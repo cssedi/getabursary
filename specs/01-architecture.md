@@ -108,9 +108,10 @@ after all sources:
 ```
 A failure in one adapter is caught, logged on that source's `IngestionRunSource` row, and the run moves on to the next source.
 
-### 3.3 Anonymous-first saves and tracker (FR-09, FR-12–FR-14)
-- **Anonymous users:** saved bursaries and tracker entries live in the browser (`localStorage`, behind an Angular `TrackerStore` service with a storage abstraction). No API calls are needed.
-- **Signed-in users:** the same `TrackerStore` switches to the `/api/v1/me/tracker` endpoints. On first sign-in, local items are uploaded and merged (details refined in a later spec).
+### 3.3 Saves, tracker and the sign-in prompt (FR-09, FR-11–FR-14)
+- Search and filter state lives in the **URL query string** (`/search?qualification=…&level=…&average=…`). It isn't stored server-side or in `localStorage`.
+- Saved bursaries, tracker entries and the profile are stored **only via the API** (`/api/v1/me/*`, requires the `Student` role). There's no anonymous local storage, so nothing needs merging.
+- **Sign-in prompt flow (web):** a `requireAuth(action)` helper wraps save/track/profile actions. If signed out, it stores the pending action (e.g. `{ type: 'save', bursaryId }`) in memory or `sessionStorage`, opens the sign-in dialog, and replays the action after a successful sign-in (including after the Google redirect).
 
 ## 4. Technology choices
 

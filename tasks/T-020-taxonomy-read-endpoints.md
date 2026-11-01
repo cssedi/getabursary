@@ -28,7 +28,7 @@ You may create or modify **only**:
 
 ## Requirements
 1. Endpoints (all `GET`, anonymous, `[ResponseCache(Duration = 3600)]`):
-   - `/api/v1/taxonomy/institutions` → `InstitutionResponse[] { id, name, shortName, slug, type, province }`, sorted by name
+   - `/api/v1/taxonomy/institutions` → `InstitutionResponse[] { id, name, shortName, slug, type, province }`, sorted by name. By default return **only institutions that have at least one qualification** (brief FR-32: the picker shows the big 5 in the MVP). `?includeAll=true` returns all of them
    - `/api/v1/taxonomy/institutions/{id:guid}/faculties` → `FacultyResponse[] { id, name, slug }`. Unknown institution → 404 `Taxonomy.InstitutionNotFound`
    - `/api/v1/taxonomy/faculties/{id:guid}/qualifications` → `QualificationResponse[] { id, name, abbreviation, studyLevel, slug, fieldCodes[] }`. Unknown faculty → 404
    - `/api/v1/taxonomy/fields` → `FieldOfStudyResponse[] { id, code, name, slug, parentCode, children[] }` as a tree (first order with nested second order)
