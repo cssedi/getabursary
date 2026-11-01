@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect solution
+        id: detect
+        run: |
+          if [ -f GetABursary.sln ] || [ -f GetABursary.slnx ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-dotnet@v4
+        if: steps.detect.outputs.present == 'true'
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet restore
+
+      - name: Build (warnings as errors)
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet build --no-restore -c Release
+
+      - name: Test (Testcontainers uses the runner's Docker)
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet test --no-build -c Release --logger "trx" --results-directory TestResults
+
+      - name: No .NET solution yet
+        if: steps.detect.outputs.present != 'true'
+        run: echo "No solution file yet (T-001 creates it). Skipping .NET build."
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect web app
+        id: detect
+        run: |
+          if [ -f src/web/package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.present == 'true'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: src/web/package-lock.json
+
+      - name: Install, test, build
+        if: steps.detect.outputs.present == 'true'
+        working-directory: src/web
+        run: |
+          npm ci
+          npm test -- --watch=false
+          npm run build
+
+      - name: No web app yet
+        if: steps.detect.outputs.present != 'true'
+        run: echo "No Angular app yet. Skipping."
+
+  task-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate task front-matter and dependency graph
+        run: node scripts/sync-issues.mjs --check
