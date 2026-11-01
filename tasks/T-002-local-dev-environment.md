@@ -4,7 +4,7 @@ title: Local dev environment (Docker Compose Postgres + env example + dev guide)
 phase: 0
 area: infra
 model: haiku
-status: todo
+status: done
 depends_on: []
 requirements: [NFR-07]
 issue: 2
