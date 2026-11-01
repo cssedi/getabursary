@@ -4,7 +4,7 @@ title: Scaffold .NET solution, projects and health endpoint
 phase: 0
 area: infra
 model: sonnet
-status: todo
+status: done
 depends_on: []
 requirements: [NFR-06]
 issue: 1

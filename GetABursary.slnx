@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GetABursary.Api/GetABursary.Api.csproj" />
+    <Project Path="src/GetABursary.Core/GetABursary.Core.csproj" />
+    <Project Path="src/GetABursary.Worker/GetABursary.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GetABursary.Api.Tests/GetABursary.Api.Tests.csproj" />
+    <Project Path="tests/GetABursary.Core.Tests/GetABursary.Core.Tests.csproj" />
+    <Project Path="tests/GetABursary.Worker.Tests/GetABursary.Worker.Tests.csproj" />
+  </Folder>
+</Solution>
