@@ -4,7 +4,7 @@ title: Create reference seed JSON (fields of study, universities, sources)
 phase: 1
 area: data
 model: haiku
-status: todo
+status: done
 depends_on: []
 requirements: [FR-31, FR-32, FR-05]
 issue: 8

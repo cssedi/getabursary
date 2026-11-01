@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://getabursary.co.za/schemas/seed/sources.schema.json",
+  "title": "Aggregator sources (reference seed)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["key", "name", "baseUrl", "iconUrl", "enabled", "crawlDelayMs"],
+    "properties": {
+      "key": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 50 },
+      "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+      "baseUrl": { "type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 300 },
+      "iconUrl": { "type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 300 },
+      "enabled": { "type": "boolean" },
+      "crawlDelayMs": { "type": "integer", "minimum": 0, "default": 3000 }
+    }
+  }
+}

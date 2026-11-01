@@ -1,0 +1,11 @@
+[
+  { "key": "zabursaries", "name": "ZA Bursaries", "baseUrl": "https://www.zabursaries.co.za", "iconUrl": "https://www.zabursaries.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "studytrust", "name": "StudyTrust", "baseUrl": "https://studytrust.org.za", "iconUrl": "https://studytrust.org.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "allbursaries", "name": "AllBursaries", "baseUrl": "https://allbursaries.co.za", "iconUrl": "https://allbursaries.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "gocareers", "name": "GoCareers", "baseUrl": "https://gocareers.co.za", "iconUrl": "https://gocareers.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "fundiconnect", "name": "FundiConnect", "baseUrl": "https://fundiconnect.co.za", "iconUrl": "https://fundiconnect.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "careerdrive", "name": "CareerDrive", "baseUrl": "https://careerdrive.co.za", "iconUrl": "https://careerdrive.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "bursaryza", "name": "BursaryZA", "baseUrl": "https://bursaryza.pages.dev", "iconUrl": "https://bursaryza.pages.dev/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "edupstairs", "name": "Edupstairs", "baseUrl": "https://www.edupstairs.org", "iconUrl": "https://www.edupstairs.org/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "applyorgza", "name": "Apply.org.za", "baseUrl": "https://apply.org.za", "iconUrl": "https://apply.org.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 }
+]

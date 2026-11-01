@@ -1,0 +1,22 @@
+[
+  { "code": "01", "name": "Agriculture, Agricultural Operations and Related Sciences", "slug": "agriculture-agricultural-operations-and-related-sciences", "parentCode": null },
+  { "code": "02", "name": "Architecture and the Built Environment", "slug": "architecture-and-the-built-environment", "parentCode": null },
+  { "code": "03", "name": "Visual and Performing Arts", "slug": "visual-and-performing-arts", "parentCode": null },
+  { "code": "04", "name": "Business, Economics and Management Studies", "slug": "business-economics-and-management-studies", "parentCode": null },
+  { "code": "05", "name": "Communication, Journalism and Related Studies", "slug": "communication-journalism-and-related-studies", "parentCode": null },
+  { "code": "06", "name": "Computer and Information Sciences", "slug": "computer-and-information-sciences", "parentCode": null },
+  { "code": "07", "name": "Education", "slug": "education", "parentCode": null },
+  { "code": "08", "name": "Engineering", "slug": "engineering", "parentCode": null },
+  { "code": "09", "name": "Health Professions and Related Clinical Sciences", "slug": "health-professions-and-related-clinical-sciences", "parentCode": null },
+  { "code": "10", "name": "Family Ecology and Consumer Sciences", "slug": "family-ecology-and-consumer-sciences", "parentCode": null },
+  { "code": "11", "name": "Languages, Linguistics and Literature", "slug": "languages-linguistics-and-literature", "parentCode": null },
+  { "code": "12", "name": "Law", "slug": "law", "parentCode": null },
+  { "code": "13", "name": "Life Sciences", "slug": "life-sciences", "parentCode": null },
+  { "code": "14", "name": "Physical Sciences", "slug": "physical-sciences", "parentCode": null },
+  { "code": "15", "name": "Mathematics and Statistics", "slug": "mathematics-and-statistics", "parentCode": null },
+  { "code": "16", "name": "Military Sciences", "slug": "military-sciences", "parentCode": null },
+  { "code": "17", "name": "Philosophy, Religion and Theology", "slug": "philosophy-religion-and-theology", "parentCode": null },
+  { "code": "18", "name": "Psychology", "slug": "psychology", "parentCode": null },
+  { "code": "19", "name": "Public Management and Services", "slug": "public-management-and-services", "parentCode": null },
+  { "code": "20", "name": "Social Sciences", "slug": "social-sciences", "parentCode": null }
+]

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://getabursary.co.za/schemas/seed/institutions.schema.json",
+  "title": "Public universities (reference seed)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["shortName", "name", "slug", "type", "province", "websiteUrl"],
+    "properties": {
+      "shortName": { "type": "string", "minLength": 1, "maxLength": 20 },
+      "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+      "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 100 },
+      "type": {
+        "type": "string",
+        "enum": ["TraditionalUniversity", "ComprehensiveUniversity", "UniversityOfTechnology", "Tvet", "Private"]
+      },
+      "province": {
+        "type": "string",
+        "enum": ["EasternCape", "FreeState", "Gauteng", "KwaZuluNatal", "Limpopo", "Mpumalanga", "NorthWest", "NorthernCape", "WesternCape"]
+      },
+      "websiteUrl": {
+        "type": "string",
+        "pattern": "^(https://[^\\s]+)?$",
+        "maxLength": 300,
+        "description": "Official homepage, or empty string when not yet verified (see data/seed/README.md)."
+      }
+    }
+  }
+}
