@@ -7,7 +7,7 @@ model: sonnet
 status: todo
 depends_on: [T-007]
 requirements: [FR-20, FR-27, NFR-05]
-issue: null
+issue: 11
 ---
 
 ## Goal

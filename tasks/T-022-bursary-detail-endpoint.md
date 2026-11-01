@@ -7,7 +7,7 @@ model: haiku
 status: todo
 depends_on: [T-021]
 requirements: [FR-06, FR-07]
-issue: null
+issue: 22
 ---
 
 ## Goal
