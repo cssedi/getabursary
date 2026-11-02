@@ -4,7 +4,7 @@ title: Wire the ingestion pipeline end to end, plus closure and vanished jobs
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-011, T-018]
 requirements: [FR-20, FR-22, FR-25, FR-26, FR-27, NFR-05]
 issue: 19
