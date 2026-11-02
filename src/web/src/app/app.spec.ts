@@ -27,6 +27,20 @@ describe('App shell', () => {
     );
   });
 
+  it('skipLink_isFirstFocusable_andFocusesContent', async () => {
+    const fixture = TestBed.createComponent(App);
+    document.body.appendChild(fixture.nativeElement);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const first = el.querySelector('a, button, input, select, [tabindex]');
+    expect(first?.textContent).toContain('Skip to content');
+    const main = el.querySelector<HTMLElement>('main#content');
+    expect(main?.getAttribute('tabindex')).toBe('-1');
+    (first as HTMLElement).click();
+    expect(document.activeElement).toBe(main);
+    fixture.nativeElement.remove();
+  });
+
   it('provides an empty API base URL in the browser', () => {
     expect(TestBed.inject(API_BASE_URL)).toBe('');
   });

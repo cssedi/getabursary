@@ -136,7 +136,7 @@ const AVERAGE_DEBOUNCE_MS = 400;
 
         <button
           type="button"
-          class="rounded-[var(--radius)] border border-[var(--color-primary)] p-2 font-medium text-[var(--color-primary)]"
+          class="rounded-control border border-jacaranda p-2 font-medium text-jacaranda"
           (click)="state.clear()"
         >
           Clear filters

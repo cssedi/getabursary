@@ -4,7 +4,7 @@ title: Design foundation - tokens, font, base styles, shell, formatting helpers
 phase: 4
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-029]
 requirements: [NFR-01, NFR-02]
 issue: 55
