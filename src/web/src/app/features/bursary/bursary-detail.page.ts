@@ -30,26 +30,19 @@ import {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="mx-auto max-w-3xl space-y-6 p-4">
+    <div class="detail" [class.with-apply-bar]="!!open()?.applyUrl">
       @if (open(); as b) {
-        <header class="space-y-2">
+        <header class="space-y-3">
+          <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
           <h1 class="text-2xl font-bold">{{ b.name }}</h1>
           @if (b.funderName) {
             <p class="text-muted">{{ b.funderName }}</p>
           }
-          <div class="flex flex-wrap items-center gap-3">
-            <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
-            <app-source-icons [sources]="b.sources" />
-          </div>
+          <app-source-icons [sources]="b.sources" />
         </header>
 
-        <section class="space-y-2" aria-labelledby="about-heading">
-          <h2 id="about-heading" class="text-lg font-semibold">About</h2>
-          <p>{{ b.summary }}</p>
-        </section>
-
-        <section class="space-y-2" aria-labelledby="who-heading">
-          <h2 id="who-heading" class="text-lg font-semibold">Who can apply</h2>
+        <section class="section" aria-labelledby="who-heading">
+          <h2 id="who-heading" class="text-xl font-bold">Who can apply</h2>
           <dl class="grid gap-2 text-sm sm:grid-cols-[10rem_1fr]">
             <dt class="font-medium">Study levels</dt>
             <dd>{{ b.studyLevels.length ? b.studyLevels.join(', ') : 'Not specified' }}</dd>
@@ -70,8 +63,8 @@ import {
           }
         </section>
 
-        <section class="space-y-2" aria-labelledby="fields-heading">
-          <h2 id="fields-heading" class="text-lg font-semibold">
+        <section class="section" aria-labelledby="fields-heading">
+          <h2 id="fields-heading" class="text-xl font-bold">
             Fields of study and qualifications
           </h2>
           @if (b.fields.length) {
@@ -95,8 +88,8 @@ import {
           }
         </section>
 
-        <section class="space-y-2" aria-labelledby="covered-heading">
-          <h2 id="covered-heading" class="text-lg font-semibold">What's covered</h2>
+        <section class="section" aria-labelledby="covered-heading">
+          <h2 id="covered-heading" class="text-xl font-bold">What’s covered</h2>
           @if (b.coverage.length) {
             <ul class="list-inside list-disc text-sm">
               @for (item of b.coverage; track item) {
@@ -110,8 +103,8 @@ import {
         </section>
 
         @if (b.workBackRequired || b.workBackDetails) {
-          <section class="space-y-2" aria-labelledby="workback-heading">
-            <h2 id="workback-heading" class="text-lg font-semibold">Work-back obligation</h2>
+          <section class="section" aria-labelledby="workback-heading">
+            <h2 id="workback-heading" class="text-xl font-bold">Work-back obligation</h2>
             <p>
               {{
                 b.workBackDetails ??
@@ -121,18 +114,25 @@ import {
           </section>
         }
 
-        @if (b.applyUrl) {
-          <a
-            class="inline-block rounded-control bg-jacaranda px-6 py-3 text-lg font-semibold text-paper"
-            [href]="b.applyUrl"
-            target="_blank"
-            rel="noopener nofollow"
-            >Apply on funder's site</a
-          >
-        }
+        <section class="section" aria-labelledby="about-heading">
+          <h2 id="about-heading" class="text-xl font-bold">About this bursary</h2>
+          <p>{{ b.summary }}</p>
+        </section>
 
         <p class="text-sm text-muted">Last updated {{ lastUpdated(b) }}</p>
         <div class="ad-slot" data-slot="detail" hidden></div>
+
+        @if (b.applyUrl) {
+          <div class="apply-bar">
+            <a
+              class="apply-button"
+              [href]="b.applyUrl"
+              target="_blank"
+              rel="noopener nofollow"
+              >{{ applyLabel(b) }}</a
+            >
+          </div>
+        }
       } @else if (closed(); as c) {
         <app-closed-bursary [summary]="c" />
       } @else if (page().kind === 'notFound') {
@@ -141,6 +141,57 @@ import {
         <app-error-state message="We couldn't load this bursary." (retry)="retry()" />
       }
     </div>
+  `,
+  styles: `
+    .detail {
+      max-width: 720px;
+      padding: 24px 16px;
+    }
+    .section {
+      display: grid;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+    .apply-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      border-radius: var(--radius-control);
+      background: var(--jacaranda);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    .apply-button:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    @media (min-width: 768px) {
+      .detail {
+        padding: 24px;
+      }
+      .apply-bar {
+        margin-top: 32px;
+      }
+    }
+    /* Below 768 px the apply button is a sticky bottom bar; the page reserves matching space below it. */
+    @media (max-width: 767px) {
+      .detail.with-apply-bar {
+        padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+      }
+      .apply-bar {
+        position: fixed;
+        inset: auto 0 0 0;
+        z-index: 10;
+        padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+        background: var(--paper);
+        border-top: 1px solid var(--line);
+      }
+    }
   `,
 })
 export class BursaryDetailPage {
@@ -180,6 +231,11 @@ export class BursaryDetailPage {
     return b.provinces.length
       ? b.provinces.map((p) => PROVINCE_LABELS[p]).join(', ')
       : 'Any province';
+  }
+
+  /** "Apply on Sasol’s site", or the generic label when the funder is unknown. */
+  protected applyLabel(b: BursaryDetailResponse): string {
+    return b.funderName ? `Apply on ${b.funderName}’s site` : 'Apply on the funder’s site';
   }
 
   protected lastUpdated(b: BursaryDetailResponse): string {
