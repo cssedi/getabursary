@@ -63,22 +63,24 @@ export class TrackerPage {
 
   protected load(): void {
     this.failed.set(false);
-    this.store.load().then(
+    // Always fetch fresh: the store's cached load() is only for which bursaries are saved.
+    firstValueFrom(this.api.list()).then(
       (list) => this.entries.set(list),
       () => this.failed.set(true),
     );
   }
 
-  /** Optimistic: shows the change at once and puts the old entry back if the API refuses. */
+  /** Optimistic: shows the change at once and, if the API refuses, puts back only the fields it changed. */
   protected async update(entry: TrackerEntryResponse, change: TrackerChange): Promise<void> {
-    const next = { ...entry, ...change };
-    this.replace(entry.bursary.id, next);
+    const id = entry.bursary.id;
+    const current = this.entries()?.find((e) => e.bursary.id === id) ?? entry;
+    const next = { ...current, ...change };
+    const old = Object.fromEntries(Object.keys(change).map((k) => [k, current[k as keyof TrackerChange]]));
+    this.replace(id, next);
     try {
-      await firstValueFrom(
-        this.api.upsert(entry.bursary.id, { status: next.status, appliedOn: next.appliedOn, notes: next.notes }),
-      );
+      await firstValueFrom(this.api.upsert(id, { status: next.status, appliedOn: next.appliedOn, notes: next.notes }));
     } catch {
-      this.replace(entry.bursary.id, entry);
+      this.entries.update((list) => list?.map((e) => (e.bursary.id === id ? { ...e, ...old } : e)) ?? null);
       this.toast.show('Couldn’t save your changes. Check your connection and try again.');
     }
   }

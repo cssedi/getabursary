@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TRACKER_STATUSES, TrackerEntryResponse, TrackerStatus } from '../../core/api/models';
 import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
@@ -94,10 +94,6 @@ export class TrackerRowComponent {
   protected readonly notesMax = NOTES_MAX;
   private pending: string | undefined;
   private timer: ReturnType<typeof setTimeout> | undefined;
-
-  constructor() {
-    inject(DestroyRef).onDestroy(() => this.flushNotes());
-  }
 
   protected closed(): boolean {
     return this.entry().bursary.status === 'Closed';

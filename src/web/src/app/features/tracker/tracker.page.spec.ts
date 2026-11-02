@@ -51,7 +51,10 @@ describe('TrackerPage', () => {
   async function render(entries: TrackerEntryResponse[]) {
     const fixture = TestBed.createComponent(TrackerPage);
     fixture.detectChanges();
-    http.expectOne('/api/v1/me/tracker').flush(entries);
+    // The page and the store each fetch the list.
+    const reqs = http.match('/api/v1/me/tracker');
+    expect(reqs.length).toBe(2);
+    reqs.forEach((r) => r.flush(entries));
     await settle(fixture);
     fixture.detectChanges();
     return { fixture, el: fixture.nativeElement as HTMLElement };
@@ -83,6 +86,48 @@ describe('TrackerPage', () => {
     await settle(fixture);
     fixture.detectChanges();
     expect(el.querySelector('.counts')!.textContent).toBe('1 saved');
+  });
+
+  it('statusFailure_doesNotUndoLaterDateEdit', async () => {
+    const { fixture, el } = await render([entry()]);
+    const select = el.querySelector<HTMLSelectElement>('select.status')!;
+    select.value = 'Applied';
+    select.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    const date = el.querySelector<HTMLInputElement>('input.applied-on')!;
+    date.value = '2026-11-01';
+    date.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    const puts = http.match('/api/v1/me/tracker/' + openBursary.id);
+    expect(puts.length).toBe(2);
+    puts[0].flush({}, { status: 500, statusText: 'Server Error' });
+    puts[1].flush(entry());
+    await settle(fixture);
+    fixture.detectChanges();
+    expect(el.querySelector('.counts')!.textContent).toBe('1 saved');
+    expect(el.querySelector<HTMLInputElement>('input.applied-on')!.value).toBe('2026-11-01');
+  });
+
+  it('notes_blurWithPending_savesImmediately', async () => {
+    const { el } = await render([entry()]);
+    const area = el.querySelector<HTMLTextAreaElement>('textarea.notes')!;
+    area.value = 'Call now';
+    area.dispatchEvent(new Event('input'));
+    area.dispatchEvent(new Event('blur'));
+    const put = http.expectOne('/api/v1/me/tracker/' + openBursary.id);
+    expect(put.request.body.notes).toBe('Call now');
+    put.flush(entry());
+  });
+
+  it('open_afterListChangedElsewhere_showsFreshList', async () => {
+    const first = await render([]);
+    first.fixture.destroy();
+    const fixture = TestBed.createComponent(TrackerPage);
+    fixture.detectChanges();
+    http.expectOne('/api/v1/me/tracker').flush([entry()]);
+    await settle(fixture);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('app-tracker-row').length).toBe(1);
   });
 
   it('notes_typed_savesOnceAfterDebounce', async () => {
