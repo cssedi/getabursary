@@ -4,7 +4,7 @@ title: Google sign-in (external login) for the API
 phase: 5
 area: api
 model: sonnet
-status: todo
+status: done
 depends_on: [T-038]
 requirements: [FR-10]
 issue: 76
