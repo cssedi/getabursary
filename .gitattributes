@@ -1,0 +1,6 @@
+# Normalise all text files to LF in the repo (matches .editorconfig). Prevents CRLF/LF diff noise between agents and machines.
+* text=auto eol=lf
+*.sln text eol=crlf
+*.png binary
+*.jpg binary
+*.ico binary
