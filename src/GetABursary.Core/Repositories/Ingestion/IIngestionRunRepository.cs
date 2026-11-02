@@ -20,5 +20,14 @@ public interface IIngestionRunRepository
     /// </summary>
     Task<bool> MarkRequestPickedAsync(Guid requestId, DateTimeOffset pickedUpAt, CancellationToken ct);
 
+    /// <summary>The oldest unpicked request for the same source (null = all sources), or null if none is waiting.</summary>
+    Task<IngestionRunRequest?> FindPendingRequestAsync(Guid? sourceId, CancellationToken ct);
+
+    /// <summary>Adds a manual run request. Call <see cref="SaveChangesAsync"/> to persist it.</summary>
+    void AddRunRequest(IngestionRunRequest request);
+
+    /// <summary>A page of runs, newest first, with their per-source rows and source names (read-only).</summary>
+    Task<(IReadOnlyList<IngestionRun> Items, int Total)> ListRunsAsync(int skip, int take, CancellationToken ct);
+
     Task SaveChangesAsync(CancellationToken ct);
 }

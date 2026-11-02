@@ -252,6 +252,106 @@ public sealed partial class AdminEndpointTests(AuthFixture fixture)
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 
+    [Fact]
+    public async Task ListSources_WithAndWithoutRun_ShowsLatestRunCounts()
+    {
+        var sourceId = await AddSourceAsync();
+        using var client = await SignInAdminAsync();
+        Assert.Equal(JsonValueKind.Null, FindSource(await GetSourcesAsync(client), sourceId).GetProperty("lastRun").ValueKind);
+
+        await AddRunAsync(sourceId, DateTimeOffset.UtcNow.AddDays(-2), discovered: 1);
+        await AddRunAsync(sourceId, DateTimeOffset.UtcNow.AddDays(-1), discovered: 5, errorSummary: "Timeout on page 3");
+
+        var lastRun = FindSource(await GetSourcesAsync(client), sourceId).GetProperty("lastRun");
+        Assert.Equal(5, lastRun.GetProperty("discovered").GetInt32());
+        Assert.Equal("Timeout on page 3", lastRun.GetProperty("errorSummary").GetString());
+        Assert.Equal("Succeeded", lastRun.GetProperty("status").GetString());
+    }
+
+    [Fact]
+    public async Task ListSources_NoRunYet_LastRunIsNull()
+    {
+        var sourceId = await AddSourceAsync();
+        using var client = await SignInAdminAsync();
+
+        var source = FindSource(await GetSourcesAsync(client), sourceId);
+
+        Assert.Equal(JsonValueKind.Null, source.GetProperty("lastRun").ValueKind);
+    }
+
+    [Fact]
+    public async Task PatchSource_Toggles_Rejects_MissingEnabled_And_UnknownId()
+    {
+        var sourceId = await AddSourceAsync(enabled: true);
+        using var client = await SignInAdminAsync();
+
+        using var off = await client.PatchAsJsonAsync($"/api/v1/admin/sources/{sourceId}", new { enabled = false });
+        using var missing = await client.PatchAsJsonAsync($"/api/v1/admin/sources/{sourceId}", new { });
+        using var unknown = await client.PatchAsJsonAsync($"/api/v1/admin/sources/{Guid.NewGuid()}", new { enabled = true });
+
+        Assert.Equal(HttpStatusCode.OK, off.StatusCode);
+        Assert.False((await off.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("enabled").GetBoolean());
+        Assert.False(FindSource(await GetSourcesAsync(client), sourceId).GetProperty("enabled").GetBoolean());
+        Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+    }
+
+    [Fact]
+    public async Task RunNow_TwiceForSameSource_QueuesOneRequest()
+    {
+        var sourceId = await AddSourceAsync();
+        using var client = await SignInAdminAsync();
+
+        using var first = await client.PostAsJsonAsync("/api/v1/admin/ingestion-runs", new { sourceId });
+        using var second = await client.PostAsJsonAsync("/api/v1/admin/ingestion-runs", new { sourceId });
+        using var all = await client.PostAsJsonAsync("/api/v1/admin/ingestion-runs", new { });
+        using var unknown = await client.PostAsJsonAsync("/api/v1/admin/ingestion-runs", new { sourceId = Guid.NewGuid() });
+
+        Assert.Equal(HttpStatusCode.Accepted, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, second.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, all.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        var firstId = (await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        Assert.Equal(firstId, (await second.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid());
+        Assert.NotEqual(firstId, (await all.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid());
+        await using var scope = fixture.Factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
+        Assert.Equal(1, await db.IngestionRunRequests.CountAsync(r => r.SourceId == sourceId && r.PickedUpAt == null));
+    }
+
+    [Fact]
+    public async Task ListRuns_Pages_ReturnsEveryRunOnceNewestFirst()
+    {
+        var sourceId = await AddSourceAsync();
+        var start = DateTimeOffset.UtcNow.AddDays(-30);
+        var runIds = new List<Guid>();
+        for (var i = 0; i < 21; i++)
+        {
+            runIds.Add(await AddRunAsync(sourceId, start.AddHours(i), discovered: i));
+        }
+
+        using var client = await SignInAdminAsync();
+        var first = await GetJsonAsync(client, "/api/v1/admin/ingestion-runs?page=1");
+        var total = first.GetProperty("totalCount").GetInt32();
+        var seen = new List<JsonElement>();
+        for (var page = 1; page <= (total + 19) / 20; page++)
+        {
+            var json = await GetJsonAsync(client, $"/api/v1/admin/ingestion-runs?page={page}");
+            seen.AddRange(json.GetProperty("items").EnumerateArray().Select(i => i.Clone()));
+        }
+
+        Assert.Equal(20, first.GetProperty("items").GetArrayLength());
+        var ids = seen.Select(i => i.GetProperty("id").GetGuid()).ToList();
+        Assert.Equal(ids.Count, ids.Distinct().Count());
+        Assert.All(runIds, id => Assert.Contains(id, ids));
+        var ours = seen.Single(i => i.GetProperty("id").GetGuid() == runIds[^1]);
+        var source = Assert.Single(ours.GetProperty("sources").EnumerateArray());
+        Assert.Equal(sourceId, source.GetProperty("sourceId").GetGuid());
+        Assert.Equal(20, source.GetProperty("discovered").GetInt32());
+        using var badPage = await client.GetAsync("/api/v1/admin/ingestion-runs?page=0");
+        Assert.Equal(HttpStatusCode.BadRequest, badPage.StatusCode);
+    }
+
     private static IEnumerable<(HttpMethod Method, string Url)> Endpoints()
     {
         var id = Guid.NewGuid();
@@ -261,7 +361,17 @@ public sealed partial class AdminEndpointTests(AuthFixture fixture)
         yield return (HttpMethod.Get, $"/api/v1/admin/bursaries/{id}");
         yield return (HttpMethod.Patch, $"/api/v1/admin/bursaries/{id}");
         yield return (HttpMethod.Delete, $"/api/v1/admin/bursaries/{id}/locks/Name");
+        yield return (HttpMethod.Get, "/api/v1/admin/sources");
+        yield return (HttpMethod.Patch, $"/api/v1/admin/sources/{id}");
+        yield return (HttpMethod.Post, "/api/v1/admin/ingestion-runs");
+        yield return (HttpMethod.Get, "/api/v1/admin/ingestion-runs");
     }
+
+    private static async Task<JsonElement> GetSourcesAsync(HttpClient client) =>
+        await GetJsonAsync(client, "/api/v1/admin/sources");
+
+    private static JsonElement FindSource(JsonElement sources, Guid id) =>
+        sources.EnumerateArray().Single(s => s.GetProperty("id").GetGuid() == id);
 
     private static async Task<JsonElement> GetJsonAsync(HttpClient client, string url)
     {
@@ -342,6 +452,47 @@ public sealed partial class AdminEndpointTests(AuthFixture fixture)
         });
         await db.SaveChangesAsync();
         return source.Id;
+    }
+
+    private async Task<Guid> AddSourceAsync(bool enabled = true)
+    {
+        await using var scope = fixture.Factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
+        var source = new Source
+        {
+            Key = $"s{Guid.NewGuid():N}"[..20],
+            Name = "Admin source test",
+            BaseUrl = "https://sources.example.test",
+            Enabled = enabled,
+        };
+        db.Sources.Add(source);
+        await db.SaveChangesAsync();
+        return source.Id;
+    }
+
+    private async Task<Guid> AddRunAsync(Guid sourceId, DateTimeOffset startedAt, int discovered, string? errorSummary = null)
+    {
+        await using var scope = fixture.Factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
+        var run = new IngestionRun
+        {
+            Trigger = IngestionTrigger.Scheduled,
+            Status = RunStatus.Succeeded,
+            StartedAt = startedAt,
+            FinishedAt = startedAt.AddMinutes(5),
+        };
+        run.Sources.Add(new IngestionRunSource
+        {
+            SourceId = sourceId,
+            Discovered = discovered,
+            Created = 1,
+            Updated = 2,
+            Failed = 0,
+            ErrorSummary = errorSummary,
+        });
+        db.IngestionRuns.Add(run);
+        await db.SaveChangesAsync();
+        return run.Id;
     }
 
     private async Task<HttpClient> SignInAdminAsync() => await SignInAsync(AuthFixture.AdminTestsEmail);

@@ -43,5 +43,25 @@ public class IngestionRunRepository(GetABursaryDbContext db) : IIngestionRunRepo
         return updated == 1;
     }
 
+    public Task<IngestionRunRequest?> FindPendingRequestAsync(Guid? sourceId, CancellationToken ct) =>
+        db.IngestionRunRequests.AsNoTracking()
+            .Where(r => r.PickedUpAt == null && r.SourceId == sourceId)
+            .OrderBy(r => r.RequestedAt)
+            .FirstOrDefaultAsync(ct);
+
+    public void AddRunRequest(IngestionRunRequest request) => db.IngestionRunRequests.Add(request);
+
+    public async Task<(IReadOnlyList<IngestionRun> Items, int Total)> ListRunsAsync(int skip, int take, CancellationToken ct)
+    {
+        var query = db.IngestionRuns.AsNoTracking();
+        var total = await query.CountAsync(ct);
+        var items = await query
+            .Include(r => r.Sources).ThenInclude(s => s.Source)
+            .OrderByDescending(r => r.StartedAt).ThenByDescending(r => r.Id)
+            .Skip(skip).Take(take)
+            .ToListAsync(ct);
+        return (items, total);
+    }
+
     public Task SaveChangesAsync(CancellationToken ct) => db.SaveChangesAsync(ct);
 }

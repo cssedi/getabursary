@@ -28,6 +28,12 @@ public static class AdminErrors
     public static Error LockNotFound(string field) =>
         Error.NotFound("Bursary.LockNotFound", $"Field '{field}' is not locked");
 
+    public static Error SourceNotFound(Guid id) =>
+        Error.NotFound("Source.NotFound", $"Source {id} was not found");
+
+    public static Error InvalidEnabled() =>
+        Error.Validation("Source.InvalidEnabled", "enabled is required and must be true or false");
+
     public static Error InvalidField(string field, string rule) =>
         Error.Validation("Bursary.InvalidField", $"{field}: {rule}");
 

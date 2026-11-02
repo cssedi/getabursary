@@ -162,6 +162,14 @@ public class IngestionSchedulerTests
             return Task.FromResult(true);
         }
 
+        public Task<IngestionRunRequest?> FindPendingRequestAsync(Guid? sourceId, CancellationToken ct) =>
+            throw new NotSupportedException();
+
+        public void AddRunRequest(IngestionRunRequest request) => throw new NotSupportedException();
+
+        public Task<(IReadOnlyList<IngestionRun> Items, int Total)> ListRunsAsync(int skip, int take, CancellationToken ct) =>
+            throw new NotSupportedException();
+
         public Task SaveChangesAsync(CancellationToken ct) => Task.CompletedTask;
     }
 }
