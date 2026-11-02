@@ -63,7 +63,7 @@ function flattenFieldSlugs(fields: FieldNode[]): string[] {
 }
 
 async function getJson<T>(fetchFn: FetchLike, url: string): Promise<T> {
-  const response = await fetchFn(url);
+  const response = await fetchFn(url, { signal: AbortSignal.timeout(10_000) });
   if (!response.ok) {
     throw new Error(`API ${response.status} for ${url}`);
   }
@@ -115,12 +115,18 @@ export function createSitemapCache(
   ttlMs = 60 * 60 * 1000,
 ): SitemapCache {
   let cached: { xml: string; expires: number } | undefined;
+  let inFlight: Promise<string> | undefined;
   return {
     async get(now: number): Promise<string> {
       if (cached && now < cached.expires) return cached.xml;
-      const xml = await build();
-      cached = { xml, expires: now + ttlMs };
-      return xml;
+      // Concurrent callers share one build; cleared afterwards so failures are not cached.
+      inFlight ??= build()
+        .then((xml) => {
+          cached = { xml, expires: now + ttlMs };
+          return xml;
+        })
+        .finally(() => (inFlight = undefined));
+      return inFlight;
     },
   };
 }

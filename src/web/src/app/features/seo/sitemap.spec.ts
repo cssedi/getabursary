@@ -97,6 +97,13 @@ describe('sitemap cache and response', () => {
     expect(build).toHaveBeenCalledTimes(2);
   });
 
+  it('get_concurrentCalls_shareOneBuild', async () => {
+    const build = vi.fn().mockResolvedValue('<xml/>');
+    const cache = createSitemapCache(build);
+    await Promise.all([cache.get(0), cache.get(0), cache.get(0)]);
+    expect(build).toHaveBeenCalledTimes(1);
+  });
+
   it('respondWithSitemap_apiFailure_returns503AndDoesNotCache', async () => {
     const build = vi.fn().mockRejectedValueOnce(new Error('down')).mockResolvedValue('<xml/>');
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
