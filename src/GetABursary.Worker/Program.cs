@@ -20,6 +20,7 @@ builder.Services.AddBursaryMerging();
 builder.Services.AddIngestionPipeline();
 builder.Services.AddSingleton<ISourceAdapter, GetABursary.Worker.Sources.Adapters.ZaBursaries.ZaBursariesAdapter>();
 builder.Services.AddSingleton<ISourceAdapter, StudyTrustAdapter>();
+builder.Services.AddSingleton<ISourceAdapter, GetABursary.Worker.Sources.Adapters.AllBursaries.AllBursariesAdapter>();
 builder.Services.AddSingleton<SourceAdapterRegistry>();
 builder.Services.AddScoped<IRawListingRepository, RawListingRepository>();
 builder.Services.AddScoped<ISnapshotStore, SnapshotStore>();
