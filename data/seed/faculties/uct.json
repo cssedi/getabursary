@@ -1,0 +1,297 @@
+{
+  "$schema": "../schemas/faculties.schema.json",
+  "institutionSlug": "uct",
+  "sourceUrls": [
+    "https://uct.ac.za/faculties",
+    "https://uct.ac.za/students/prospective-students/undergraduate-prospectus",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-commerce/commerce-undergraduate",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-engineering-built-environment/engineering-built-environment-undergraduate",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-health-sciences/health-sciences-undergraduate",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-humanities/humanities-undergraduate",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-law/law-undergraduate",
+    "https://uct.ac.za/students/study-uct-degrees-diplomas-science/science-undergraduate"
+  ],
+  "faculties": [
+    {
+      "name": "Commerce",
+      "slug": "commerce",
+      "qualifications": [
+        {
+          "name": "Bachelor of Business Science",
+          "abbreviation": "BBusSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bbusc",
+          "fieldCodes": [
+            "04",
+            "15"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Actuarial Science",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-actuarial-science",
+          "fieldCodes": [
+            "04",
+            "15"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Engineering & the Built Environment",
+      "slug": "engineering-built-environment",
+      "qualifications": [
+        {
+          "name": "Bachelor of Architectural Studies",
+          "studyLevel": "Undergraduate",
+          "slug": "bas",
+          "fieldCodes": [
+            "02"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Property Studies",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-property-studies",
+          "fieldCodes": [
+            "02",
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Construction Studies",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-construction-studies",
+          "fieldCodes": [
+            "02"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Chemical Engineering",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-chemical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Civil Engineering",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-civil",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Electrical Engineering",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-electrical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Electrical & Computer Engineering",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-electrical-computer",
+          "fieldCodes": [
+            "08",
+            "06"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Mechanical Engineering",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-mechanical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Engineering in Mechatronics",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-eng-mechatronics",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Geomatics: Surveying",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-geomatics-surveying",
+          "fieldCodes": [
+            "02",
+            "08"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Sciences",
+      "slug": "health-sciences",
+      "qualifications": [
+        {
+          "name": "Bachelor of Medicine & Bachelor of Surgery",
+          "studyLevel": "Undergraduate",
+          "slug": "mbchb",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Audiology",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-audiology",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Occupational Therapy",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-occupational-therapy",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Physiotherapy",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-physiotherapy",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Speech-Language Pathology",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc-speech-language-pathology",
+          "fieldCodes": [
+            "09"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Humanities",
+      "slug": "humanities",
+      "qualifications": [
+        {
+          "name": "Bachelor of Arts",
+          "studyLevel": "Undergraduate",
+          "slug": "ba",
+          "fieldCodes": [
+            "03",
+            "11",
+            "20"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Fine Art",
+          "studyLevel": "Undergraduate",
+          "slug": "ba-fine-art",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Film & Media Production",
+          "studyLevel": "Undergraduate",
+          "slug": "ba-film-media-production",
+          "fieldCodes": [
+            "03",
+            "05"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Theatre & Performance",
+          "studyLevel": "Undergraduate",
+          "slug": "ba-theatre-performance",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Music",
+          "studyLevel": "Undergraduate",
+          "slug": "bmus",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Social Science",
+          "studyLevel": "Undergraduate",
+          "slug": "bsocsc",
+          "fieldCodes": [
+            "20"
+          ]
+        },
+        {
+          "name": "Bachelor of Social Science in Philosophy, Politics & Economics",
+          "studyLevel": "Undergraduate",
+          "slug": "bsocsc-ppe",
+          "fieldCodes": [
+            "17",
+            "20"
+          ]
+        },
+        {
+          "name": "Bachelor of Social Work",
+          "studyLevel": "Undergraduate",
+          "slug": "bsocwork",
+          "fieldCodes": [
+            "19",
+            "20"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Law",
+      "slug": "law",
+      "qualifications": [
+        {
+          "name": "Bachelor of Laws",
+          "abbreviation": "LLB",
+          "studyLevel": "Undergraduate",
+          "slug": "llb",
+          "fieldCodes": [
+            "12"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Science",
+      "slug": "science",
+      "qualifications": [
+        {
+          "name": "Bachelor of Science",
+          "abbreviation": "BSc",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc",
+          "fieldCodes": [
+            "13",
+            "14",
+            "15",
+            "06"
+          ]
+        }
+      ]
+    }
+  ]
+}

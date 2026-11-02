@@ -55,6 +55,22 @@ The 9 aggregator sites from spec §3.3 and brief §6.1. Each entry is `{ key, na
 3. Run the validation commands above and check the counts. The expected counts are 20 fields, 26 institutions and 9 sources. If a count changes, update the spec first.
 4. Seed data is loaded by the `DataSeeder`, never by `HasData` (conventions §4). How the seeder treats rows removed from these files is defined in T-009.
 
+## Faculties and qualifications (`faculties/*.json`)
+
+One file per institution, validated against `schemas/faculties.schema.json` (draft 2020-12). Each file has `institutionSlug`, `sourceUrls` and `faculties`. Each faculty has `name`, `slug` and `qualifications`. A qualification has `name`, `abbreviation?`, `studyLevel`, `nqfLevel?`, `durationYears?`, `slug` and `fieldCodes`. `fieldCodes` are first-order CESM codes from `fields-of-study.json`.
+
+- **Covered:** UCT and Wits (T-010). UP, SU and UJ come in T-024, from prospectus PDFs.
+- **Sources:** official faculty and programme pages, listed in each file's `sourceUrls`. Nothing is included that could not be read there.
+- **Optional fields:** `abbreviation`, `nqfLevel` and `durationYears` are left out when the source page did not state them. No `nqfLevel` is set anywhere yet.
+- **Scope:** at most 10 undergraduate qualifications per faculty. Where a degree has many majors (for example the UCT BSc, BA and BCom), the degree is one qualification.
+- **Field mapping:** `fieldCodes` are the seeder author's judgement and need human review.
+
+Validate:
+
+```bash
+for f in data/seed/faculties/*.json; do npx --yes ajv-cli@5 validate --spec=draft2020 -s data/seed/schemas/faculties.schema.json -d $f; done
+```
+
 ## Needs verification
 
 These values were recorded without a live check. A reviewer should confirm each one before the seeder is run against production data.

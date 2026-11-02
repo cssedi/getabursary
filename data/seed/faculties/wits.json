@@ -1,0 +1,463 @@
+{
+  "$schema": "../schemas/faculties.schema.json",
+  "institutionSlug": "wits",
+  "sourceUrls": [
+    "https://www.wits.ac.za/faculties-and-schools/",
+    "https://www.wits.ac.za/clm/undergraduate-programmes/",
+    "https://www.wits.ac.za/ebe/undergraduate-programmes/",
+    "https://www.wits.ac.za/health/academic-programmes/undergraduate-programmes/",
+    "https://www.wits.ac.za/humanities/undergraduate-programmes/",
+    "https://www.wits.ac.za/science/undergraduate/"
+  ],
+  "faculties": [
+    {
+      "name": "Commerce, Law and Management",
+      "slug": "commerce-law-management",
+      "qualifications": [
+        {
+          "name": "Bachelor of Commerce in Accounting",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-accounting",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Accounting Science",
+          "abbreviation": "BAccSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bacc-sc",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Economics",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-economics",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Finance",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-finance",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Information Systems",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-information-systems",
+          "fieldCodes": [
+            "04",
+            "06"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Management",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-management",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Marketing",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-marketing",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Commerce in Human Resource Management",
+          "abbreviation": "BCom",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcom-hrm",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Economic Science",
+          "abbreviation": "BEconSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "beconsc",
+          "fieldCodes": [
+            "04"
+          ]
+        },
+        {
+          "name": "Bachelor of Laws",
+          "abbreviation": "LLB",
+          "studyLevel": "Undergraduate",
+          "slug": "llb",
+          "fieldCodes": [
+            "12"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Engineering and the Built Environment",
+      "slug": "engineering-built-environment",
+      "qualifications": [
+        {
+          "name": "BSc (Eng) Aeronautical Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-aeronautical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Chemical Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-chemical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Civil Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-civil",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Electrical Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-electrical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Industrial Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-industrial",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Information Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-information",
+          "fieldCodes": [
+            "08",
+            "06"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Mechanical Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-mechanical",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Mining Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-mining",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "BSc (Eng) Metallurgy and Materials Engineering",
+          "abbreviation": "BSc(Eng)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-eng-metallurgy-materials",
+          "fieldCodes": [
+            "08"
+          ]
+        },
+        {
+          "name": "Bachelor of Architectural Studies",
+          "abbreviation": "BAS",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bas",
+          "fieldCodes": [
+            "02"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health Sciences",
+      "slug": "health-sciences",
+      "qualifications": [
+        {
+          "name": "Bachelor of Medicine and Bachelor of Surgery",
+          "abbreviation": "MBBCh",
+          "studyLevel": "Undergraduate",
+          "durationYears": 6,
+          "slug": "mbbch",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Dental Science",
+          "abbreviation": "BDS",
+          "studyLevel": "Undergraduate",
+          "durationYears": 5,
+          "slug": "bds",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Pharmacy",
+          "abbreviation": "BPharm",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bpharm",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Nursing",
+          "abbreviation": "BNurs",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bnurs",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Occupational Therapy",
+          "abbreviation": "BSc(OT)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-occupational-therapy",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Science in Physiotherapy",
+          "abbreviation": "BSc(Physiotherapy)",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bsc-physiotherapy",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Health Sciences in Biokinetics",
+          "abbreviation": "BHSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bhsc-biokinetics",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Health Sciences in Biomedical Sciences",
+          "abbreviation": "BHSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bhsc-biomedical-sciences",
+          "fieldCodes": [
+            "09",
+            "13"
+          ]
+        },
+        {
+          "name": "Bachelor of Oral Health Sciences",
+          "abbreviation": "BOHSc",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bohsc",
+          "fieldCodes": [
+            "09"
+          ]
+        },
+        {
+          "name": "Bachelor of Clinical Medical Practice",
+          "abbreviation": "BCMP",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "bcmp",
+          "fieldCodes": [
+            "09"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Humanities",
+      "slug": "humanities",
+      "qualifications": [
+        {
+          "name": "Bachelor of Arts",
+          "abbreviation": "BA",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "ba",
+          "fieldCodes": [
+            "03",
+            "11",
+            "20"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts with Law",
+          "abbreviation": "BA",
+          "studyLevel": "Undergraduate",
+          "durationYears": 3,
+          "slug": "ba-law",
+          "fieldCodes": [
+            "12",
+            "20"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Digital Arts",
+          "abbreviation": "BA",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "ba-digital-arts",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Film and Television",
+          "abbreviation": "BAFT",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "ba-film-television",
+          "fieldCodes": [
+            "03",
+            "05"
+          ]
+        },
+        {
+          "name": "Bachelor of Arts in Fine Arts",
+          "abbreviation": "BAFA",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "ba-fine-arts",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Music",
+          "abbreviation": "BMus",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bmus",
+          "fieldCodes": [
+            "03"
+          ]
+        },
+        {
+          "name": "Bachelor of Education in Foundation Phase Teaching",
+          "abbreviation": "BEd",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bed-foundation-phase",
+          "fieldCodes": [
+            "07"
+          ]
+        },
+        {
+          "name": "Bachelor of Education in Intermediate Phase Teaching",
+          "abbreviation": "BEd",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bed-intermediate-phase",
+          "fieldCodes": [
+            "07"
+          ]
+        },
+        {
+          "name": "Bachelor of Education in Senior Phase and Further Education and Training",
+          "abbreviation": "BEd",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "bed-senior-phase-fet",
+          "fieldCodes": [
+            "07"
+          ]
+        },
+        {
+          "name": "Bachelor of Social Work",
+          "abbreviation": "BSocWork",
+          "studyLevel": "Undergraduate",
+          "durationYears": 4,
+          "slug": "b-social-work",
+          "fieldCodes": [
+            "19",
+            "20"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Science",
+      "slug": "science",
+      "qualifications": [
+        {
+          "name": "Bachelor of Science",
+          "abbreviation": "BSc",
+          "studyLevel": "Undergraduate",
+          "slug": "bsc",
+          "fieldCodes": [
+            "13",
+            "14",
+            "15",
+            "06"
+          ]
+        }
+      ]
+    }
+  ]
+}

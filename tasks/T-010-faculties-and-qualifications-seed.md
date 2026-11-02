@@ -4,7 +4,7 @@ title: Research and seed faculties + popular qualifications for UCT and Wits
 phase: 1
 area: data
 model: sonnet
-status: todo
+status: done
 depends_on: [T-008]
 requirements: [FR-01, FR-30, FR-32]
 issue: 10
