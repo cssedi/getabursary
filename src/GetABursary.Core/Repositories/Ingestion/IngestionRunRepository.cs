@@ -17,7 +17,12 @@ public class IngestionRunRepository(GetABursaryDbContext db) : IIngestionRunRepo
     public async Task CompleteRunAsync(Guid runId, RunStatus status, DateTimeOffset finishedAt, CancellationToken ct)
     {
         var run = await db.IngestionRuns.SingleAsync(r => r.Id == runId, ct);
-        run.Status = status;
+        // The pipeline records PartiallyFailed/Failed on the tracked run itself; a plain "Succeeded" from the caller must not hide that.
+        if (!(status == RunStatus.Succeeded && run.Status is RunStatus.PartiallyFailed or RunStatus.Failed))
+        {
+            run.Status = status;
+        }
+
         run.FinishedAt = finishedAt;
     }
 
