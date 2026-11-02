@@ -1,4 +1,5 @@
 using GetABursary.Core.Common;
+using GetABursary.Core.Domain.Bursaries;
 using GetABursary.Core.Domain.Common;
 using GetABursary.Core.Domain.Taxonomy;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,20 @@ public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options
     public DbSet<Qualification> Qualifications => Set<Qualification>();
 
     public DbSet<QualificationField> QualificationFields => Set<QualificationField>();
+
+    public DbSet<Funder> Funders => Set<Funder>();
+
+    public DbSet<Bursary> Bursaries => Set<Bursary>();
+
+    public DbSet<Source> Sources => Set<Source>();
+
+    public DbSet<BursaryField> BursaryFields => Set<BursaryField>();
+
+    public DbSet<BursaryQualification> BursaryQualifications => Set<BursaryQualification>();
+
+    public DbSet<BursaryInstitution> BursaryInstitutions => Set<BursaryInstitution>();
+
+    public DbSet<BursarySource> BursarySources => Set<BursarySource>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
