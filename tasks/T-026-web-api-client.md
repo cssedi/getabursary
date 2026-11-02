@@ -4,7 +4,7 @@ title: Typed API client, DTO models and error interceptor for the web app
 phase: 4
 area: web
 model: haiku
-status: todo
+status: done
 depends_on: [T-025]
 requirements: [FR-01, FR-04, FR-07, FR-08]
 issue: 35
