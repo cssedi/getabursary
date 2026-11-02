@@ -40,6 +40,11 @@ export const routes: Routes = [
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./features/admin/bursary-editor.page').then((m) => m.BursaryEditorPage),
       },
+      {
+        path: 'sources',
+        title: 'Sources',
+        loadComponent: () => import('./features/admin/sources/sources.page').then((m) => m.SourcesPage),
+      },
     ],
   },
   { path: 'account/confirm', title: 'Confirm your email', loadComponent: () => import('./features/account/confirm.page').then((m) => m.ConfirmPage) },
