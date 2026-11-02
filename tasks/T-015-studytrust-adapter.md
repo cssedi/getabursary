@@ -4,7 +4,7 @@ title: Source adapter for StudyTrust (studytrust)
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-013]
 requirements: [FR-21, FR-22, FR-27]
 issue: 15
