@@ -74,6 +74,59 @@ export type AdminBursaryPatch = Partial<
   >
 >;
 
+export type RunStatus = 'Running' | 'Succeeded' | 'PartiallyFailed' | 'Failed';
+
+/** The latest run of one source (`lastRun` on `AdminSource`). */
+export interface SourceRun {
+  startedAt: string;
+  finishedAt: string | null;
+  status: RunStatus;
+  discovered: number;
+  created: number;
+  updated: number;
+  failed: number;
+  errorSummary: string | null;
+}
+
+/** `GET /api/v1/admin/sources` (T-044). `lastRun` is null until the source has run. */
+export interface AdminSource {
+  id: string;
+  key: string;
+  name: string;
+  enabled: boolean;
+  lastRun: SourceRun | null;
+}
+
+/** `POST /api/v1/admin/ingestion-runs` (T-044) answers 202 with the queued request. */
+export interface IngestionRunRequest {
+  id: string;
+  sourceId: string | null;
+  requestedAt: string;
+  pickedUpAt: string | null;
+}
+
+/** One source's counts inside an `IngestionRun`. */
+export interface RunSource {
+  sourceId: string;
+  sourceKey: string;
+  sourceName: string;
+  discovered: number;
+  created: number;
+  updated: number;
+  failed: number;
+  errorSummary: string | null;
+}
+
+/** `GET /api/v1/admin/ingestion-runs` (T-044): one row of run history. */
+export interface IngestionRun {
+  id: string;
+  trigger: 'Scheduled' | 'Manual';
+  status: RunStatus;
+  startedAt: string;
+  finishedAt: string | null;
+  sources: RunSource[];
+}
+
 /** Admin endpoints (FR-41, FR-42). The API enforces the Admin role; the UI guard is convenience. */
 @Injectable({ providedIn: 'root' })
 export class AdminApi {
@@ -118,5 +171,26 @@ export class AdminApi {
     return this.http.delete<AdminBursary>(
       `${this.url}/bursaries/${encodeURIComponent(id)}/locks/${encodeURIComponent(field)}`,
     );
+  }
+
+  sources(): Observable<AdminSource[]> {
+    return this.http.get<AdminSource[]>(`${this.url}/sources`);
+  }
+
+  setSourceEnabled(id: string, enabled: boolean): Observable<AdminSource> {
+    return this.http.patch<AdminSource>(`${this.url}/sources/${encodeURIComponent(id)}`, {
+      enabled,
+    });
+  }
+
+  /** No `sourceId` runs every enabled source. */
+  requestRun(sourceId?: string): Observable<IngestionRunRequest> {
+    return this.http.post<IngestionRunRequest>(`${this.url}/ingestion-runs`, { sourceId });
+  }
+
+  ingestionRuns(page: number): Observable<PagedResponse<IngestionRun>> {
+    return this.http.get<PagedResponse<IngestionRun>>(`${this.url}/ingestion-runs`, {
+      params: toHttpParams({ page }),
+    });
   }
 }

@@ -4,7 +4,7 @@ title: Admin tab - sources page with run now and run history (web)
 phase: 5
 area: web
 model: haiku
-status: todo
+status: done
 depends_on: [T-044, T-045]
 requirements: [FR-43]
 issue: 83
