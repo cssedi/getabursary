@@ -61,7 +61,8 @@ jobs:
                Re-read the lines to confirm. A `// shortcut:` comment that names its limit is a decision, not a finding, unless
                the expected load already crosses it. Propose the smallest fix; prefer fixes that delete code. No style taste,
                no "consider", no vague worries.
-            4. Output ONE summary comment (inline comments for specific lines are fine), in very simple English, short sentences:
+            4. You MUST post ONE summary comment on the PR by running `gh pr comment ${{ github.event.pull_request.number }} --body "..."`
+               (inline comments for specific lines are optional extras). Write it in very simple English, short sentences:
                - Start with "Lesdee," then "What this change does:" in two or three sentences.
                - Findings in groups **Must fix** / **Should fix** / **Nice to have** (skip empty groups), numbered across groups.
                  Each finding: a bold title with `path:Lx-Ly`, then "What this is:", "Problem:", "Fix:", "If we skip it:"
@@ -72,7 +73,7 @@ jobs:
                  `VERDICT: CHANGES REQUESTED` if there is any Must fix, or any Should fix of type "missing test" or "Risk";
                  `VERDICT: NEEDS HUMAN` only for decisions an agent can't make (product/spec choices, data a person must check);
                  otherwise `VERDICT: APPROVE`.
-            You list findings; you change no code.
+            You list findings; you change no code. The task is not finished until the `gh pr comment` has been posted.
           claude_args: |
             --model claude-sonnet-5-5
             --max-turns 25
