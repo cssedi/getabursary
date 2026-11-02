@@ -4,7 +4,7 @@ title: Worker host with cron scheduler, manual run requests and run recording
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-007]
 requirements: [FR-20, FR-27, NFR-05]
 issue: 11
