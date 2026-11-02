@@ -1,11 +1,22 @@
 using GetABursary.Core.Common;
 using GetABursary.Core.Domain.Common;
+using GetABursary.Core.Domain.Taxonomy;
 using Microsoft.EntityFrameworkCore;
 
 namespace GetABursary.Core.Data;
 
 public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options, IClock clock) : DbContext(options)
 {
+    public DbSet<FieldOfStudy> FieldsOfStudy => Set<FieldOfStudy>();
+
+    public DbSet<Institution> Institutions => Set<Institution>();
+
+    public DbSet<Faculty> Faculties => Set<Faculty>();
+
+    public DbSet<Qualification> Qualifications => Set<Qualification>();
+
+    public DbSet<QualificationField> QualificationFields => Set<QualificationField>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
