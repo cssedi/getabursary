@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://getabursary.co.za/schemas/seed/fields-of-study.schema.json",
+  "title": "Fields of study (CESM first order)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["code", "name", "slug", "parentCode"],
+    "properties": {
+      "code": { "type": "string", "pattern": "^[0-9]{2,4}$" },
+      "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+      "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 200 },
+      "parentCode": { "type": ["string", "null"], "pattern": "^[0-9]{2,4}$" }
+    }
+  }
+}
