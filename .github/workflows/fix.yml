@@ -53,7 +53,9 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Uses the Pro/Max plan when CLAUDE_CODE_OAUTH_TOKEN is set (from `claude setup-token`); otherwise API credits.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY || '' }}
           allowed_bots: 'github-actions'
           prompt: |
             REPO: ${{ github.repository }}
