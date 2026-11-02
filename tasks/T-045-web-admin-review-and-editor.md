@@ -4,7 +4,7 @@ title: Admin tab - review queue and bursary editor (web)
 phase: 5
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-040, T-043]
 requirements: [FR-41, FR-42]
 issue: 82

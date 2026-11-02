@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { bursaryDetailResolver } from './features/bursary/bursary-detail.resolver';
+import { adminGuard, unsavedChangesGuard } from './features/admin/admin.guards';
 import { signedInGuard } from './features/tracker/tracker.guard';
 
 export const routes: Routes = [
@@ -17,6 +18,29 @@ export const routes: Routes = [
     title: 'My bursaries',
     canActivate: [signedInGuard],
     loadComponent: () => import('./features/tracker/tracker.page').then((m) => m.TrackerPage),
+  },
+  {
+    path: 'admin',
+    canMatch: [adminGuard],
+    loadComponent: () => import('./features/admin/admin.page').then((m) => m.AdminPage),
+    children: [
+      {
+        path: '',
+        title: 'Review queue',
+        loadComponent: () => import('./features/admin/review-queue.page').then((m) => m.ReviewQueuePage),
+      },
+      {
+        path: 'bursaries',
+        title: 'Admin bursaries',
+        loadComponent: () => import('./features/admin/bursaries.page').then((m) => m.AdminBursariesPage),
+      },
+      {
+        path: 'bursaries/:id',
+        title: 'Edit bursary',
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () => import('./features/admin/bursary-editor.page').then((m) => m.BursaryEditorPage),
+      },
+    ],
   },
   { path: 'account/confirm', title: 'Confirm your email', loadComponent: () => import('./features/account/confirm.page').then((m) => m.ConfirmPage) },
   { path: 'account/forgot', title: 'Reset your password', loadComponent: () => import('./features/account/forgot.page').then((m) => m.ForgotPage) },
