@@ -23,6 +23,7 @@ You may create or modify **only**:
 - `src/web/src/app/features/seo/**` and the field landing route entry
 - `src/web/src/server.ts` (add `/sitemap.xml` and `/robots.txt` handlers only)
 - `src/web/src/app/features/search/result-list/**` (only if an input is needed for reuse)
+- `src/web/src/app/features/home/home.page.ts` and `src/web/README.md` (widened by orchestrator 2026-11-02: requirement 4 needs them)
 
 ## Requirements
 1. `FieldLandingPage` at `/bursaries/field/:fieldSlug`: resolves the slug via `TaxonomyApi.fields()` (unknown → 404 page); `<h1>` "{Field name} bursaries in South Africa"; a short intro; open bursaries for that field (search with `fieldIds=[id]`, `sort=ClosingSoonest`) using `ResultListComponent`; a link "Refine by your degree →" to `/search?fieldIds=...`. `SeoService` sets title "{Field} bursaries {current year} | GetABursary", description and canonical.

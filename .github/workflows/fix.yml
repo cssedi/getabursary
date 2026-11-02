@@ -53,7 +53,9 @@ jobs:
 
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Uses the Pro/Max plan when CLAUDE_CODE_OAUTH_TOKEN is set (from `claude setup-token`); otherwise API credits.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN == '' && secrets.ANTHROPIC_API_KEY || '' }}
           allowed_bots: 'github-actions'
           prompt: |
             REPO: ${{ github.repository }}
@@ -63,7 +65,7 @@ jobs:
             You are an implementer agent fixing an existing PR for GetABursary (attempt ${{ inputs.attempt }} of 2).
             1. Read AGENTS.md. Read the PR (`gh pr view ${{ inputs.pr }} --comments`), its task file, and the latest
                review comment that contains "VERDICT:". For failing checks, read the logs (`gh run list --branch <branch>`, `gh run view <id> --log-failed`).
-            2. Fix every **Blocking** item and every failing check. Stay inside the task Scope (plus any scope approved in PR comments).
+            2. Fix every **Must fix** item (and any Should fix the verdict names) and every failing check, with the smallest change that works (AGENTS.md "smallest complete change"). Don't touch Nice to have items. Stay inside the task Scope (plus any scope approved in PR comments).
             3. Run `dotnet build` and `dotnet test` (and the task's verify commands) until they pass.
             4. Commit (Conventional Commits, mention the task ID). Before pushing, run `git fetch origin main && git merge --no-edit origin/main` (a stale base gets the push rejected), then `git push` to this same branch. Do NOT open a new PR.
             5. Post one PR comment starting with "Lesdee," listing what you changed.
