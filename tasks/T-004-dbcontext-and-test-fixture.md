@@ -27,6 +27,8 @@ You may create or modify **only**:
 - `src/GetABursary.Api/Program.cs`, `src/GetABursary.Api/appsettings*.json`
 - `src/GetABursary.Worker/Program.cs`, `src/GetABursary.Worker/appsettings*.json`
 - `tests/GetABursary.Core.Tests/**`
+- `tests/GetABursary.Api.Tests/**` (widened by orchestrator: test factory that sets `Database:MigrateOnStartup=false`)
+- `src/GetABursary.Api/GetABursary.Api.csproj` (widened by orchestrator: `Microsoft.EntityFrameworkCore.Design` package)
 
 ## Requirements
 1. Packages: `Npgsql.EntityFrameworkCore.PostgreSQL`, `EFCore.NamingConventions`, `Microsoft.EntityFrameworkCore.Design` (Api, private assets), `Testcontainers.PostgreSql` (tests).
