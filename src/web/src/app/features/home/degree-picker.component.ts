@@ -32,7 +32,8 @@ function loaded<T>(source: Observable<T[]>): Observable<Loaded<T>> {
         <label [for]="id + '-institution'" class="font-medium">University</label>
         <select
           [id]="id + '-institution'"
-          class="rounded-[var(--radius)] border border-gray-400 p-2"
+          name="institution"
+          class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
           [disabled]="institutions().loading"
           (change)="onInstitution($any($event.target).value)"
         >
@@ -50,8 +51,9 @@ function loaded<T>(source: Observable<T[]>): Observable<Loaded<T>> {
         <label [for]="id + '-faculty'" class="font-medium">Faculty</label>
         <select
           [id]="id + '-faculty'"
-          class="rounded-[var(--radius)] border border-gray-400 p-2"
-          [disabled]="!selInstitution() ||faculties().loading"
+          name="faculty"
+          class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
+          [disabled]="!selInstitution() || faculties().loading"
           (change)="onFaculty($any($event.target).value)"
         >
           @if (faculties().loading) {
@@ -68,8 +70,9 @@ function loaded<T>(source: Observable<T[]>): Observable<Loaded<T>> {
         <label [for]="id + '-qualification'" class="font-medium">Qualification</label>
         <select
           [id]="id + '-qualification'"
-          class="rounded-[var(--radius)] border border-gray-400 p-2"
-          [disabled]="!selFaculty() ||qualifications().loading"
+          name="qualification"
+          class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
+          [disabled]="!selFaculty() || qualifications().loading"
           (change)="onQualification($any($event.target).value)"
         >
           @if (qualifications().loading) {

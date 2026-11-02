@@ -52,7 +52,7 @@ describe('Routes', () => {
     ['/search', 'Search bursaries'],
     ['/about', 'AboutPage'],
     ['/privacy', 'PrivacyPage'],
-    ['/does/not/exist', 'NotFoundPage'],
+    ['/does/not/exist', 'Page not found'],
   ];
 
   it('/bursaries/:slug resolves the bursary before rendering BursaryDetailPage', async () => {

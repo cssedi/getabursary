@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
       <p class="mb-3">{{ message() }}</p>
       <button
         type="button"
-        class="rounded-control bg-jacaranda px-4 py-2 text-paper"
+        class="min-h-11 rounded-control bg-jacaranda px-4 py-2 text-paper hover:bg-ink active:bg-ink"
         (click)="retry.emit()"
       >
         Try again
@@ -17,6 +17,6 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   `,
 })
 export class ErrorStateComponent {
-  readonly message = input("Bursaries didn't load. Check your connection and try again.");
+  readonly message = input('Bursaries didn’t load. Check your connection and try again.');
   readonly retry = output<void>();
 }

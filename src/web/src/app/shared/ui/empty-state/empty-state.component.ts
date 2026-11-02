@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
       @if (actionLabel()) {
         <button
           type="button"
-          class="rounded-control bg-jacaranda px-4 py-2 text-paper"
+          class="min-h-11 rounded-control bg-jacaranda px-4 py-2 text-paper hover:bg-ink active:bg-ink"
           (click)="action.emit()"
         >
           {{ actionLabel() }}

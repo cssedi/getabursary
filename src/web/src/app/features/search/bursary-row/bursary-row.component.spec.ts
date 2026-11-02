@@ -32,7 +32,7 @@ describe('BursaryRowComponent', () => {
 
   it('openRow_rendersDateBlockTitleLinkAndDetails', () => {
     const { el } = render(openBursary);
-    const link = el.querySelector<HTMLAnchorElement>('h3 a')!;
+    const link = el.querySelector<HTMLAnchorElement>('h2 a')!;
     expect(link.getAttribute('href')).toBe(`/bursaries/${openBursary.slug}`);
     expect(el.querySelector('.date-column .date-block')).not.toBeNull();
     expect(el.querySelector('.funder')!.textContent).toBe('Anglo American');
@@ -50,7 +50,7 @@ describe('BursaryRowComponent', () => {
 
   it('titleLink_isStretchedOverTheRow_andFlagSitsAboveIt', () => {
     const { el } = render(openBursary);
-    expect(el.querySelector('h3 a')!.classList.contains('stretched-link')).toBe(true);
+    expect(el.querySelector('h2 a')!.classList.contains('stretched-link')).toBe(true);
     expect(el.querySelector('article')!.classList.contains('relative')).toBe(true);
     expect(el.querySelector('.report-flag')!.classList.contains('z-10')).toBe(true);
   });
@@ -87,8 +87,8 @@ describe('BursaryRowComponent', () => {
   it('longTitle_clampsToThreeLines_andFunderTruncates', () => {
     const name = 'Very long bursary name '.repeat(30);
     const { el } = render({ ...openBursary, name, funderName: 'A very long funder name '.repeat(10) });
-    expect(el.querySelector('h3')!.classList.contains('line-clamp-3')).toBe(true);
-    expect(el.querySelector('h3')!.classList.contains('min-w-0')).toBe(true);
+    expect(el.querySelector('h2')!.classList.contains('line-clamp-3')).toBe(true);
+    expect(el.querySelector('h2')!.classList.contains('min-w-0')).toBe(true);
     expect(el.querySelector('.funder')!.classList.contains('truncate')).toBe(true);
   });
 });

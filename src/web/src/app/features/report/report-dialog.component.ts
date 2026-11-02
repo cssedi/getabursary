@@ -127,7 +127,7 @@ const GENERIC_FAILURE = 'Your report didn’t send. Check your connection and tr
         </button>
         <button
           type="submit"
-          class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:opacity-90 active:opacity-80 disabled:opacity-60"
+          class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink disabled:opacity-60"
           [disabled]="sending()"
         >
           {{ sending() ? 'Sending…' : 'Send report' }}

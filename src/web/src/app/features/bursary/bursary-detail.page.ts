@@ -145,7 +145,7 @@ import {
       } @else if (page().kind === 'notFound') {
         <app-not-found-page />
       } @else {
-        <app-error-state message="We couldn't load this bursary." (retry)="retry()" />
+        <app-error-state message="This bursary didn’t load. Check your connection and try again." (retry)="retry()" />
       }
       <app-toast />
     </div>
@@ -168,7 +168,7 @@ import {
       min-height: 48px;
       border-radius: var(--radius-control);
       background: var(--jacaranda);
-      color: #fff;
+      color: var(--paper);
       font-size: 20px;
       font-weight: 600;
       text-align: center;
