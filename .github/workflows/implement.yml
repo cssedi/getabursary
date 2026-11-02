@@ -1,8 +1,10 @@
-# Reusable implementer run for one task. Called by autopilot.yml.
+# Implementer run for one task. Dispatched by autopilot.yml (or by hand from the Actions tab).
+# Uses workflow_dispatch because claude-code-action does not support push-triggered runs.
 name: Implement task
+run-name: Implement ${{ inputs.task_id }} (#${{ inputs.issue }})
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       issue:
         type: number
@@ -14,8 +16,16 @@ on:
         type: string
         required: true
       model:
-        type: string
+        type: choice
+        options: [haiku, sonnet]
         required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
 
 jobs:
   implement:

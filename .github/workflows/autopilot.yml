@@ -16,7 +16,7 @@ permissions:
   pull-requests: write
   issues: write
   id-token: write
-  actions: read
+  actions: write
 
 concurrency:
   group: autopilot
@@ -71,17 +71,25 @@ jobs:
           echo "matrix={\"include\":$picked}" >> "$GITHUB_OUTPUT"
           echo "count=$(jq 'length' <<<"$picked")" >> "$GITHUB_OUTPUT"
 
-  implement:
+  dispatch:
     needs: plan
     if: needs.plan.outputs.count != '0'
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    uses: ./.github/workflows/implement.yml
-    with:
-      issue: ${{ matrix.issue }}
-      task_id: ${{ matrix.id }}
-      task_file: ${{ matrix.file }}
-      model: ${{ matrix.model }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MATRIX: ${{ needs.plan.outputs.matrix }}
+    steps:
+      # workflow_dispatch is the one event GITHUB_TOKEN may trigger; claude-code-action can't run on push.
+      - name: Start one implement run per task
+        run: |
+          set -euo pipefail
+          jq -c '.include[]' <<<"$MATRIX" | while IFS= read -r t; do
+            issue=$(jq -r .issue <<<"$t"); id=$(jq -r .id <<<"$t")
+            gh issue edit "$issue" -R "$GITHUB_REPOSITORY" --add-label agent:in-progress
+            gh workflow run implement.yml -R "$GITHUB_REPOSITORY" --ref main \
+              -f issue="$issue" -f task_id="$id" -f task_file="$(jq -r .file <<<"$t")" -f model="$(jq -r .model <<<"$t")"
+            echo "Dispatched $id (#$issue)"
+          done
