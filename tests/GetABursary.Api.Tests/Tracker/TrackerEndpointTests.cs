@@ -52,6 +52,18 @@ public sealed class TrackerEndpointTests(TrackerFixture fixture)
     }
 
     [Fact]
+    public async Task Upsert_ConcurrentFirstSaves_NeverReturn500()
+    {
+        using var client = await fixture.SignInNewUserAsync();
+
+        var responses = await Task.WhenAll(Enumerable.Range(0, 8)
+            .Select(_ => PutAsync(client, fixture.SoonBursaryId, new { status = "Saved" })));
+
+        Assert.All(responses, r => Assert.True(r.StatusCode is HttpStatusCode.Created or HttpStatusCode.OK));
+        Assert.Single(await ListAsync(client));
+    }
+
+    [Fact]
     public async Task Delete_SavedEntry_Returns204AndIsIdempotent()
     {
         using var client = await fixture.SignInNewUserAsync();

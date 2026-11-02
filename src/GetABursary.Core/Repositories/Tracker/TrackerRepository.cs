@@ -2,6 +2,7 @@ using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Bursaries;
 using GetABursary.Core.Domain.Users;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace GetABursary.Core.Repositories.Tracker;
 
@@ -31,5 +32,21 @@ public sealed class TrackerRepository(GetABursaryDbContext db) : ITrackerReposit
     public Task DeleteAsync(Guid userId, Guid bursaryId, CancellationToken ct) =>
         db.TrackerEntries.Where(t => t.UserId == userId && t.BursaryId == bursaryId).ExecuteDeleteAsync(ct);
 
-    public async Task SaveChangesAsync(CancellationToken ct) => await db.SaveChangesAsync(ct);
+    public async Task<bool> TrySaveChangesAsync(CancellationToken ct)
+    {
+        try
+        {
+            await db.SaveChangesAsync(ct);
+            return true;
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            foreach (var e in db.ChangeTracker.Entries<TrackerEntry>().Where(e => e.State == EntityState.Added).ToList())
+            {
+                e.State = EntityState.Detached;
+            }
+
+            return false;
+        }
+    }
 }

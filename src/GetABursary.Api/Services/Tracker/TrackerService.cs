@@ -45,7 +45,16 @@ public sealed class TrackerService(ITrackerRepository tracker, IClock clock) : I
         entry.AppliedOn = request.AppliedOn;
         entry.Notes = request.Notes;
 
-        await tracker.SaveChangesAsync(ct);
+        if (!await tracker.TrySaveChangesAsync(ct))
+        {
+            // A concurrent request created the entry first; apply this request as an update to it.
+            entry = (await tracker.FindAsync(userId, bursaryId, ct))!;
+            created = false;
+            entry.Status = status;
+            entry.AppliedOn = request.AppliedOn;
+            entry.Notes = request.Notes;
+            await tracker.TrySaveChangesAsync(ct);
+        }
 
         return new UpsertTrackerOutcome(created, ToResponse(entry, bursary, clock.Today));
     }

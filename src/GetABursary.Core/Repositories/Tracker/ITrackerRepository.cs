@@ -12,15 +12,15 @@ public interface ITrackerRepository
     /// <summary>The published bursary with its funder and sources loaded; null when unknown or unpublished.</summary>
     Task<Bursary?> GetPublishedBursaryAsync(Guid bursaryId, CancellationToken ct);
 
-    /// <summary>The user's entry for the bursary, tracked so changes are written by <see cref="SaveChangesAsync"/>; null when absent.</summary>
+    /// <summary>The user's entry for the bursary, tracked so changes are written by <see cref="TrySaveChangesAsync"/>; null when absent.</summary>
     Task<TrackerEntry?> FindAsync(Guid userId, Guid bursaryId, CancellationToken ct);
 
-    /// <summary>Tracks a new entry. Nothing is written until <see cref="SaveChangesAsync"/>.</summary>
+    /// <summary>Tracks a new entry. Nothing is written until <see cref="TrySaveChangesAsync"/>.</summary>
     void Add(TrackerEntry entry);
 
     /// <summary>Deletes the user's entry for the bursary if there is one. Writes immediately; a missing entry is not an error.</summary>
     Task DeleteAsync(Guid userId, Guid bursaryId, CancellationToken ct);
 
-    /// <summary>Writes all tracked changes in one transaction. Called once per use case by the service.</summary>
-    Task SaveChangesAsync(CancellationToken ct);
+    /// <summary>Writes all tracked changes in one transaction. Returns false (and untracks the pending inserts) when a unique index rejected them, i.e. a concurrent save won.</summary>
+    Task<bool> TrySaveChangesAsync(CancellationToken ct);
 }
