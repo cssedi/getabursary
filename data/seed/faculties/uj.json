@@ -1,0 +1,118 @@
+{
+  "$schema": "../schemas/faculties.schema.json",
+  "institutionSlug": "uj",
+  "sourceUrls": [
+    "https://www.uj.ac.za"
+  ],
+  "faculties": [
+    {
+      "name": "Art, Design and Architecture",
+      "slug": "art-design-architecture",
+      "qualifications": [
+        { "name": "B Architecture", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "b-architecture", "fieldCodes": ["02"] },
+        { "name": "BA (Communication Design)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-communication-design", "fieldCodes": ["03", "05"] },
+        { "name": "BA (Digital Media Design)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-digital-media-design", "fieldCodes": ["03", "05"] },
+        { "name": "BA (Industrial Design)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-industrial-design", "fieldCodes": ["03"] },
+        { "name": "BA (Interior Design)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-interior-design", "fieldCodes": ["02", "03"] },
+        { "name": "BA (Fashion Design)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-fashion-design", "fieldCodes": ["03"] },
+        { "name": "BA (Visual Art)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-visual-art", "fieldCodes": ["03"] },
+        { "name": "Diploma in Architecture", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-architecture", "fieldCodes": ["02"] },
+        { "name": "Diploma in Fashion Production", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-fashion-production", "fieldCodes": ["03"] },
+        { "name": "Diploma in Jewellery Design and Manufacture", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-jewellery-design-manufacture", "fieldCodes": ["03"] }
+      ]
+    },
+    {
+      "name": "College of Business and Economics",
+      "slug": "business-economics",
+      "qualifications": [
+        { "name": "Accounting (CA)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "accounting-ca", "fieldCodes": ["04"] },
+        { "name": "Bachelor of Commerce (Accounting)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-accounting", "fieldCodes": ["04"] },
+        { "name": "Bachelor of Commerce (Finance)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-finance", "fieldCodes": ["04"] },
+        { "name": "Bachelor of Commerce (Economics and Econometrics)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-economics-econometrics", "fieldCodes": ["04", "15"] },
+        { "name": "Bachelor of Commerce (Business Management)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-business-management", "fieldCodes": ["04"] },
+        { "name": "Bachelor of Commerce (Marketing Management)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-marketing-management", "fieldCodes": ["04"] },
+        { "name": "Bachelor of Commerce (Information Systems)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-information-systems", "fieldCodes": ["04", "06"] },
+        { "name": "Human Resource Management", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "human-resource-management", "fieldCodes": ["04"] },
+        { "name": "Diploma in Accountancy", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-accountancy", "fieldCodes": ["04"] },
+        { "name": "Diploma in Marketing", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-marketing", "fieldCodes": ["04"] }
+      ]
+    },
+    {
+      "name": "Education",
+      "slug": "education",
+      "qualifications": [
+        { "name": "BEd in Foundation Phase Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bed-foundation-phase-teaching", "fieldCodes": ["07"] },
+        { "name": "BEd in Intermediate Phase Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bed-intermediate-phase-teaching", "fieldCodes": ["07"] },
+        { "name": "BEd in Senior Phase and FET Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "slug": "bed-senior-phase-fet-teaching", "fieldCodes": ["07"] }
+      ]
+    },
+    {
+      "name": "Engineering and the Built Environment",
+      "slug": "engineering-built-environment",
+      "qualifications": [
+        { "name": "BEng Civil Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "beng-civil-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Electrical and Electronic Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "beng-electrical-electronic-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Mechanical Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "beng-mechanical-engineering", "fieldCodes": ["08"] },
+        { "name": "BEngTech Chemical Engineering", "abbreviation": "BEngTech", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bengtech-chemical-engineering", "fieldCodes": ["08"] },
+        { "name": "BEngTech Civil Engineering", "abbreviation": "BEngTech", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bengtech-civil-engineering", "fieldCodes": ["08"] },
+        { "name": "BEngTech Electrical Engineering", "abbreviation": "BEngTech", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bengtech-electrical-engineering", "fieldCodes": ["08"] },
+        { "name": "BEngTech Industrial Engineering", "abbreviation": "BEngTech", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bengtech-industrial-engineering", "fieldCodes": ["08"] },
+        { "name": "BEngTech Mechanical Engineering", "abbreviation": "BEngTech", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bengtech-mechanical-engineering", "fieldCodes": ["08"] },
+        { "name": "Bachelor of Science in Construction", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-construction", "fieldCodes": ["02"] },
+        { "name": "Bachelor of Urban and Regional Planning", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "urban-regional-planning", "fieldCodes": ["02"] }
+      ]
+    },
+    {
+      "name": "Health Sciences",
+      "slug": "health-sciences",
+      "qualifications": [
+        { "name": "Bachelor of Biokinetics", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "biokinetics", "fieldCodes": ["09"] },
+        { "name": "Diagnostic Radiography", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "diagnostic-radiography", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Health Science (Chiropractic)", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bhsc-chiropractic", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Health Science (Emergency Medical Care)", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bhsc-emergency-medical-care", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Health Science (Medical Laboratory Science)", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bhsc-medical-laboratory-science", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Health Science (Podiatry)", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "bhsc-podiatry", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Nursing", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "nursing", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Optometry", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "optometry", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Environmental Health", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "environmental-health", "fieldCodes": ["09"] },
+        { "name": "Bachelor of Health Sciences (Sport and Exercise Science)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bhsc-sport-exercise-science", "fieldCodes": ["09"] }
+      ]
+    },
+    {
+      "name": "Humanities",
+      "slug": "humanities",
+      "qualifications": [
+        { "name": "Bachelor of Social Work", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "social-work", "fieldCodes": ["19"] },
+        { "name": "Bachelor of Arts", "abbreviation": "BA", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba", "fieldCodes": ["11", "20"] },
+        { "name": "BA with specialisation in Language Practice", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-language-practice", "fieldCodes": ["11"] },
+        { "name": "BA with specialisation in Politics, Economics and Technology", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-politics-economics-technology", "fieldCodes": ["20"] },
+        { "name": "Community Development and Leadership", "studyLevel": "Undergraduate", "slug": "community-development-leadership", "fieldCodes": ["19", "20"] },
+        { "name": "BA with specialisation in Development Studies", "abbreviation": "BA", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "ba-development-studies-extended", "fieldCodes": ["20"] },
+        { "name": "BA with specialisation in Linguistics", "abbreviation": "BA", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "ba-linguistics-extended", "fieldCodes": ["11"] },
+        { "name": "BA with specialisation in Strategic Communication", "abbreviation": "BA", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "ba-strategic-communication-extended", "fieldCodes": ["05"] },
+        { "name": "Diploma in Public Relations and Communication", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "diploma-public-relations-communication", "fieldCodes": ["05"] },
+        { "name": "Extended Diploma in Public Relations and Communication", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "extended-diploma-public-relations-communication", "fieldCodes": ["05"] }
+      ]
+    },
+    {
+      "name": "Law",
+      "slug": "law",
+      "qualifications": [
+        { "name": "BA (Law)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "ba-law", "fieldCodes": ["12"] },
+        { "name": "BCom (Law)", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bcom-law", "fieldCodes": ["12", "04"] },
+        { "name": "LLB", "studyLevel": "Undergraduate", "durationYears": 4, "slug": "llb", "fieldCodes": ["12"] }
+      ]
+    },
+    {
+      "name": "Science",
+      "slug": "science",
+      "qualifications": [
+        { "name": "Bachelor of Science in Information Technology", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-information-technology", "fieldCodes": ["06"] },
+        { "name": "Bachelor of Science in Life and Environmental Sciences", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-life-environmental-sciences", "fieldCodes": ["13"] },
+        { "name": "Bachelor of Science in Mathematical Sciences", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-mathematical-sciences", "fieldCodes": ["15"] },
+        { "name": "Bachelor of Science in Mathematical Sciences (Actuarial Science)", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-actuarial-science", "fieldCodes": ["15", "04"] },
+        { "name": "Bachelor of Science in Physical Sciences", "abbreviation": "BSc", "studyLevel": "Undergraduate", "durationYears": 3, "slug": "bsc-physical-sciences", "fieldCodes": ["14"] }
+      ]
+    }
+  ]
+}

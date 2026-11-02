@@ -59,11 +59,43 @@ The 9 aggregator sites from spec §3.3 and brief §6.1. Each entry is `{ key, na
 
 One file per institution, validated against `schemas/faculties.schema.json` (draft 2020-12). Each file has `institutionSlug`, `sourceUrls` and `faculties`. Each faculty has `name`, `slug` and `qualifications`. A qualification has `name`, `abbreviation?`, `studyLevel`, `nqfLevel?`, `durationYears?`, `slug` and `fieldCodes`. `fieldCodes` are first-order CESM codes from `fields-of-study.json`.
 
-- **Covered:** UCT and Wits (T-010). UP, SU and UJ come in T-024, from prospectus PDFs.
+- **Covered:** UCT and Wits (T-010). UP and UJ (T-024), from the prospectus PDFs below. SU is excluded by product-owner decision.
 - **Sources:** official faculty and programme pages, listed in each file's `sourceUrls`. Nothing is included that could not be read there.
 - **Optional fields:** `abbreviation`, `nqfLevel` and `durationYears` are left out when the source page did not state them. No `nqfLevel` is set anywhere yet.
 - **Scope:** at most 10 undergraduate qualifications per faculty. Where a degree has many majors (for example the UCT BSc, BA and BCom), the degree is one qualification.
 - **Field mapping:** `fieldCodes` are the seeder author's judgement and need human review.
+
+### UJ and UP sources (T-024)
+
+Both sites block automated access, so the data comes from PDFs under `data/sources/prospectuses/`. `sourceUrls` are the official sites printed in the PDFs. Page numbers are PDF page numbers (they match the printed numbers in the UJ prospectus).
+
+**UJ** (`uj.json`): `uj/uj-undergraduate-prospectus-2027.pdf` is the only source used. The College of Business and Economics is treated as a faculty. Where a degree has many majors, the degree is one qualification. Qualifications whose heading and programme are printed separately are written as `Bachelor of Commerce (Accounting)`.
+
+| Faculty | Pages |
+|---|---|
+| Art, Design and Architecture | 32-34 (names in the admission table on 37) |
+| College of Business and Economics | 40-45 |
+| Education | 53-54 |
+| Engineering and the Built Environment | 60-62 |
+| Health Sciences | 66-69 |
+| Humanities | 74-76 |
+| Law | 82 |
+| Science | 86-90 |
+
+**UP** (`up.json`): `"sourceYear": 2021`. The schema has no field for this, so it is recorded here. All UP data comes from the 2021 yearbook extracts, and programme names may have changed since. UP names are the printed yearbook names (often abbreviations such as `BNurs`). `ENGAGE` variants and extended programmes are not listed separately. Pages are from the "Undergraduate Degree" list in each file.
+
+| Faculty | File | Pages |
+|---|---|---|
+| Engineering, Built Environment and Information Technology | `up-yearbook-2021-ebit.pdf` | 9-10 |
+| Education | `up-yearbook-2021-edu.pdf` | 5 |
+| Economic and Management Sciences | `up-yearbook-2021-ems.pdf` | 7 |
+| Humanities | `up-yearbook-2021-hum.pdf` | 11 |
+| Law | `up-yearbook-2021-law.pdf` | 6 |
+| Health Sciences | `up-yearbook-2021-med.pdf` | 8 |
+| Natural and Agricultural Sciences | `up-yearbook-2021-sci.pdf` | 7-8 |
+| Theology and Religion | `up-yearbook-2021-theo.pdf` | 6-7 |
+
+The PDFs have no Veterinary Science faculty, so UP has none here yet.
 
 Validate:
 

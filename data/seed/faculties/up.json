@@ -1,0 +1,114 @@
+{
+  "$schema": "../schemas/faculties.schema.json",
+  "institutionSlug": "up",
+  "sourceUrls": [
+    "https://www.up.ac.za"
+  ],
+  "faculties": [
+    {
+      "name": "Engineering, Built Environment and Information Technology",
+      "slug": "engineering-built-environment-information-technology",
+      "qualifications": [
+        { "name": "BEng Chemical Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-chemical-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Civil Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-civil-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Computer Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-computer-engineering", "fieldCodes": ["08", "06"] },
+        { "name": "BEng Electrical Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-electrical-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Industrial Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-industrial-engineering", "fieldCodes": ["08"] },
+        { "name": "BEng Mechanical Engineering", "abbreviation": "BEng", "studyLevel": "Undergraduate", "slug": "beng-mechanical-engineering", "fieldCodes": ["08"] },
+        { "name": "BIT Information Systems", "abbreviation": "BIT", "studyLevel": "Undergraduate", "slug": "bit-information-systems", "fieldCodes": ["06"] },
+        { "name": "BSc Architecture", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-architecture", "fieldCodes": ["02"] },
+        { "name": "BSc Computer Science", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-computer-science", "fieldCodes": ["06"] },
+        { "name": "BSc Quantity Surveying", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-quantity-surveying", "fieldCodes": ["02"] }
+      ]
+    },
+    {
+      "name": "Education",
+      "slug": "education",
+      "qualifications": [
+        { "name": "BEd Foundation Phase Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "slug": "bed-foundation-phase-teaching", "fieldCodes": ["07"] },
+        { "name": "BEd Intermediate Phase Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "slug": "bed-intermediate-phase-teaching", "fieldCodes": ["07"] },
+        { "name": "BEd Senior Phase and Further Education and Training Teaching", "abbreviation": "BEd", "studyLevel": "Undergraduate", "slug": "bed-senior-phase-fet-teaching", "fieldCodes": ["07"] }
+      ]
+    },
+    {
+      "name": "Economic and Management Sciences",
+      "slug": "economic-management-sciences",
+      "qualifications": [
+        { "name": "BAdmin Public Management and International Relations", "abbreviation": "BAdmin", "studyLevel": "Undergraduate", "slug": "badmin-public-management-international-relations", "fieldCodes": ["19", "20"] },
+        { "name": "BCom", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom", "fieldCodes": ["04"] },
+        { "name": "BCom Accounting Sciences", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-accounting-sciences", "fieldCodes": ["04"] },
+        { "name": "BCom Business Management", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-business-management", "fieldCodes": ["04"] },
+        { "name": "BCom Econometrics", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-econometrics", "fieldCodes": ["04", "15"] },
+        { "name": "BCom Economics", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-economics", "fieldCodes": ["04"] },
+        { "name": "BCom Financial Sciences", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-financial-sciences", "fieldCodes": ["04"] },
+        { "name": "BCom Human Resource Management", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-human-resource-management", "fieldCodes": ["04"] },
+        { "name": "BCom Informatics Information Systems", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-informatics-information-systems", "fieldCodes": ["04", "06"] },
+        { "name": "BCom Marketing Management", "abbreviation": "BCom", "studyLevel": "Undergraduate", "slug": "bcom-marketing-management", "fieldCodes": ["04"] }
+      ]
+    },
+    {
+      "name": "Humanities",
+      "slug": "humanities",
+      "qualifications": [
+        { "name": "BA", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba", "fieldCodes": ["20", "11"] },
+        { "name": "BA Fine Arts", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-fine-arts", "fieldCodes": ["03"] },
+        { "name": "BA Information Design", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-information-design", "fieldCodes": ["03", "05"] },
+        { "name": "BA Languages", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-languages", "fieldCodes": ["11"] },
+        { "name": "BA Speech-Language Pathology", "abbreviation": "BA", "studyLevel": "Undergraduate", "slug": "ba-speech-language-pathology", "fieldCodes": ["09"] },
+        { "name": "BDram", "abbreviation": "BDram", "studyLevel": "Undergraduate", "slug": "bdram", "fieldCodes": ["03"] },
+        { "name": "BMus", "abbreviation": "BMus", "studyLevel": "Undergraduate", "slug": "bmus", "fieldCodes": ["03"] },
+        { "name": "BPolSci Political Studies", "abbreviation": "BPolSci", "studyLevel": "Undergraduate", "slug": "bpolsci-political-studies", "fieldCodes": ["20"] },
+        { "name": "BSocSci Industrial Sociology and Labour Studies", "abbreviation": "BSocSci", "studyLevel": "Undergraduate", "slug": "bsocsci-industrial-sociology-labour-studies", "fieldCodes": ["20"] },
+        { "name": "BSW", "abbreviation": "BSW", "studyLevel": "Undergraduate", "slug": "bsw", "fieldCodes": ["19"] }
+      ]
+    },
+    {
+      "name": "Law",
+      "slug": "law",
+      "qualifications": [
+        { "name": "LLB", "abbreviation": "LLB", "studyLevel": "Undergraduate", "slug": "llb", "fieldCodes": ["12"] }
+      ]
+    },
+    {
+      "name": "Health Sciences",
+      "slug": "health-sciences",
+      "qualifications": [
+        { "name": "BChD", "abbreviation": "BChD", "studyLevel": "Undergraduate", "slug": "bchd", "fieldCodes": ["09"] },
+        { "name": "BCMP", "abbreviation": "BCMP", "studyLevel": "Undergraduate", "slug": "bcmp", "fieldCodes": ["09"] },
+        { "name": "BDietetics", "studyLevel": "Undergraduate", "slug": "bdietetics", "fieldCodes": ["09"] },
+        { "name": "BNurs", "abbreviation": "BNurs", "studyLevel": "Undergraduate", "slug": "bnurs", "fieldCodes": ["09"] },
+        { "name": "BOH", "abbreviation": "BOH", "studyLevel": "Undergraduate", "slug": "boh", "fieldCodes": ["09"] },
+        { "name": "BOT", "abbreviation": "BOT", "studyLevel": "Undergraduate", "slug": "bot", "fieldCodes": ["09"] },
+        { "name": "BPhysT", "abbreviation": "BPhysT", "studyLevel": "Undergraduate", "slug": "bphyst", "fieldCodes": ["09"] },
+        { "name": "BRad in Diagnostics", "abbreviation": "BRad", "studyLevel": "Undergraduate", "slug": "brad-diagnostics", "fieldCodes": ["09"] },
+        { "name": "BSportSci", "abbreviation": "BSportSci", "studyLevel": "Undergraduate", "slug": "bsportsci", "fieldCodes": ["09"] },
+        { "name": "MBChB", "abbreviation": "MBChB", "studyLevel": "Undergraduate", "slug": "mbchb", "fieldCodes": ["09"] }
+      ]
+    },
+    {
+      "name": "Natural and Agricultural Sciences",
+      "slug": "natural-agricultural-sciences",
+      "qualifications": [
+        { "name": "BSc Actuarial and Financial Mathematics", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-actuarial-financial-mathematics", "fieldCodes": ["15", "04"] },
+        { "name": "BSc Biochemistry", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-biochemistry", "fieldCodes": ["13"] },
+        { "name": "BSc Biological Sciences", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-biological-sciences", "fieldCodes": ["13"] },
+        { "name": "BSc Chemistry", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-chemistry", "fieldCodes": ["14"] },
+        { "name": "BSc Geology", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-geology", "fieldCodes": ["14"] },
+        { "name": "BSc Mathematics", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-mathematics", "fieldCodes": ["15"] },
+        { "name": "BSc Physics", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-physics", "fieldCodes": ["14"] },
+        { "name": "BSc Zoology", "abbreviation": "BSc", "studyLevel": "Undergraduate", "slug": "bsc-zoology", "fieldCodes": ["13"] },
+        { "name": "BScAgric Agricultural Economics and Agribusiness Management", "abbreviation": "BScAgric", "studyLevel": "Undergraduate", "slug": "bscagric-agricultural-economics-agribusiness-management", "fieldCodes": ["01", "04"] },
+        { "name": "BScAgric Animal Science", "abbreviation": "BScAgric", "studyLevel": "Undergraduate", "slug": "bscagric-animal-science", "fieldCodes": ["01"] }
+      ]
+    },
+    {
+      "name": "Theology and Religion",
+      "slug": "theology-religion",
+      "qualifications": [
+        { "name": "BDiv", "abbreviation": "BDiv", "studyLevel": "Undergraduate", "slug": "bdiv", "fieldCodes": ["17"] },
+        { "name": "BTh", "abbreviation": "BTh", "studyLevel": "Undergraduate", "slug": "bth", "fieldCodes": ["17"] },
+        { "name": "Diploma in Theology", "studyLevel": "Undergraduate", "slug": "diploma-theology", "fieldCodes": ["17"] }
+      ]
+    }
+  ]
+}
