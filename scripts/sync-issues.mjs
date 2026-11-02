@@ -212,7 +212,10 @@ for (const t of tasks) {
   const labels = ['task', `phase:${t.meta.phase}`, `area:${t.meta.area}`, `model:${t.meta.model}`];
   if (t.meta.status === 'blocked') labels.push('agent:blocked');
   const current = dry ? null : gh('GET', `/issues/${t.meta.issue}`);
-  if (current?.labels?.some((l) => l.name === 'agent:ready')) labels.push('agent:ready');
+  // Keep workflow-owned labels (set by autopilot/automerge) so a sync never resets in-flight state.
+  for (const keep of ['agent:ready', 'agent:in-progress', 'agent:blocked', 'needs:human']) {
+    if (current?.labels?.some((l) => l.name === keep) && !labels.includes(keep)) labels.push(keep);
+  }
   const payload = {
     title: `[${t.meta.id}] ${t.meta.title}`,
     body: issueBody(t, byId),
