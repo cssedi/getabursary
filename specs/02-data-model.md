@@ -102,6 +102,8 @@ Second-order codes (e.g. `0801` Chemical Engineering) are added by a dedicated t
 
 *Classification by type follows DHET's grouping and should be double-checked in the seeding task.*
 
+**MVP:** all 26 are seeded as institutions, but faculties and qualifications exist only for the big 5 (UCT, Wits, UP, SU, UJ). See brief FR-32.
+
 ### 3.3 Sources (seeded, `enabled=false` until their adapter is merged)
 `zabursaries` (https://www.zabursaries.co.za), `studytrust` (https://studytrust.org.za), `allbursaries` (https://allbursaries.co.za), `gocareers`, `fundiconnect`, `careerdrive`, `bursaryza`, `edupstairs`, `applyorgza`.
 
