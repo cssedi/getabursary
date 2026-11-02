@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { BursarySummaryResponse } from '../../../core/api/models';
 import { ClosingDateBadgeComponent } from '../../../shared/ui/closing-date-badge/closing-date-badge.component';
 import { ReportButtonComponent } from '../../../shared/ui/report-button/report-button.component';
+import { SaveButtonComponent } from '../../../shared/ui/save-button/save-button.component';
 import { SourceIconsComponent } from '../../../shared/ui/source-icons/source-icons.component';
 
 const COVERAGE_SHOWN = 3;
@@ -18,7 +19,7 @@ function lowerFirst(text: string): string {
 /** One ledger row: date column on the left, details on the right (06 §5). */
 @Component({
   selector: 'app-bursary-row',
-  imports: [RouterLink, ClosingDateBadgeComponent, ReportButtonComponent, SourceIconsComponent],
+  imports: [RouterLink, ClosingDateBadgeComponent, ReportButtonComponent, SaveButtonComponent, SourceIconsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article
@@ -42,6 +43,9 @@ function lowerFirst(text: string): string {
               }}</a>
             }
           </h2>
+          @if (!closed()) {
+            <app-save-button class="-mt-2" [bursaryId]="bursary().id" [name]="bursary().name" />
+          }
           <app-report-button class="-mt-2 -mr-2" [bursaryId]="bursary().id" />
         </div>
         @if (bursary().funderName) {

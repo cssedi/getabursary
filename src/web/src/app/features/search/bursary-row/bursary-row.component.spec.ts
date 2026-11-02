@@ -73,6 +73,12 @@ describe('BursaryRowComponent', () => {
     expect(el.querySelectorAll('app-source-icons a').length).toBe(1);
   });
 
+  it('saveButton_shownOnOpenRow_notOnClosedRow', () => {
+    expect(render(openBursary).el.querySelector('app-save-button button')).not.toBeNull();
+    TestBed.resetTestingModule();
+    expect(render(closedBursary).el.querySelector('app-save-button')).toBeNull();
+  });
+
   it('firstRows_animate_butNotRowFourOnwards', () => {
     expect(render(closingSoonBursary, 0).el.querySelector('article')!.classList.contains('swipe-in')).toBe(true);
     TestBed.resetTestingModule();

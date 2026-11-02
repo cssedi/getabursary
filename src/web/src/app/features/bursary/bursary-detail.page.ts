@@ -7,6 +7,7 @@ import { formatDate } from '../../shared/format/format';
 import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
 import { ErrorStateComponent } from '../../shared/ui/error-state/error-state.component';
 import { ReportButtonComponent } from '../../shared/ui/report-button/report-button.component';
+import { SaveButtonComponent } from '../../shared/ui/save-button/save-button.component';
 import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
 import { ToastComponent } from '../../shared/ui/toast/toast.component';
 import { NotFoundPage } from '../static/not-found.page';
@@ -29,6 +30,7 @@ import {
     ErrorStateComponent,
     NotFoundPage,
     ReportButtonComponent,
+    SaveButtonComponent,
     SourceIconsComponent,
     ToastComponent,
   ],
@@ -40,6 +42,7 @@ import {
           <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
           <div class="flex items-start gap-2">
             <h1 class="min-w-0 flex-1 text-2xl font-bold [overflow-wrap:anywhere]">{{ b.name }}</h1>
+            <app-save-button class="-mt-2" [bursaryId]="b.id" [name]="b.name" />
             <app-report-button class="-mt-2 -mr-2" [bursaryId]="b.id" />
           </div>
           @if (b.funderName) {
