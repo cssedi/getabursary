@@ -73,6 +73,11 @@ export interface QualificationResponse {
   fieldCodes: string[];
 }
 
+/** Taxonomy: `GET /api/v1/taxonomy/institutions/{id}/qualifications` — faculties with their qualifications. */
+export interface FacultyQualificationsResponse extends FacultyResponse {
+  qualifications: QualificationResponse[];
+}
+
 /** Taxonomy: `GET /api/v1/taxonomy/fields` (T-020). First-order fields with nested second-order `children`. */
 export interface FieldOfStudyResponse {
   id: string;

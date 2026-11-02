@@ -61,6 +61,29 @@ public sealed class FakeTaxonomyRepository : ITaxonomyRepository
         return Task.FromResult(result);
     }
 
+    public Task<IReadOnlyList<FacultyQualificationsSummary>?> GetFacultiesWithQualificationsAsync(Guid institutionId, CancellationToken ct)
+    {
+        if (!Institutions.Any(i => i.Id == institutionId))
+        {
+            return Task.FromResult<IReadOnlyList<FacultyQualificationsSummary>?>(null);
+        }
+
+        IReadOnlyList<FacultyQualificationsSummary> result = Faculties
+            .Where(f => FacultyIdToInstitutionId.TryGetValue(f.Id, out var owner) && owner == institutionId)
+            .OrderBy(f => f.Name, StringComparer.Ordinal)
+            .Select(f => new FacultyQualificationsSummary(
+                f.Id,
+                f.Name,
+                f.Slug,
+                Qualifications
+                    .Where(q => QualificationIdToFacultyId.TryGetValue(q.Id, out var faculty) && faculty == f.Id)
+                    .OrderBy(q => q.Name, StringComparer.Ordinal)
+                    .ToList()))
+            .ToList();
+
+        return Task.FromResult<IReadOnlyList<FacultyQualificationsSummary>?>(result);
+    }
+
     public Task<IReadOnlyList<FieldOfStudySummary>> GetFieldsOfStudyAsync(CancellationToken ct)
     {
         IReadOnlyList<FieldOfStudySummary> result = FieldsOfStudy

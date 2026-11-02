@@ -44,6 +44,16 @@ public class TaxonomyServiceTests
     }
 
     [Fact]
+    public async Task GetQualificationsByInstitutionAsync_UnknownInstitution_ReturnsInstitutionNotFound()
+    {
+        var service = new TaxonomyService(new FakeTaxonomyRepository());
+
+        var result = await service.GetQualificationsByInstitutionAsync(Guid.CreateVersion7(), CancellationToken.None);
+
+        AssertSingleError(result, "Taxonomy.InstitutionNotFound", ErrorType.NotFound);
+    }
+
+    [Fact]
     public async Task GetQualificationsAsync_UnknownFaculty_ReturnsFacultyNotFound()
     {
         var repository = new FakeTaxonomyRepository();

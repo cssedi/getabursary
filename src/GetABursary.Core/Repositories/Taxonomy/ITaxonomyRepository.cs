@@ -20,6 +20,9 @@ public interface ITaxonomyRepository
     /// <summary>Qualifications of one faculty, sorted by name, with the CESM codes of the fields they cover.</summary>
     Task<IReadOnlyList<QualificationSummary>> GetQualificationsAsync(Guid facultyId, CancellationToken ct);
 
+    /// <summary>Faculties of one institution sorted by name, each with its qualifications sorted by name. Null when the institution does not exist.</summary>
+    Task<IReadOnlyList<FacultyQualificationsSummary>?> GetFacultiesWithQualificationsAsync(Guid institutionId, CancellationToken ct);
+
     /// <summary>All fields of study (first and second order), sorted by code. The service arranges them into a tree.</summary>
     Task<IReadOnlyList<FieldOfStudySummary>> GetFieldsOfStudyAsync(CancellationToken ct);
 }
@@ -44,6 +47,9 @@ public sealed record QualificationSummary(
     StudyLevel StudyLevel,
     string Slug,
     IReadOnlyList<string> FieldCodes);
+
+/// <summary>Projection of a faculty and its qualifications.</summary>
+public sealed record FacultyQualificationsSummary(Guid Id, string Name, string Slug, IReadOnlyList<QualificationSummary> Qualifications);
 
 /// <summary>Projection of a CESM field of study. <c>ParentId</c> is null for first-order fields.</summary>
 public sealed record FieldOfStudySummary(Guid Id, string Code, string Name, string Slug, Guid? ParentId);

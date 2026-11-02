@@ -67,6 +67,15 @@ describe('TaxonomyApi', () => {
     req.flush(qualifications);
   });
 
+  it('qualificationsByInstitution_institutionId_requestsOneGroupedRoute', () => {
+    const id = institutions[0].id;
+    api.qualificationsByInstitution(id).subscribe();
+
+    const req = http.expectOne(`/api/v1/taxonomy/institutions/${id}/qualifications`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
   it('fields_always_requestsFieldTree', () => {
     let result: unknown;
     api.fields().subscribe((value) => (result = value));

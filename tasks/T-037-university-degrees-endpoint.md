@@ -4,7 +4,7 @@ title: One request for a university's degrees (replace per-faculty calls on home
 phase: 3
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-033]
 requirements: [FR-01, NFR-01, NFR-03]
 issue: 66
