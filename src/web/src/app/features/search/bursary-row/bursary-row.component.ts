@@ -1,8 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BursarySummaryResponse } from '../../../core/api/models';
 import { ClosingDateBadgeComponent } from '../../../shared/ui/closing-date-badge/closing-date-badge.component';
+import { ReportButtonComponent } from '../../../shared/ui/report-button/report-button.component';
 import { SourceIconsComponent } from '../../../shared/ui/source-icons/source-icons.component';
 
 const COVERAGE_SHOWN = 3;
@@ -17,7 +18,7 @@ function lowerFirst(text: string): string {
 /** One ledger row: date column on the left, details on the right (06 §5). */
 @Component({
   selector: 'app-bursary-row',
-  imports: [RouterLink, ClosingDateBadgeComponent, SourceIconsComponent],
+  imports: [RouterLink, ClosingDateBadgeComponent, ReportButtonComponent, SourceIconsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article
@@ -41,16 +42,7 @@ function lowerFirst(text: string): string {
               }}</a>
             }
           </h3>
-          <button
-            type="button"
-            class="report-flag relative z-10 -mt-2 -mr-2 inline-flex h-11 w-11 shrink-0 items-center justify-center text-muted hover:text-ink"
-            [attr.aria-label]="'Report a problem with ' + bursary().name"
-            (click)="report.emit()"
-          >
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 14V2m0 1h9l-2 3 2 3H3" />
-            </svg>
-          </button>
+          <app-report-button class="-mt-2 -mr-2" [bursaryId]="bursary().id" />
         </div>
         @if (bursary().funderName) {
           <p class="funder truncate text-sm text-muted">{{ bursary().funderName }}</p>
@@ -104,8 +96,6 @@ export class BursaryRowComponent {
   readonly bursary = input.required<BursarySummaryResponse>();
   /** Position in the results page; the first {@link SWIPE_ROWS} rows animate. */
   readonly index = input(0);
-  /** The flag was pressed; the row itself does not navigate. */
-  readonly report = output<void>();
 
   protected readonly closed = computed(() => this.bursary().status === 'Closed');
   protected readonly animate = computed(

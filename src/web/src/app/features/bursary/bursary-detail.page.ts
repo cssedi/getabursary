@@ -6,7 +6,9 @@ import { BursaryDetailResponse, Citizenship } from '../../core/api/models';
 import { formatDate } from '../../shared/format/format';
 import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
 import { ErrorStateComponent } from '../../shared/ui/error-state/error-state.component';
+import { ReportButtonComponent } from '../../shared/ui/report-button/report-button.component';
 import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
+import { ToastComponent } from '../../shared/ui/toast/toast.component';
 import { NotFoundPage } from '../static/not-found.page';
 import { SeoService } from '../seo/seo.service';
 import { ClosedBursaryComponent } from './closed-bursary.component';
@@ -26,7 +28,9 @@ import {
     ClosedBursaryComponent,
     ErrorStateComponent,
     NotFoundPage,
+    ReportButtonComponent,
     SourceIconsComponent,
+    ToastComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -34,7 +38,10 @@ import {
       @if (open(); as b) {
         <header class="space-y-3">
           <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
-          <h1 class="text-2xl font-bold">{{ b.name }}</h1>
+          <div class="flex items-start gap-2">
+            <h1 class="min-w-0 flex-1 text-2xl font-bold [overflow-wrap:anywhere]">{{ b.name }}</h1>
+            <app-report-button class="-mt-2 -mr-2" [bursaryId]="b.id" />
+          </div>
           @if (b.funderName) {
             <p class="text-muted">{{ b.funderName }}</p>
           }
@@ -140,6 +147,7 @@ import {
       } @else {
         <app-error-state message="We couldn't load this bursary." (retry)="retry()" />
       }
+      <app-toast />
     </div>
   `,
   styles: `

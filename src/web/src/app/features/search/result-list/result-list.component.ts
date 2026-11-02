@@ -3,6 +3,7 @@ import { BursarySummaryResponse, PagedResponse, SearchSort } from '../../../core
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../shared/ui/error-state/error-state.component';
 import { SkeletonCardComponent } from '../../../shared/ui/skeleton-card/skeleton-card.component';
+import { ToastComponent } from '../../../shared/ui/toast/toast.component';
 import { BursaryRowComponent } from '../bursary-row/bursary-row.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { SEARCH_SORTS } from '../search-state.service';
@@ -11,7 +12,14 @@ export const AD_SLOT_EVERY = 6;
 
 @Component({
   selector: 'app-result-list',
-  imports: [BursaryRowComponent, EmptyStateComponent, ErrorStateComponent, SkeletonCardComponent, PaginationComponent],
+  imports: [
+    BursaryRowComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    SkeletonCardComponent,
+    PaginationComponent,
+    ToastComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section id="results">
@@ -63,6 +71,8 @@ export const AD_SLOT_EVERY = 6;
           }
         }
       }
+      <!-- Outside the state blocks so it survives loading/error/empty: report toasts land here. -->
+      <app-toast />
     </section>
   `,
 })

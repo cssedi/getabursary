@@ -4,7 +4,7 @@ title: Report-an-inaccuracy flag and dialog on cards and detail page
 phase: 4
 area: web
 model: haiku
-status: todo
+status: done
 depends_on: [T-028, T-029, T-032]
 requirements: [FR-08]
 issue: 39
