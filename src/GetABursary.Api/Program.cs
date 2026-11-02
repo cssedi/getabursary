@@ -3,6 +3,7 @@ using GetABursary.Api.Services.Auth;
 using GetABursary.Core;
 using GetABursary.Core.Data;
 using GetABursary.Core.Data.Seeding;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,14 @@ builder.Services.AddReportsFeature(builder.Configuration, builder.Environment);
 builder.Services.AddTaxonomyFeature();
 builder.Services.AddBursaryFeature();
 builder.Services.AddAuthFeature(builder.Configuration, builder.Environment);
+
+// shortcut: trusts X-Forwarded-* from any sender, so the API must only be reachable through Caddy/Cloudflare.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 var app = builder.Build();
 
@@ -34,6 +43,7 @@ else if (!app.Environment.IsDevelopment() && !string.IsNullOrWhiteSpace(app.Conf
     await AuthSeeder.SeedAsync(scope.ServiceProvider);
 }
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseCsrfHeaderCheck();
 

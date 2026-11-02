@@ -38,6 +38,22 @@ public sealed partial class AuthEndpointTests(AuthFixture fixture)
     }
 
     [Fact]
+    public async Task AuthEndpoints_OverRateLimit_Return429()
+    {
+        await using var limited = fixture.Factory.WithWebHostBuilder(b => b.UseSetting("Auth:RateLimitPerHour", "2"));
+        using var client = limited.CreateClient();
+
+        for (var i = 0; i < 2; i++)
+        {
+            using var ok = await LoginAsync(client, NewEmail(), Password);
+            Assert.NotEqual(HttpStatusCode.TooManyRequests, ok.StatusCode);
+        }
+
+        using var blocked = await LoginAsync(client, NewEmail(), Password);
+        Assert.Equal(HttpStatusCode.TooManyRequests, blocked.StatusCode);
+    }
+
+    [Fact]
     public async Task Me_SignedOut_Returns401()
     {
         using var client = fixture.Factory.CreateClient();

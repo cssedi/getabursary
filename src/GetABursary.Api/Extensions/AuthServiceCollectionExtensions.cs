@@ -52,15 +52,18 @@ public static class AuthServiceCollectionExtensions
         services.AddRateLimiter(limiter => limiter.AddPolicy<string>(AuthRateLimitPolicy, context =>
             RateLimitPartition.GetFixedWindowLimiter(
                 ClientIp.From(context),
-                _ => new FixedWindowRateLimiterOptions { PermitLimit = 60, Window = TimeSpan.FromHours(1), QueueLimit = 0 })));
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = configuration.GetValue("Auth:RateLimitPerHour", 60), Window = TimeSpan.FromHours(1), QueueLimit = 0 })));
 
-        services.AddOptions<SmtpOptions>().Bind(configuration.GetSection(SmtpOptions.SectionName));
         if (environment.IsDevelopment())
         {
             services.AddSingleton<IEmailSender<User>, LogEmailSender>();
         }
         else
         {
+            services.AddOptions<SmtpOptions>()
+                .Bind(configuration.GetSection(SmtpOptions.SectionName))
+                .Validate(o => !string.IsNullOrWhiteSpace(o.Host) && !string.IsNullOrWhiteSpace(o.From), "Email:Smtp:Host and Email:Smtp:From are required.")
+                .ValidateOnStart();
             services.AddSingleton<IEmailSender<User>, SmtpEmailSender>();
         }
 

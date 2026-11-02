@@ -31,5 +31,7 @@ public class ReportsStartupTests
             builder.UseEnvironment("Production");
             builder.UseSetting("Database:MigrateOnStartup", "false");
             builder.UseSetting("Reports:IpHashSalt", salt);
+            builder.UseSetting("Email:Smtp:Host", "smtp.example.test");
+            builder.UseSetting("Email:Smtp:From", "noreply@example.test");
         });
 }
