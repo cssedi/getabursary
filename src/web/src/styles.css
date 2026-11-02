@@ -18,7 +18,7 @@
   --bloom: #e6defa;
   --highlighter: #ffe14d;
   --muted: #5b566b;
-  --line: #e3e0eb;
+  --line: #e3e0ea;
   --closed: #8a8697;
   color-scheme: light;
 }
@@ -112,7 +112,7 @@ button:active {
   padding: 8px 16px;
   border-radius: 8px;
   background: var(--jacaranda);
-  color: #fff;
+  color: var(--paper);
   font-weight: 600;
 }
 
