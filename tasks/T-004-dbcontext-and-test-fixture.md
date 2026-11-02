@@ -4,7 +4,7 @@ title: Add EF Core DbContext, Postgres wiring and Testcontainers fixture
 phase: 0
 area: core
 model: sonnet
-status: todo
+status: done
 depends_on: [T-001, T-002, T-003]
 requirements: [NFR-06]
 issue: 4
