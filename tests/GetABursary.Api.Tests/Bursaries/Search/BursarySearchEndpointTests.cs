@@ -163,7 +163,7 @@ public class BursarySearchEndpointTests(BursarySearchFixture fixture)
     {
         var names = Names(await GetOkAsync($"{Base}?fieldIds={Ids.LifeSciences}")).ToList();
 
-        Assert.Equal(["Unrelated Field", "All Fields"], names);
+        Assert.Equal(["Unrelated Field", "Qualification Match", "All Fields"], names);
     }
 
     [Fact]

@@ -13,20 +13,20 @@ public sealed class BursaryReadRepository(GetABursaryDbContext db) : IBursaryRea
 
     // One statement: eligibility filter + score (filtered), total count, ranking and paging (page), then funder and
     // sources for the page only. A LEFT JOIN from the count row guarantees totalCount even for an empty page.
-    // Score: +3 qualification listed, best field match (+2 second-order, +1 first-order), +0.5 all fields,
+    // Score: best single match (3 qualification listed, 2 second-order field, 1 first-order field, 0.5 all fields),
     // -0.5 unknown study levels. Closed bursaries always sort last.
     private const string SearchSql = """
         WITH filtered AS (
             SELECT b.id, b.slug, b.name, b.funder_id, b.closing_date, b.status, b.study_levels,
                    b.min_average, b.coverage, b.created_at,
-                   (CASE WHEN EXISTS (SELECT 1 FROM bursary_qualification bq
+                   (GREATEST(CASE WHEN EXISTS (SELECT 1 FROM bursary_qualification bq
                                       WHERE bq.bursary_id = b.id AND bq.qualification_id = @qualification_id)
                          THEN 3.0 ELSE 0.0 END
-                    + COALESCE((SELECT MAX(CASE WHEN f.parent_id IS NOT NULL THEN 2.0 ELSE 1.0 END)
+                    , COALESCE((SELECT MAX(CASE WHEN f.parent_id IS NOT NULL THEN 2.0 ELSE 1.0 END)
                                 FROM bursary_field bf
                                 JOIN field_of_study f ON f.id = bf.field_of_study_id
                                 WHERE bf.bursary_id = b.id AND bf.field_of_study_id = ANY(@field_ids)), 0.0)
-                    + CASE WHEN b.all_fields_eligible THEN 0.5 ELSE 0.0 END
+                    , CASE WHEN b.all_fields_eligible THEN 0.5 ELSE 0.0 END)
                     - CASE WHEN cardinality(b.study_levels) = 0 THEN 0.5 ELSE 0.0 END) AS score
             FROM bursary b
             WHERE b.is_published

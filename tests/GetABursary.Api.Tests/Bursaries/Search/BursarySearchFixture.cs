@@ -167,7 +167,7 @@ public sealed class BursarySearchFixture : IAsyncLifetime
         var undergrad = new List<StudyLevel> { StudyLevel.Undergraduate };
 
         // Expected for UCT chem-eng, Undergraduate, average 70: Qual(3) > SecondOrder(2) > UnknownLevel(1.5) > FirstOrder(1) > AllFields(0.5)
-        var qual = Bursary("Qualification Match", undergrad, today.AddDays(30), funder.Id, minAverage: 60);
+        var qual = Bursary("Qualification Match", undergrad, today.AddDays(30), funder.Id, minAverage: 60, allFields: true);
         var second = Bursary("Second Order Field", undergrad, today.AddDays(10));
         var first = Bursary("First Order Field", undergrad, today.AddDays(60));
         var all = Bursary("All Fields", undergrad, today.AddDays(90), allFields: true);
