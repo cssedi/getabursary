@@ -4,7 +4,7 @@ title: Taxonomy read endpoints (institutions, faculties, qualifications, fields)
 phase: 3
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-003, T-009]
 requirements: [FR-01]
 issue: 20
