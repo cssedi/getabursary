@@ -176,7 +176,7 @@ describe('BursaryDetailPage', () => {
 
     expect(el.querySelector('app-closed-bursary')).not.toBeNull();
     expect(el.querySelector('h1')?.textContent).toBe(closedBursary.name);
-    expect(el.textContent).toContain('This bursary closed on 30 Sep 2026.');
+    expect(el.textContent).toContain('This bursary closed on 30 Sept 2026.');
     expect(el.querySelectorAll('app-source-icons a').length).toBe(1);
     expect(headings()).toEqual([]);
     expect(el.textContent).not.toContain('Apply on funder');

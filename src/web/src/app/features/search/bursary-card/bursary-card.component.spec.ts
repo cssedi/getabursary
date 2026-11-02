@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BursarySummaryResponse } from '../../../core/api/models';
 import { closedBursary, closingSoonBursary, openBursary } from '../../../../testing/fixtures';
-import { NOW } from '../../../shared/ui/closing-date-badge/closing-date-badge.component';
+import { TODAY } from '../../../shared/format/today';
 import { BursaryCardComponent } from './bursary-card.component';
 
 describe('BursaryCardComponent', () => {
   function render(bursary: BursarySummaryResponse): HTMLElement {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: NOW, useValue: () => new Date('2026-11-02T10:00:00Z') }],
+      providers: [provideRouter([]), { provide: TODAY, useValue: '2026-11-02' }],
     });
     const fixture = TestBed.createComponent(BursaryCardComponent);
     fixture.componentRef.setInput('bursary', bursary);
@@ -29,7 +29,7 @@ describe('BursaryCardComponent', () => {
   it('coverage_moreThanThree_showsPlusN', () => {
     const el = render(closingSoonBursary);
     expect(el.querySelector('.coverage')!.textContent).toBe('Tuition, Accommodation, Meals +1');
-    expect(el.textContent).toContain('Closes in 8 days');
+    expect(el.textContent).toContain('closes in 8 days');
   });
 
   it('coverage_threeOrFewer_hasNoPlus', () => {

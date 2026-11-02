@@ -28,6 +28,12 @@ public interface IBursaryWriteRepository
 
     Task<IReadOnlyList<Guid>> GetInstitutionIdsByShortNamesAsync(IReadOnlyCollection<string> shortNames, CancellationToken ct);
 
+    /// <summary>Sets every published, not-yet-closed bursary whose closing date is before <paramref name="today"/> to Closed. Returns the count. Takes effect immediately.</summary>
+    Task<int> CloseExpiredAsync(DateOnly today, DateTimeOffset now, CancellationToken ct);
+
+    /// <summary>True when the bursary has a source link other than (<paramref name="sourceId"/>, <paramref name="url"/>) last seen at or after <paramref name="since"/>.</summary>
+    Task<bool> HasOtherSourceSeenSinceAsync(Guid bursaryId, Guid sourceId, string url, DateTimeOffset since, CancellationToken ct);
+
     void Add(Bursary bursary);
 
     Task SaveChangesAsync(CancellationToken ct);

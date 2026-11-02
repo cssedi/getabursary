@@ -18,7 +18,7 @@ To start a task, add the **`agent:ready`** label to its issue. Do this only when
 | **1** | Data model & reference data | Detailed (T-005–T-010) |
 | **2** | Ingestion worker: HTTP, adapters, extraction, dedupe | Detailed (T-011–T-019) |
 | **3** | Public read API: taxonomy, search, detail, reports | Detailed (T-020–T-023) |
-| **4** | Angular web app: SSR scaffold, API client, degree picker + filters, results, detail, report dialog, SEO pages | Detailed (T-025–T-031) |
+| **4** | Angular web app: SSR scaffold, API client, degree picker + filters, results, detail, report dialog, SEO pages | Detailed (T-025–T-036; design per spec 06) |
 | 5 | Accounts (Identity + Google), sign-in prompt, saved bursaries + tracker, admin review queue, source and taxonomy management | Roadmap; detailed when Phase 3 lands |
 | 6 | Launch: VPS deploy (Docker Compose + Caddy), ads + consent, privacy policy, monitoring, budget alerts | Roadmap |
 
@@ -66,6 +66,17 @@ graph LR
   T029 --> T030
   T028 --> T031[T-031 SEO pages + sitemap]
   T029 --> T031
+  T029 --> T032[T-032 design foundation]
+  T032 --> T030
+  T032 --> T031
+  T032 --> T033[T-033 home sentence search]
+  T032 --> T034[T-034 deadline ledger]
+  T032 --> T035[T-035 detail restyle]
+  T030 --> T036[T-036 guidelines audit]
+  T031 --> T036
+  T033 --> T036
+  T034 --> T036
+  T035 --> T036
 ```
 
 **Can start immediately (in parallel):** T-001, T-002, T-008.

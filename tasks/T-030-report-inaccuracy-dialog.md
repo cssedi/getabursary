@@ -5,7 +5,7 @@ phase: 4
 area: web
 model: haiku
 status: todo
-depends_on: [T-028, T-029]
+depends_on: [T-028, T-029, T-032]
 requirements: [FR-08]
 issue: 39
 ---

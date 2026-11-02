@@ -1,6 +1,6 @@
 # 05 — Web App (Angular)
 
-> Status: **Accepted v1.0** (2026-11-02). Implements brief FR-01–FR-08, NFR-01, NFR-02. Accounts, saving and the tracker (FR-09–FR-14) come in Phase 5.
+> Status: **Accepted v1.1** (2026-11-02). **Visual design, copy and interface rules: [06-design.md](06-design.md), which wins over anything here.** Implements brief FR-01–FR-08, NFR-01, NFR-02. Accounts, saving and the tracker (FR-09–FR-14) come in Phase 5.
 > Conventions: [03-conventions §8](03-conventions.md). API contract: [01-architecture §6](01-architecture.md#6-api-surface-v1-mvp), [02-data-model §5](02-data-model.md#5-matching-algorithm), task T-022 (detail response).
 
 ## 1. Stack decisions
@@ -46,7 +46,7 @@ In production one origin serves everything: Caddy routes `/api/*` to the .NET AP
 | `features/seo/` | `FieldLandingPage`, `SeoService` (title, meta description, canonical, Open Graph, JSON-LD) |
 
 ## 6. Behaviour rules
-- **Result card (FR-04):** name, funder, closing date (+ "Closes in N days" badge when ≤ 14 days), study levels, min average, a coverage summary (first 3 items + "+N"), source icons (FR-05), and a report flag (FR-08). The whole card links to `/bursaries/:slug`.
+- **Result row (FR-04; ledger layout per 06 §5):** name, funder, closing date (+ "Closes in N days" badge when ≤ 14 days), study levels, min average, a coverage summary (first 3 items + "+N"), source icons (FR-05), and a report flag (FR-08). The whole card links to `/bursaries/:slug`.
 - **Closed (FR-06):** the card is greyed out (reduced opacity plus a "Closed" badge), has no link (`aria-disabled="true"`, not focusable as a link), and still shows source icons. Closed results only appear when "Show closed" is ticked.
 - **Source icons (FR-05):** one 16×16 favicon per source (`iconUrl`, lazy-loaded, `alt` = source name), each linking to that source's listing URL (`target="_blank" rel="noopener nofollow"`). If an icon fails to load, show the source's initials in a circle.
 - **Apply button (FR-07):** "Apply on funder's site" → `applyUrl`, opens in a new tab with `rel="noopener nofollow"`.
@@ -54,19 +54,10 @@ In production one origin serves everything: Caddy routes `/api/*` to the .NET AP
 - **Report (FR-08):** the dialog has a reason (required radio list), comment (≤ 1000, with a counter) and an optional email. Submit → `POST /api/v1/bursaries/{id}/reports`. `201` → "Thanks, we'll check it" toast. `429` → "Too many reports from your connection, try later". `400` → inline field errors.
 
 ## 7. Non-functional
-- **Performance budget (NFR-01):** Angular budgets measure **raw (uncompressed)** size. Initial bundle: warning at 300 KB raw, error at 350 KB raw (≈ 90–100 KB over the network). Any component style: error at 6 KB. Set in `angular.json`. *(Revised 2026-11-02: the bare scaffold alone is ~270 KB raw.)* No web fonts: use the system font stack. Images are lazy-loaded.
+- **Performance budget (NFR-01):** Angular budgets measure **raw (uncompressed)** size. Initial bundle: warning at 300 KB raw, error at 350 KB raw (≈ 90–100 KB over the network). Any component style: error at 6 KB. Set in `angular.json`. *(Revised 2026-11-02: the bare scaffold alone is ~270 KB raw.)* One self-hosted variable font (06 §4), Latin subset, preloaded. Images are lazy-loaded.
 - **Accessibility:** WCAG 2.1 AA. Form controls have labels, focus is visible, the dialog traps focus and closes on Esc, colour contrast ≥ 4.5:1, and the layout works at 320 px wide.
 - **SEO (NFR-02):** unique `<title>` and meta description per page, canonical URLs, `robots.txt`, `sitemap.xml` (an SSR server route that lists open bursaries and field pages via the API), and JSON-LD on the detail page (`Grant`-like `MonetaryGrant` schema.org type where fields allow).
 - **Ads:** not in Phase 4. Leave a `<div class="ad-slot" data-slot="results-inline">` placeholder every 6 cards and one on the detail page, hidden for now (Phase 6 wires up AdSense and consent).
 
-## 8. Design tokens (CSS variables in `styles.css`, used through Tailwind's theme)
-| Token | Value | Use |
-|---|---|---|
-| `--color-primary` | `#0B6E4F` | Buttons, links (contrast-checked on white) |
-| `--color-primary-ink` | `#FFFFFF` | Text on primary |
-| `--color-accent` | `#F2A900` | Closing-soon badge, highlights (never text on white) |
-| `--color-ink` | `#1A1A1A` | Body text |
-| `--color-muted` | `#5C5C5C` | Secondary text |
-| `--color-surface` | `#FFFFFF` / `--color-surface-alt` `#F5F7F6` | Cards / page background |
-| `--radius` | `12px` | Cards, inputs |
-| Font | `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif` | |
+## 8. Design tokens
+Moved to [06-design.md §3](06-design.md#3-tokens-css-variables-in-stylescss-mapped-into-the-tailwind-theme). The earlier green/gold tokens are retired.
