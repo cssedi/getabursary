@@ -5,9 +5,9 @@ import { RouterLink } from '@angular/router';
   selector: 'app-header',
   imports: [RouterLink],
   template: `
-    <header class="bg-surface border-b border-surface-alt">
-      <div class="mx-auto max-w-5xl px-4 py-3">
-        <a routerLink="/" class="text-xl font-bold text-primary">GetABursary</a>
+    <header class="border-b border-line">
+      <div class="mx-auto max-w-5xl px-4 py-3 md:px-6">
+        <a routerLink="/" class="text-xl font-extrabold text-ink hover:text-jacaranda">GetABursary</a>
       </div>
     </header>
   `,

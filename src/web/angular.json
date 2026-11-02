@@ -25,6 +25,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "atkinson-hyperlegible-next-latin-wght-normal.woff2",
+                "input": "node_modules/@fontsource-variable/atkinson-hyperlegible-next/files",
+                "output": "/fonts"
               }
             ],
             "styles": [

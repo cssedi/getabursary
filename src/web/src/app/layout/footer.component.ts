@@ -5,11 +5,11 @@ import { RouterLink } from '@angular/router';
   selector: 'app-footer',
   imports: [RouterLink],
   template: `
-    <footer class="bg-surface border-t border-surface-alt mt-8">
-      <div class="mx-auto max-w-5xl px-4 py-6 text-sm text-muted">
-        <nav class="flex gap-4 mb-2">
-          <a routerLink="/about" class="text-primary underline">About</a>
-          <a routerLink="/privacy" class="text-primary underline">Privacy</a>
+    <footer class="mt-8 border-t border-line">
+      <div class="mx-auto max-w-5xl px-4 py-6 text-sm text-muted md:px-6">
+        <nav class="mb-2 flex gap-4">
+          <a routerLink="/about" class="text-jacaranda underline hover:text-ink">About</a>
+          <a routerLink="/privacy" class="text-jacaranda underline hover:text-ink">Privacy</a>
         </nav>
         <p>Bursary info is gathered from public sources. Always confirm details on the funder's site.</p>
       </div>

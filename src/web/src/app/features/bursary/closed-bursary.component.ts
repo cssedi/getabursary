@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BursarySummaryResponse } from '../../core/api/models';
-import { formatDate } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
+import { formatDate } from '../../shared/format/format';
 import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
 
 /**
@@ -14,17 +14,17 @@ import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.
   imports: [RouterLink, SourceIconsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="space-y-4 rounded-[var(--radius)] bg-[var(--color-surface)] p-4 shadow-sm">
+    <section class="space-y-4 rounded-control bg-paper p-4 shadow-sm">
       <h1 class="text-2xl font-bold">{{ summary().name }}</h1>
       @if (summary().funderName) {
-        <p class="text-[var(--color-muted)]">{{ summary().funderName }}</p>
+        <p class="text-muted">{{ summary().funderName }}</p>
       }
       <p class="font-semibold" role="status">{{ closedMessage() }}</p>
       <app-source-icons [sources]="summary().sources" />
       @if (fieldIds().length) {
         <p>
           <a
-            class="text-[var(--color-primary)] underline"
+            class="text-jacaranda underline"
             [routerLink]="['/search']"
             [queryParams]="{ fieldIds: fieldIds().join(',') }"
             >Find open bursaries for similar fields</a

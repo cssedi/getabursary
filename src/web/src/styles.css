@@ -1,38 +1,125 @@
 @import "tailwindcss";
 
+/* Latin subset only, self-hosted from the Fontsource package (copied to /fonts by angular.json). */
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  --color-primary: #0b6e4f;
-  --color-primary-ink: #ffffff;
-  --color-accent: #f2a900;
-  --color-ink: #1a1a1a;
-  --color-muted: #5c5c5c;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f5f7f6;
-  --radius: 12px;
-  --font-system: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ink: #1e1a2e;
+  --paper: #fafafc;
+  --jacaranda: #5e43b0;
+  --bloom: #e6defa;
+  --highlighter: #ffe14d;
+  --muted: #5b566b;
+  --line: #e3e0eb;
+  --closed: #8a8697;
+  color-scheme: light;
+}
+
+@theme {
+  --radius-control: 8px;
 }
 
 @theme inline {
-  --color-primary: var(--color-primary);
-  --color-primary-ink: var(--color-primary-ink);
-  --color-accent: var(--color-accent);
-  --color-ink: var(--color-ink);
-  --color-muted: var(--color-muted);
-  --color-surface: var(--color-surface);
-  --color-surface-alt: var(--color-surface-alt);
-  --radius-card: var(--radius);
-  --font-sans: var(--font-system);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-jacaranda: var(--jacaranda);
+  --color-bloom: var(--bloom);
+  --color-highlighter: var(--highlighter);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-closed: var(--closed);
+  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  /* Type scale, ratio 1.25 on a 16 px base */
+  --text-xs: 13px;
+  --text-xs--line-height: 1.5;
+  --text-sm: 13px;
+  --text-sm--line-height: 1.5;
+  --text-base: 16px;
+  --text-base--line-height: 1.55;
+  --text-lg: 20px;
+  --text-lg--line-height: 1.3;
+  --text-xl: 20px;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 25px;
+  --text-2xl--line-height: 1.15;
+  --text-3xl: 31px;
+  --text-3xl--line-height: 1.15;
+  --text-4xl: 39px;
+  --text-4xl--line-height: 1.15;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--color-surface-alt);
-  color: var(--color-ink);
-  font-family: var(--font-system);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
 }
 
-a:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--color-primary);
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+a,
+button,
+input,
+select,
+textarea,
+summary {
+  touch-action: manipulation;
+}
+
+select {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--jacaranda);
   outline-offset: 2px;
+}
+
+/* Visible pressed state for every button and link (tap highlight is transparent). */
+a:active,
+button:active {
+  opacity: 0.7;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -64px;
+  z-index: 50;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--jacaranda);
+  color: #fff;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+#content {
+  scroll-margin-top: 16px;
 }

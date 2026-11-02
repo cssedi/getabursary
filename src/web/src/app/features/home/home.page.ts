@@ -40,7 +40,7 @@ import { DegreePickerComponent, DegreeSelection } from './degree-picker.componen
         </div>
         <button
           type="submit"
-          class="rounded-[var(--radius)] bg-[var(--color-primary)] p-3 font-medium text-[var(--color-primary-ink)]"
+          class="rounded-control bg-jacaranda p-3 font-medium text-paper"
         >
           Search
         </button>

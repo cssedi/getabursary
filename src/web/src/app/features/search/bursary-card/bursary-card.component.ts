@@ -12,7 +12,7 @@ const COVERAGE_SHOWN = 3;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article
-      class="relative rounded-[var(--radius)] bg-[var(--color-surface)] p-4 shadow-sm"
+      class="relative rounded-control bg-paper p-4 shadow-sm"
       [class.opacity-60]="closed()"
       [class.grayscale]="closed()"
       [attr.aria-disabled]="closed() ? 'true' : null"
@@ -21,13 +21,13 @@ const COVERAGE_SHOWN = 3;
         @if (closed()) {
           {{ bursary().name }}
         } @else {
-          <a class="stretched-link text-[var(--color-primary)]" [routerLink]="['/bursaries', bursary().slug]">{{
+          <a class="stretched-link text-jacaranda" [routerLink]="['/bursaries', bursary().slug]">{{
             bursary().name
           }}</a>
         }
       </h3>
       @if (bursary().funderName) {
-        <p class="text-sm text-[var(--color-muted)]">{{ bursary().funderName }}</p>
+        <p class="text-sm text-muted">{{ bursary().funderName }}</p>
       }
       <div class="mt-2">
         <app-closing-date-badge [closingDate]="bursary().closingDate" [status]="bursary().status" />

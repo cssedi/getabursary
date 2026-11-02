@@ -3,10 +3,8 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { BursaryDetailResponse, Citizenship } from '../../core/api/models';
-import {
-  ClosingDateBadgeComponent,
-  formatDate,
-} from '../../shared/ui/closing-date-badge/closing-date-badge.component';
+import { formatDate } from '../../shared/format/format';
+import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
 import { ErrorStateComponent } from '../../shared/ui/error-state/error-state.component';
 import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
 import { NotFoundPage } from '../static/not-found.page';
@@ -37,7 +35,7 @@ import {
         <header class="space-y-2">
           <h1 class="text-2xl font-bold">{{ b.name }}</h1>
           @if (b.funderName) {
-            <p class="text-[var(--color-muted)]">{{ b.funderName }}</p>
+            <p class="text-muted">{{ b.funderName }}</p>
           }
           <div class="flex flex-wrap items-center gap-3">
             <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
@@ -125,7 +123,7 @@ import {
 
         @if (b.applyUrl) {
           <a
-            class="inline-block rounded-[var(--radius)] bg-[var(--color-primary)] px-6 py-3 text-lg font-semibold text-[var(--color-primary-ink)]"
+            class="inline-block rounded-control bg-jacaranda px-6 py-3 text-lg font-semibold text-paper"
             [href]="b.applyUrl"
             target="_blank"
             rel="noopener nofollow"
@@ -133,7 +131,7 @@ import {
           >
         }
 
-        <p class="text-sm text-[var(--color-muted)]">Last updated {{ lastUpdated(b) }}</p>
+        <p class="text-sm text-muted">Last updated {{ lastUpdated(b) }}</p>
         <div class="ad-slot" data-slot="detail" hidden></div>
       } @else if (closed(); as c) {
         <app-closed-bursary [summary]="c" />
