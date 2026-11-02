@@ -12,6 +12,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddCommon();
 builder.Services.AddCoreData(builder.Configuration);
 builder.Services.AddReportsFeature(builder.Configuration, builder.Environment);
+builder.Services.AddTaxonomyFeature();
 
 var app = builder.Build();
 
