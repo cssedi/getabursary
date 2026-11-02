@@ -4,7 +4,7 @@ title: Add taxonomy entities (institution, faculty, qualification, field of stud
 phase: 1
 area: core
 model: haiku
-status: todo
+status: done
 depends_on: [T-004]
 requirements: [FR-30, FR-31]
 issue: 5
@@ -32,11 +32,11 @@ You may create or modify **only**:
 4. Migration `AddTaxonomy`.
 
 ## Acceptance criteria
-- [ ] Integration tests (Postgres fixture): an institution with a faculty and qualification linked to two fields can be saved and reloaded with `Include`
-- [ ] Integration test: a duplicate `field_of_study.code` throws `DbUpdateException`
-- [ ] Integration test: table and column names are snake_case (e.g. query `information_schema.columns` for `qualification_field.field_of_study_id`)
-- [ ] `dotnet build` (zero warnings) and `dotnet test` pass
-- [ ] Task file `status: done`
+- [x] Integration tests (Postgres fixture): an institution with a faculty and qualification linked to two fields can be saved and reloaded with `Include`
+- [x] Integration test: a duplicate `field_of_study.code` throws `DbUpdateException`
+- [x] Integration test: table and column names are snake_case (e.g. query `information_schema.columns` for `qualification_field.field_of_study_id`)
+- [x] `dotnet build` (zero warnings) and `dotnet test` pass
+- [x] Task file `status: done`
 
 ## How to verify
 ```bash
