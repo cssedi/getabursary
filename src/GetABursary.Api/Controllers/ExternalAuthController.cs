@@ -10,10 +10,11 @@ namespace GetABursary.Api.Controllers;
 /// <summary>"Continue with Google" (FR-10): challenge, then the callback that signs the user in.</summary>
 [ApiController]
 [Route("api/v1/auth/external/google")]
-public class ExternalAuthController(
+public partial class ExternalAuthController(
     IAuthenticationSchemeProvider schemes,
     IExternalLoginService externalLogin,
-    SignInManager<User> signInManager) : ControllerBase
+    SignInManager<User> signInManager,
+    ILogger<ExternalAuthController> logger) : ControllerBase
 {
     /// <summary>Open-redirect protection: only local paths ("/x"), never "//host", "/\host" or absolute URLs.</summary>
     public static string SafeReturnUrl(string? returnUrl) =>
@@ -41,6 +42,7 @@ public class ExternalAuthController(
         var external = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
         if (!external.Succeeded)
         {
+            LogNoExternalIdentity();
             return LocalRedirect(target);
         }
 
@@ -50,7 +52,17 @@ public class ExternalAuthController(
         {
             await signInManager.SignInAsync(result.Value, isPersistent: false);
         }
+        else
+        {
+            LogSignInFailed(result.Errors[0].Code);
+        }
 
         return LocalRedirect(target);
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Google sign-in failed: {ErrorCode}")]
+    private partial void LogSignInFailed(string errorCode);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Google sign-in callback had no external identity")]
+    private partial void LogNoExternalIdentity();
 }

@@ -42,7 +42,17 @@ public class ExternalLoginService(UserManager<User> users, IConfiguration config
             }
             else if (!user.EmailConfirmed)
             {
-                // Google verified this address, so it is safe to confirm.
+                // Google verified this address, so it is safe to confirm. Drop any password set while it was
+                // unconfirmed so a squatter who pre-registered the address cannot keep access.
+                if (await users.HasPasswordAsync(user))
+                {
+                    var removed = await users.RemovePasswordAsync(user);
+                    if (!removed.Succeeded)
+                    {
+                        return Failed(removed);
+                    }
+                }
+
                 user.EmailConfirmed = true;
                 var updated = await users.UpdateAsync(user);
                 if (!updated.Succeeded)

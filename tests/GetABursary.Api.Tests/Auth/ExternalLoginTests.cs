@@ -110,6 +110,8 @@ public sealed class ExternalLoginTests(AuthFixture fixture)
         Assert.Equal(existingId, linked.Id);
         Assert.True(linked.EmailConfirmed);
         Assert.Equal(existingId, again.Id);
+        using var scope2 = fixture.Factory.Services.CreateScope();
+        Assert.False(await scope2.ServiceProvider.GetRequiredService<UserManager<User>>().HasPasswordAsync(linked));
     }
 
     [Fact]
