@@ -31,6 +31,7 @@ Product-owner rule (2026-11-02). Be lazy about the solution, never about finishi
 On top of your task's Scope, you **may** change these when your work legitimately needs it, without escalating:
 - **Test infrastructure:** test project `.csproj` files (adding packages already pinned in `Directory.Packages.props`), shared fixtures/factories (e.g. Postgres/Testcontainers fixtures, `WebApplicationFactory` subclasses), and test helpers under `tests/**` or `src/web/src/testing/**`.
 - **Existing tests broken by your intended change:** update assertions in existing spec/test files (e.g. `src/web/src/app/app.spec.ts`, or route tests that hit a page you're replacing) so they test the new, correct behaviour. Never delete a test just to make it pass, and never weaken what it checks.
+- **DI registration:** adding `services.Add…` lines for your own new types (and existing repositories they need) to the matching `src/*/Extensions/*ServiceCollectionExtensions.cs`, or one `Add…Feature()` line in `Program.cs`.
 - List every such file under a **"Scope allowance used"** heading in the PR description, with one line each on why.
 Anything else outside Scope still means: stop and escalate.
 

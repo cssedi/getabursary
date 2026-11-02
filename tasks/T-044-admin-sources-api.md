@@ -36,3 +36,8 @@ Admins see each scraper source's health and last run, switch sources on or off, 
 ```bash
 dotnet test --filter "FullyQualifiedName~Admin"
 ```
+
+## Orchestrator decisions (2026-11-02, answering the BLOCKED comment)
+- Option **A**: add the three registrations to `AdminServiceCollectionExtensions.cs` (now also covered by the standing DI allowance in AGENTS.md).
+- Check-then-insert for "run now" is fine. The rare double request is harmless (the worker runs once per picked request). No migration.
+- An unknown `sourceId` returns 404, a disabled source is accepted, and PATCH returns the list-item shape: all agreed.
