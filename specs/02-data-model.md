@@ -129,6 +129,6 @@ Second-order codes (e.g. `0801` Chemical Engineering) are added by a dedicated t
 - Marks: `min_average IS NULL` **or** `min_average <= average`
 - Closing-date range, if given
 
-**Score** (for `BestMatch`): `+3` qualification listed explicitly · `+2` second-order field match · `+1` first-order field match · `+0.5` all fields eligible · `-0.5` study levels unknown. Ties are broken by `closing_date ASC NULLS LAST`. Closed bursaries (when included) always sort last.
+**Score** (for `BestMatch`), take the **best single match**, not a sum: `3` qualification listed explicitly, else `2` second-order field match, else `1` first-order field match, else `0.5` all fields eligible; then `-0.5` if study levels are unknown. *(Decided 2026-11-02 on PR #54: summing let a field match tie an exact qualification match.)* Ties are broken by `closing_date ASC NULLS LAST`. Closed bursaries (when included) always sort last.
 
 **Output:** `BursarySummaryResponse { id, slug, name, funderName, closingDate, isClosingSoon, status, studyLevels, minAverage, coverage, sources: [{ key, name, iconUrl, url }], matchScore }`.
