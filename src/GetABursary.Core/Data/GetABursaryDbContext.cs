@@ -50,6 +50,8 @@ public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options
 
     public DbSet<ReviewItem> ReviewItems => Set<ReviewItem>();
 
+    public DbSet<TrackerEntry> TrackerEntries => Set<TrackerEntry>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);

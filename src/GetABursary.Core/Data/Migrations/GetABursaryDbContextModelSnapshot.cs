@@ -936,6 +936,56 @@ namespace GetABursary.Core.Data.Migrations
                     b.ToTable("qualification_field", (string)null);
                 });
 
+            modelBuilder.Entity("GetABursary.Core.Domain.Users.TrackerEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateOnly?>("AppliedOn")
+                        .HasColumnType("date")
+                        .HasColumnName("applied_on");
+
+                    b.Property<Guid>("BursaryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("bursary_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tracker_entry");
+
+                    b.HasIndex("BursaryId")
+                        .HasDatabaseName("ix_tracker_entry_bursary_id");
+
+                    b.HasIndex("UserId", "BursaryId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_tracker_entry_user_id_bursary_id");
+
+                    b.ToTable("tracker_entry", (string)null);
+                });
+
             modelBuilder.Entity("GetABursary.Core.Domain.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1447,6 +1497,27 @@ namespace GetABursary.Core.Data.Migrations
                     b.Navigation("FieldOfStudy");
 
                     b.Navigation("Qualification");
+                });
+
+            modelBuilder.Entity("GetABursary.Core.Domain.Users.TrackerEntry", b =>
+                {
+                    b.HasOne("GetABursary.Core.Domain.Bursaries.Bursary", "Bursary")
+                        .WithMany()
+                        .HasForeignKey("BursaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tracker_entry_bursary_bursary_id");
+
+                    b.HasOne("GetABursary.Core.Domain.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tracker_entry_asp_net_users_user_id");
+
+                    b.Navigation("Bursary");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
