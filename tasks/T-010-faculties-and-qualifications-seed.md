@@ -1,6 +1,6 @@
 ---
 id: T-010
-title: Research and seed faculties + popular qualifications for 5 universities
+title: Research and seed faculties + popular qualifications for UCT and Wits
 phase: 1
 area: data
 model: sonnet
@@ -11,7 +11,7 @@ issue: 10
 ---
 
 ## Goal
-Students at the five largest contact universities can pick their actual qualification. Faculties and their most popular undergraduate qualifications are seeded and mapped to CESM fields of study.
+Students at **UCT and Wits** can pick their actual qualification. (Scope narrowed on 2026-11-02: UP, SU and UJ block automated access, so they move to T-024, which works from prospectus PDFs. This task still adds the shared schema.) Faculties and their most popular undergraduate qualifications are seeded and mapped to CESM fields of study.
 
 ## Context
 - `AGENTS.md`
@@ -21,7 +21,7 @@ Students at the five largest contact universities can pick their actual qualific
 
 ## Scope
 You may create or modify **only**:
-- `data/seed/faculties/uct.json`, `wits.json`, `up.json`, `su.json`, `uj.json`
+- `data/seed/faculties/uct.json`, `wits.json`
 - `data/seed/schemas/faculties.schema.json`
 - `data/seed/README.md` (add a section)
 
@@ -43,14 +43,14 @@ You may create or modify **only**:
   ]
 }
 ```
-2. Use the universities' **official** faculty and programme pages. Put every URL you used in `sourceUrls`. Don't invent programmes. If you can't verify something, leave it out.
+2. Use the universities' **official** faculty and programme pages, read with **WebFetch** (plain `curl` gets bot-challenged; if Wits' course finder loads programmes dynamically, use its faculty/school pages instead). Put every URL you used in `sourceUrls`. Don't invent programmes. If you can't verify something, leave it out.
 3. For each university: all faculties, and **up to 10** of the most common undergraduate qualifications per faculty.
 4. `fieldCodes` must be codes that exist in `fields-of-study.json` (first order only for now). A qualification may have several.
 5. Add a schema and validate against it.
 6. In the PR description, flag that this data **needs human review** before merge.
 
 ## Acceptance criteria
-- [ ] 5 files, each valid against the schema
+- [ ] 2 files (`uct.json`, `wits.json`), each valid against the schema
 - [ ] Every `fieldCodes` entry exists in `fields-of-study.json` (check with the script below)
 - [ ] Every file lists at least one official `sourceUrls` entry on the university's domain
 - [ ] PR description says "needs human review" and lists any doubtful entries
@@ -59,5 +59,5 @@ You may create or modify **only**:
 ## How to verify
 ```bash
 for f in data/seed/faculties/*.json; do npx --yes ajv-cli@5 validate --spec=draft2020 -s data/seed/schemas/faculties.schema.json -d $f; done
-node -e "const codes=new Set(require('./data/seed/fields-of-study.json').map(f=>f.code));for(const u of ['uct','wits','up','su','uj']){const d=require('./data/seed/faculties/'+u+'.json');for(const f of d.faculties)for(const q of f.qualifications)for(const c of q.fieldCodes)if(!codes.has(c))throw new Error(u+': '+q.name+' bad code '+c)};console.log('ok')"
+node -e "const codes=new Set(require('./data/seed/fields-of-study.json').map(f=>f.code));for(const u of ['uct','wits']){const d=require('./data/seed/faculties/'+u+'.json');for(const f of d.faculties)for(const q of f.qualifications)for(const c of q.fieldCodes)if(!codes.has(c))throw new Error(u+': '+q.name+' bad code '+c)};console.log('ok')"
 ```
