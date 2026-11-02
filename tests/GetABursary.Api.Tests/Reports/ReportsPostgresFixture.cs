@@ -55,6 +55,9 @@ public sealed class ReportsPostgresFixture : IAsyncLifetime
 
     private sealed class ReportsPostgresApiFactory(string connectionString) : WebApplicationFactory<Program>
     {
+        protected override void ConfigureClient(HttpClient client) =>
+            client.DefaultRequestHeaders.Add("X-Requested-With", "getabursary");
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseSetting("Database:MigrateOnStartup", "false");

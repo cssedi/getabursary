@@ -4,11 +4,15 @@ using GetABursary.Core.Domain.Common;
 using GetABursary.Core.Domain.Ingestion;
 using GetABursary.Core.Domain.Reports;
 using GetABursary.Core.Domain.Taxonomy;
+using GetABursary.Core.Domain.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GetABursary.Core.Data;
 
-public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options, IClock clock) : DbContext(options)
+public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options, IClock clock)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<FieldOfStudy> FieldsOfStudy => Set<FieldOfStudy>();
 
@@ -46,12 +50,14 @@ public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options
 
     public DbSet<ReviewItem> ReviewItems => Set<ReviewItem>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        ArgumentNullException.ThrowIfNull(modelBuilder);
+        ArgumentNullException.ThrowIfNull(builder);
 
-        modelBuilder.HasPostgresExtension("pg_trgm");
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GetABursaryDbContext).Assembly);
+        base.OnModelCreating(builder);
+
+        builder.HasPostgresExtension("pg_trgm");
+        builder.ApplyConfigurationsFromAssembly(typeof(GetABursaryDbContext).Assembly);
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)

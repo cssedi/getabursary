@@ -150,6 +150,9 @@ public class ReportsEndpointTests
 
     private sealed class ReportsApiFactory(FakeListingReportRepository repository) : WebApplicationFactory<Program>
     {
+        protected override void ConfigureClient(HttpClient client) =>
+            client.DefaultRequestHeaders.Add("X-Requested-With", "getabursary");
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseSetting("Database:MigrateOnStartup", "false");
