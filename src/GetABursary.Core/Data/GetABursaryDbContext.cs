@@ -1,6 +1,8 @@
 using GetABursary.Core.Common;
 using GetABursary.Core.Domain.Bursaries;
 using GetABursary.Core.Domain.Common;
+using GetABursary.Core.Domain.Ingestion;
+using GetABursary.Core.Domain.Reports;
 using GetABursary.Core.Domain.Taxonomy;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,18 @@ public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options
     public DbSet<BursaryInstitution> BursaryInstitutions => Set<BursaryInstitution>();
 
     public DbSet<BursarySource> BursarySources => Set<BursarySource>();
+
+    public DbSet<RawListing> RawListings => Set<RawListing>();
+
+    public DbSet<IngestionRun> IngestionRuns => Set<IngestionRun>();
+
+    public DbSet<IngestionRunSource> IngestionRunSources => Set<IngestionRunSource>();
+
+    public DbSet<IngestionRunRequest> IngestionRunRequests => Set<IngestionRunRequest>();
+
+    public DbSet<ListingReport> ListingReports => Set<ListingReport>();
+
+    public DbSet<ReviewItem> ReviewItems => Set<ReviewItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -4,7 +4,7 @@ title: Add ingestion, report and review-queue entities
 phase: 1
 area: core
 model: haiku
-status: todo
+status: done
 depends_on: [T-006]
 requirements: [FR-08, FR-22, FR-25, FR-27, FR-41]
 issue: 7
