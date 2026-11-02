@@ -16,13 +16,22 @@
 ```
  spec change ─▶ orchestrator writes tasks/T-0xx-*.md  (status: todo)
              ─▶ scripts/sync-issues.mjs  ─▶ GitHub Issue (#N) with labels: task, phase:N, area:x, model:x
-             ─▶ all depends_on done?  ─▶ product owner adds label  agent:ready
-             ─▶ .github/workflows/claude.yml runs the implementer on the issue
-             ─▶ implementer: branch task/T-0xx-…, code + tests, marks the task done, opens PR "Closes #N"
-             ─▶ CI (.github/workflows/ci.yml) + reviewer (.github/workflows/claude-review.yml)
+             ─▶ AUTOPILOT (.github/workflows/autopilot.yml, on every push to main):
+                  picks ready tasks, critical path first, up to AUTOPILOT_MAX_PARALLEL (default 2) open at once,
+                  labels them agent:in-progress and runs implement.yml for each
+                (manual alternative: product owner adds label agent:ready → claude.yml)
+             ─▶ implementer: branch task/T-0xx, code + tests, marks the task done, opens PR "Closes #N"
+             ─▶ CI (ci.yml) + AI reviewer (claude-review.yml) ─▶ reviewer requests the product owner's review (notification)
              ─▶ fixes via "@claude …" comments on the PR (owner only)
-             ─▶ product owner merges  ─▶ issue closes  ─▶ next tasks become ready
+             ─▶ product owner merges  ─▶ issue closes  ─▶ push to main ─▶ autopilot picks the next tasks
 ```
+
+**Autopilot rules**
+- Switch: repository variable `AUTOPILOT` = `on` | `off`. Optional `AUTOPILOT_MAX_PARALLEL` (default `2`).
+- Priority: longest chain of tasks waiting on it ("critical path"), then how many tasks it unlocks, then task ID (`node scripts/sync-issues.mjs --ready`).
+- A task with an open PR or the `agent:in-progress`/`agent:blocked` label is never started twice. Open PRs awaiting review count against the parallel limit, so unreviewed work can't pile up.
+- If a run fails or ends without a PR, the issue gets `agent:blocked` with a link to the run. Remove the label to let the autopilot retry.
+- If a PR is closed **without** merging, remove `agent:in-progress` from its issue so the task can be picked again.
 
 **Status values** (task front-matter): `todo` → `ready` (dependencies done) → `in-progress` → `done` | `blocked`.
 

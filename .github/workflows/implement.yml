@@ -1,0 +1,84 @@
+# Reusable implementer run for one task. Called by autopilot.yml.
+name: Implement task
+
+on:
+  workflow_call:
+    inputs:
+      issue:
+        type: number
+        required: true
+      task_id:
+        type: string
+        required: true
+      task_file:
+        type: string
+        required: true
+      model:
+        type: string
+        required: true
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: claude-${{ inputs.issue }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Mark in progress
+        run: gh issue edit ${{ inputs.issue }} -R "$GITHUB_REPOSITORY" --add-label agent:in-progress
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        if: ${{ hashFiles('global.json') != '' }}
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            ISSUE: #${{ inputs.issue }}
+            TASK: ${{ inputs.task_id }} (tasks/${{ inputs.task_file }})
+
+            You are an implementer agent for GetABursary.
+            1. Read AGENTS.md, then the task file tasks/${{ inputs.task_file }} and every spec section it lists.
+               (`gh issue view ${{ inputs.issue }}` shows the same task plus any discussion.)
+            2. Create the branch `task/${{ inputs.task_id }}` from main.
+            3. Implement ONLY this task, inside its Scope, with the tests it requires.
+            4. Run `dotnet build` and `dotnet test` (and any "How to verify" commands) until they pass.
+            5. Set `status: done` in the task file's front-matter. Commit (Conventional Commits, mention ${{ inputs.task_id }}) and push.
+            6. Open ONE pull request with `gh pr create --base main`. The body must start with "Lesdee," and contain
+               "Closes #${{ inputs.issue }}", the ticked acceptance criteria, and the verification commands you ran with results.
+            If you are blocked (unclear spec, files outside Scope needed, approach doesn't work): do NOT guess.
+            Run `gh issue comment ${{ inputs.issue }} --body "Lesdee, BLOCKED: <reason> ..."` with your question and options, then stop.
+          claude_args: |
+            --model ${{ inputs.model == 'haiku' && 'claude-haiku-5-5' || 'claude-sonnet-5-5' }}
+            --max-turns 60
+            --allowedTools "Edit,Write,Read,Glob,Grep,Bash(dotnet:*),Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(docker:*),Bash(git:*),Bash(gh pr create:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(ls:*),Bash(mkdir:*),Bash(curl:*),WebFetch,WebSearch"
+
+      - name: Clear in-progress label if a PR was opened
+        if: success()
+        run: |
+          if gh pr list -R "$GITHUB_REPOSITORY" --state open --head "task/${{ inputs.task_id }}" --json number --jq 'length' | grep -q '^[1-9]'; then
+            echo "PR opened; keeping agent:in-progress until it merges."
+          else
+            gh issue edit ${{ inputs.issue }} -R "$GITHUB_REPOSITORY" --remove-label agent:in-progress --add-label agent:blocked
+            gh issue comment ${{ inputs.issue }} -R "$GITHUB_REPOSITORY" --body "Lesdee, the autopilot run finished without opening a PR. Marked \`agent:blocked\`. See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
+      - name: Mark blocked on failure
+        if: failure() || cancelled()
+        run: |
+          gh issue edit ${{ inputs.issue }} -R "$GITHUB_REPOSITORY" --remove-label agent:in-progress --add-label agent:blocked
+          gh issue comment ${{ inputs.issue }} -R "$GITHUB_REPOSITORY" --body "Lesdee, the autopilot run failed. Marked \`agent:blocked\`. See ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

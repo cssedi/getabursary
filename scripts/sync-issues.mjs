@@ -3,7 +3,8 @@
 //
 // Usage:
 //   node scripts/sync-issues.mjs --check     validate front-matter + dependency graph (used in CI, no network)
-//   node scripts/sync-issues.mjs --ready     list tasks whose dependencies are all done
+//   node scripts/sync-issues.mjs --ready     list tasks whose dependencies are all done, critical path first
+//   node scripts/sync-issues.mjs --ready --json   same, as JSON (used by the autopilot workflow)
 //   node scripts/sync-issues.mjs             create/update issues and labels (needs `gh` authenticated)
 //   node scripts/sync-issues.mjs --dry-run   show what would be created/updated
 //
@@ -28,6 +29,7 @@ const LABELS = {
   task: { color: '1d76db', description: 'Agent task mirrored from tasks/' },
   'agent:ready': { color: '0e8a16', description: 'Dependencies done; implementer agent may start' },
   'agent:blocked': { color: 'b60205', description: 'Agent needs a human decision' },
+  'agent:in-progress': { color: 'fbca04', description: 'Autopilot has started an implementer on this task' },
   'model:haiku': { color: 'c5def5', description: 'Implement with the small model' },
   'model:sonnet': { color: '5319e7', description: 'Implement with the medium model' },
   ...Object.fromEntries(AREAS.map((a) => [`area:${a}`, { color: 'fbca04', description: `Area: ${a}` }])),
@@ -102,11 +104,33 @@ function validate(tasks) {
   return { errors, byId };
 }
 
+// Priority = length of the longest chain of tasks that waits on this one (critical path first),
+// then number of tasks that transitively depend on it, then task id.
+function priorities(tasks) {
+  const dependents = new Map(tasks.map((t) => [t.meta.id, []]));
+  for (const t of tasks) for (const d of t.meta.depends_on || []) dependents.get(d)?.push(t.meta.id);
+  const depth = new Map();
+  const chain = (id) => {
+    if (!depth.has(id)) depth.set(id, 1 + Math.max(0, ...dependents.get(id).map(chain)));
+    return depth.get(id);
+  };
+  const reach = (id, seen = new Set()) => {
+    for (const c of dependents.get(id)) if (!seen.has(c)) { seen.add(c); reach(c, seen); }
+    return seen;
+  };
+  return new Map(tasks.map((t) => [t.meta.id, { chain: chain(t.meta.id), unlocks: reach(t.meta.id).size }]));
+}
+
 function readyTasks(tasks, byId) {
-  return tasks.filter(
-    (t) => ['todo', 'ready'].includes(t.meta.status) &&
-      (t.meta.depends_on || []).every((d) => byId.get(d)?.meta.status === 'done'),
-  );
+  const prio = priorities(tasks);
+  return tasks
+    .filter(
+      (t) => ['todo', 'ready'].includes(t.meta.status) &&
+        (t.meta.depends_on || []).every((d) => byId.get(d)?.meta.status === 'done'),
+    )
+    .map((t) => Object.assign(t, { priority: prio.get(t.meta.id) }))
+    .sort((a, b) => b.priority.chain - a.priority.chain || b.priority.unlocks - a.priority.unlocks ||
+      a.meta.id.localeCompare(b.meta.id));
 }
 
 // ---------- GitHub ----------
@@ -159,7 +183,16 @@ if (args.has('--check')) {
   process.exit(0);
 }
 if (args.has('--ready')) {
-  for (const t of readyTasks(tasks, byId)) console.log(`${t.meta.id}  #${t.meta.issue ?? '?'}  [${t.meta.model}]  ${t.meta.title}`);
+  const ready = readyTasks(tasks, byId);
+  if (args.has('--json')) {
+    console.log(JSON.stringify(ready.map((t) => ({
+      id: t.meta.id, issue: t.meta.issue, model: t.meta.model, title: t.meta.title, file: t.file, ...t.priority,
+    }))));
+  } else {
+    for (const t of ready) {
+      console.log(`${t.meta.id}  #${t.meta.issue ?? '?'}  [${t.meta.model}]  chain=${t.priority.chain} unlocks=${t.priority.unlocks}  ${t.meta.title}`);
+    }
+  }
   process.exit(0);
 }
 

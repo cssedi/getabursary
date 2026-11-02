@@ -1,0 +1,87 @@
+# Autopilot: after every merge to main, start implementer agents on the tasks whose
+# dependencies are all done, critical path first, up to AUTOPILOT_MAX_PARALLEL at a time.
+#
+# Switch on/off with the repository variable AUTOPILOT = on | off
+# (Settings → Secrets and variables → Actions → Variables). Optional: AUTOPILOT_MAX_PARALLEL (default 2).
+# Manual labelling with `agent:ready` (claude.yml) keeps working either way.
+name: Autopilot
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: autopilot
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: vars.AUTOPILOT == 'on'
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+      count: ${{ steps.pick.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Pick ready tasks
+        id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX: ${{ vars.AUTOPILOT_MAX_PARALLEL || '2' }}
+        run: |
+          set -euo pipefail
+          node scripts/sync-issues.mjs --ready --json > ready.json
+          echo "Ready (priority order):"; jq -r '.[] | "  \(.id) #\(.issue) chain=\(.chain) unlocks=\(.unlocks)"' ready.json
+
+          running=$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&labels=agent:in-progress&per_page=100" --jq 'length')
+          slots=$(( MAX - running )); (( slots < 0 )) && slots=0
+          echo "In progress: $running, free slots: $slots"
+
+          open_pr_bodies=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq '[.[].body // ""] | join("\n")')
+
+          picked='[]'
+          for row in $(jq -c '.[]' ready.json); do
+            (( $(jq 'length' <<<"$picked") >= slots )) && break
+            issue=$(jq -r '.issue' <<<"$row")
+            [[ "$issue" == "null" ]] && continue
+            labels=$(gh api "repos/$GITHUB_REPOSITORY/issues/$issue" --jq '[.labels[].name] | join(",")')
+            state=$(gh api "repos/$GITHUB_REPOSITORY/issues/$issue" --jq '.state')
+            if [[ "$state" != "open" || ",$labels," == *",agent:in-progress,"* || ",$labels," == *",agent:blocked,"* ]]; then
+              echo "  skip #$issue ($state; $labels)"; continue
+            fi
+            if grep -qiE "(closes|fixes|resolves) #$issue\b" <<<"$open_pr_bodies"; then
+              echo "  skip #$issue (open PR exists)"; continue
+            fi
+            picked=$(jq -c --argjson r "$row" '. + [$r]' <<<"$picked")
+          done
+
+          echo "Picked: $(jq -r 'map(.id) | join(", ")' <<<"$picked")"
+          echo "matrix={\"include\":$picked}" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq 'length' <<<"$picked")" >> "$GITHUB_OUTPUT"
+
+  implement:
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    uses: ./.github/workflows/implement.yml
+    with:
+      issue: ${{ matrix.issue }}
+      task_id: ${{ matrix.id }}
+      task_file: ${{ matrix.file }}
+      model: ${{ matrix.model }}
+    secrets: inherit
