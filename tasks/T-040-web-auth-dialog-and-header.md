@@ -4,7 +4,7 @@ title: Web sign-in/sign-up dialog, auth state, header account menu, sign-in prom
 phase: 5
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-038]
 requirements: [FR-09, FR-10]
 issue: 77

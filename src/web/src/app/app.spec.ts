@@ -10,7 +10,10 @@ import { bursaryDetail } from '../testing/fixtures';
 
 describe('App shell', () => {
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [App], providers: [provideRouter(routes)] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
   });
 
   it('renders header logo and footer links', async () => {
