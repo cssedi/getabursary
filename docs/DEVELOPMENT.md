@@ -55,6 +55,20 @@ Adapter tests use saved HTML fixtures and make no live network calls.
 ## Never commit secrets
 
 - Do **not** commit `.env`, real connection strings, API keys, passwords or personal data. This repository is public.
+### Google sign-in (optional)
+
+Without credentials the app still starts and `GET /api/v1/auth/external/google` returns 404.
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), create or pick a project, then open **APIs & Services > OAuth consent screen** and configure it (External, add your own Google account as a test user).
+2. Open **APIs & Services > Credentials > Create credentials > OAuth client ID**, application type **Web application**.
+3. Add the authorised redirect URI `{App:PublicBaseUrl}/signin-google`, for example `https://localhost:5001/signin-google` locally.
+4. Store the client ID and secret with user secrets (never commit them):
+
+```bash
+dotnet user-secrets set "Auth:Google:ClientId" "<client id>" --project src/GetABursary.Api
+dotnet user-secrets set "Auth:Google:ClientSecret" "<client secret>" --project src/GetABursary.Api
+```
+
 - Keep real values in `.env` (git-ignored) or in `dotnet user-secrets`. Only placeholders belong in `.env.example`.
 - Before pushing, check that `git status` shows no `.env` or `appsettings.*.local.json` file.
 - If a secret is committed by accident, rotate it immediately. Deleting the commit is not enough.

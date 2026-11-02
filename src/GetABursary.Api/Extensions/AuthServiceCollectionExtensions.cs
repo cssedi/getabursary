@@ -3,6 +3,7 @@ using GetABursary.Api.Services.Auth;
 using GetABursary.Api.Services.Reports;
 using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Users;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace GetABursary.Api.Extensions;
@@ -31,6 +32,21 @@ public static class AuthServiceCollectionExtensions
             .AddRoles<IdentityRole<Guid>>()
             .AddUserManager<AppUserManager>()
             .AddEntityFrameworkStores<GetABursaryDbContext>();
+
+        services.AddScoped<IExternalLoginService, ExternalLoginService>();
+
+        var clientId = configuration["Auth:Google:ClientId"];
+        var clientSecret = configuration["Auth:Google:ClientSecret"];
+        if (!string.IsNullOrWhiteSpace(clientId) && !string.IsNullOrWhiteSpace(clientSecret))
+        {
+            services.AddAuthentication().AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.ClientId = clientId;
+                options.ClientSecret = clientSecret;
+                options.ClaimActions.MapJsonKey("email_verified", "email_verified");
+            });
+        }
 
         services.ConfigureApplicationCookie(options =>
         {
