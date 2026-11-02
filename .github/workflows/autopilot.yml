@@ -52,7 +52,7 @@ jobs:
           open_pr_bodies=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq '[.[].body // ""] | join("\n")')
 
           picked='[]'
-          for row in $(jq -c '.[]' ready.json); do
+          while IFS= read -r row; do
             (( $(jq 'length' <<<"$picked") >= slots )) && break
             issue=$(jq -r '.issue' <<<"$row")
             [[ "$issue" == "null" ]] && continue
@@ -65,7 +65,7 @@ jobs:
               echo "  skip #$issue (open PR exists)"; continue
             fi
             picked=$(jq -c --argjson r "$row" '. + [$r]' <<<"$picked")
-          done
+          done < <(jq -c '.[]' ready.json)
 
           echo "Picked: $(jq -r 'map(.id) | join(", ")' <<<"$picked")"
           echo "matrix={\"include\":$picked}" >> "$GITHUB_OUTPUT"
