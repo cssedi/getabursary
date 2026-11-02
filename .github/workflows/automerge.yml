@@ -94,6 +94,11 @@ jobs:
           if [[ "$verdict" == "APPROVE" ]]; then
             gh pr merge "$pr" -R "$R" --merge --delete-branch --match-head-commit "$sha"
             gh pr comment "$pr" -R "$R" --body "Lesdee, auto-merged: CI green and AI review approved (commit ${sha:0:7})."
+            # GitHub doesn't apply "Closes #N" for merges made with GITHUB_TOKEN, so close linked issues explicitly.
+            for n in $(jq -r .body <<<"$json" | grep -oiE '(closes|fixes|resolves) #[0-9]+' | grep -oE '[0-9]+' | sort -u); do
+              gh issue edit "$n" -R "$R" --remove-label agent:in-progress 2>/dev/null || true
+              gh issue close "$n" -R "$R" --reason completed --comment "Lesdee, done in #$pr." || true
+            done
             # Merges made with GITHUB_TOKEN don't trigger push workflows, so start the autopilot explicitly.
             gh workflow run autopilot.yml -R "$R" --ref main || true
           fi
