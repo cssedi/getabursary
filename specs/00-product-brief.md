@@ -132,6 +132,8 @@ The MVP launches with the P0 sources. Each further source is a self-contained ad
 ### 6.3 Content policy
 We store **facts** (name, funder, eligibility, dates, links) and write our own short summary. We don't copy aggregators' long-form text or images. We always link to the source and, where we can, to the funder.
 
+**Robots rule (decided 2026-11-02):** scrape a source only while its `robots.txt` allows our User-Agent (`GetABursaryBot`) or `*` for the paths we fetch. Blocks aimed at other named bots (e.g. GPTBot, CCBot on StudyTrust) don't apply to us. If a source ever disallows us, the polite fetcher stops automatically and an admin disables the source.
+
 ## 7. Search & matching approach — **decided: PostgreSQL only ([ADR-001](adr/ADR-001-postgres-only.md))**
 
 The "intelligence" comes from two things: a **structured taxonomy** (Qualification → Field of study, using CESM) and **LLM extraction at ingestion** that turns each bursary's free text into structured eligibility. Once both exist, a search is a short traversal:
