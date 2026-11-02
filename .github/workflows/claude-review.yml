@@ -45,6 +45,9 @@ jobs:
                no secrets; no unjustified dependencies; migrations follow the rules; PR description starts with 'Lesdee,'.
             4. Post ONE summary comment starting with 'Lesdee,' and a verdict line: `VERDICT: APPROVE`, `VERDICT: CHANGES REQUESTED`
                or `VERDICT: NEEDS HUMAN`. List blocking issues first, then optional suggestions. Use inline comments for specific lines.
+            Scope changes approved in a PR/issue comment by the repo owner (@cssedi) or in an "orchestrator note" comment count as in Scope.
+            Use NEEDS HUMAN only for decisions an agent can't make (product/spec choices, data that must be checked by a person, security).
+            Always end with exactly one VERDICT line.
             Be strict about scope creep and missing tests. Be brief.
           claude_args: |
             --model claude-sonnet-5-5
@@ -52,8 +55,8 @@ jobs:
             --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh issue view:*)"
 
       # Notify the product owner: request their review once the AI review is in (whatever the verdict).
-      - name: Request human review
-        if: always()
+      - name: Request human review (only when auto-merge is off; automerge.yml handles it otherwise)
+        if: always() && vars.AUTOMERGE != 'on'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

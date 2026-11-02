@@ -26,6 +26,12 @@
              ─▶ product owner merges  ─▶ issue closes  ─▶ push to main ─▶ autopilot picks the next tasks
 ```
 
+**Auto-merge rules** (`.github/workflows/automerge.yml`, switch: repo variable `AUTOMERGE` = `on` | `off`)
+- Runs when CI or the AI reviewer finishes on a PR. It acts only once **all** checks on the latest commit are done.
+- **Merges** when every check is green, the verdict is `APPROVE` and there is no human trigger. Then it starts the autopilot.
+- **Starts a fix run** (`fix.yml`, at most 2 attempts per PR) on a failed check or `CHANGES REQUESTED`.
+- **Pauses for the product owner** (label `needs:human`, review requested, one comment saying why) when: the verdict is `NEEDS HUMAN`; the PR says "needs human review" (e.g. seed data); the PR touches `.github/`, `specs/`, `AGENTS.md` or `CLAUDE.md`; or 2 fix attempts are used up. To resume after you've dealt with it: merge it yourself, or remove `needs:human`.
+
 **Autopilot rules**
 - Switch: repository variable `AUTOPILOT` = `on` | `off`. Optional `AUTOPILOT_MAX_PARALLEL` (default `2`).
 - Priority: longest chain of tasks waiting on it ("critical path"), then how many tasks it unlocks, then task ID (`node scripts/sync-issues.mjs --ready`).
