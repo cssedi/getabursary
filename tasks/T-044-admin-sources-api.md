@@ -18,7 +18,7 @@ Admins see each scraper source's health and last run, switch sources on or off, 
 - `specs/02-data-model.md` §2.3; the worker polls `ingestion_run_request` (T-011)
 
 ## Scope
-- `src/GetABursary.Api/Controllers/Admin/SourcesController.cs`, `src/GetABursary.Api/Services/Admin/**`, `src/GetABursary.Api/DTOs/Admin/**`, `src/GetABursary.Core/Repositories/Ingestion/**` (read methods only)
+- `src/GetABursary.Api/Controllers/Admin/SourcesController.cs`, `src/GetABursary.Api/Services/Admin/**`, `src/GetABursary.Api/DTOs/Admin/**`, `src/GetABursary.Core/Repositories/Ingestion/**` (read methods, plus the two writes this task needs: set `Source.Enabled`, insert `IngestionRunRequest`. Orchestrator widening 2026-11-02)
 - `tests/GetABursary.Api.Tests/Admin/**`
 
 ## Requirements

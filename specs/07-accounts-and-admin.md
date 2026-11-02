@@ -13,7 +13,7 @@
 
 ## 2. Admin tab (Epic B)
 - **Route:** `/admin`, visible in the header only for admins; the API enforces `[Authorize(Roles = "Admin")]` on every `/api/v1/admin/*` endpoint (the UI guard is convenience, not security).
-- **Review queue (FR-41):** a list of open `review_item`s, newest first, filterable by type (New listing, Low confidence, Possible duplicate, Vanished, User report). Each item shows the bursary summary and the reason. Actions: **Publish** (sets `is_published`, resolves the item), **Edit** (opens the editor), **Dismiss** (resolves, with an optional note), **Mark closed**.
+- **Review queue (FR-41):** a list of open `review_item`s, newest first, filterable by type (New listing, Low confidence, Possible duplicate, Vanished, User report). Each item shows the bursary summary and the reason. Actions: **Publish** (sets `is_published`, resolves the item), **Edit** (opens the editor), **Dismiss** (resolves, with an optional note), **Mark closed**. The bursary editor can also publish/unpublish any bursary through `PATCH` with `isPublished` (not a locked field).
 - **Bursary editor (FR-42):** edit name, funder, closing date, open date, study levels, min average, coverage, fields of study, apply URL, summary. Every field the admin changes is added to `locked_fields`, so ingestion never overwrites it. Shows "locked" next to locked fields with an unlock control.
 - **Sources (FR-43):** a table of sources: enabled toggle, last run time, last run counts (discovered/created/updated/failed), last error. A **Run now** button (all sources, or one source) inserts an `ingestion_run_request`; the worker picks it up within a minute (T-011).
 - **Bursary list:** search all bursaries by name (published or not) to edit any of them.

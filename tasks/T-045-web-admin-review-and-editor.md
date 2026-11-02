@@ -19,6 +19,7 @@ An `/admin` area where admins clear the review queue (publish, dismiss, mark clo
 
 ## Scope
 - `src/web/src/app/features/admin/**` (new), `src/web/src/app/core/api/**` (admin calls), `app.routes.ts` (admin routes + guard)
+- Orchestrator widening 2026-11-02: `src/GetABursary.Api/Services/Admin/**`, `src/GetABursary.Api/DTOs/Admin/**`, `tests/GetABursary.Api.Tests/Admin/**`, only to let `PATCH /api/v1/admin/bursaries/{id}` accept `isPublished` (true/false). It is **not** added to `locked_fields`. Add tests for publish and unpublish.
 
 ## Requirements
 1. Route guard: only `isAdmin()` users; others see the 404 page (don't reveal the admin area). Admin pages set `<meta name="robots" content="noindex">`.
