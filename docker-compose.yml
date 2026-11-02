@@ -1,0 +1,28 @@
+name: getabursary
+
+# Local development services. Start the database with:
+#   docker compose up -d db
+# Values are read from .env (copy .env.example first). Defaults apply when unset.
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: getabursary-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-getabursary}
+      POSTGRES_USER: ${POSTGRES_USER:-getabursary}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - getabursary-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  getabursary-pgdata:
+    name: getabursary-pgdata
