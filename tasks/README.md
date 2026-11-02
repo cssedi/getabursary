@@ -18,11 +18,11 @@ To start a task, add the **`agent:ready`** label to its issue. Do this only when
 | **1** | Data model & reference data | Detailed (T-005–T-010) |
 | **2** | Ingestion worker: HTTP, adapters, extraction, dedupe | Detailed (T-011–T-019) |
 | **3** | Public read API: taxonomy, search, detail, reports | Detailed (T-020–T-023) |
-| 4 | Angular web app: SSR scaffold, search page, detail, local tracker, report modal, SEO pages | Roadmap; detailed after Phase 1 |
-| 5 | Accounts (Identity + Google), synced tracker, admin review queue, source and taxonomy management | Roadmap |
+| **4** | Angular web app: SSR scaffold, API client, degree picker + filters, results, detail, report dialog, SEO pages | Detailed (T-025–T-031) |
+| 5 | Accounts (Identity + Google), sign-in prompt, saved bursaries + tracker, admin review queue, source and taxonomy management | Roadmap; detailed when Phase 3 lands |
 | 6 | Launch: VPS deploy (Docker Compose + Caddy), ads + consent, privacy policy, monitoring, budget alerts | Roadmap |
 
-## Dependency graph (Phases 0–3)
+## Dependency graph (Phases 0–4)
 
 ```mermaid
 graph LR
@@ -58,6 +58,14 @@ graph LR
   T021 --> T022[T-022 detail]
   T003 --> T023[T-023 reports]
   T007 --> T023
+  T025[T-025 Angular scaffold] --> T026[T-026 API client]
+  T026 --> T027[T-027 picker + filters]
+  T027 --> T028[T-028 results + cards]
+  T026 --> T029[T-029 detail page]
+  T028 --> T030[T-030 report dialog]
+  T029 --> T030
+  T028 --> T031[T-031 SEO pages + sitemap]
+  T029 --> T031
 ```
 
 **Can start immediately (in parallel):** T-001, T-002, T-008.

@@ -8,7 +8,8 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 | 01 | [Architecture](01-architecture.md) | Accepted v1.0 |
 | 02 | [Data model & matching](02-data-model.md) | Accepted v1.0 |
 | 03 | [Engineering conventions](03-conventions.md) | Accepted v1.0 |
-| 04 | [Agentic development workflow](04-agent-workflow.md) | Accepted v1.0 |
+| 04 | [Agentic development workflow](04-agent-workflow.md) | Accepted v1.1 |
+| 05 | [Web app (Angular)](05-web.md) | Accepted v1.0 |
 
 ## Architecture Decision Records
 | ADR | Title | Status |
@@ -27,3 +28,5 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 | 2026-11-02 | Marks filter = overall average only | Brief FR-01, Q5 |
 | 2026-11-02 | MVP qualifications for the big 5 (UCT, Wits, UP, SU, UJ) | Brief FR-32 |
 | 2026-11-02 | Account required only for actions that save the user's own data | Brief FR-09, Architecture §3.3 |
+| 2026-11-02 | Web: Tailwind + Angular CDK, no component library; same-origin hosting (no CORS) | Spec 05 §1–§2 |
+| 2026-11-02 | Auto-merge green + approved PRs; human only for flagged cases | Spec 04 |
