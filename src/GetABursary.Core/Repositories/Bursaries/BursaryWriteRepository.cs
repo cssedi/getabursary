@@ -1,5 +1,6 @@
 using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Bursaries;
+using GetABursary.Core.Domain.Common.Enums;
 using GetABursary.Core.Domain.Ingestion;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,6 +84,22 @@ public class BursaryWriteRepository(GetABursaryDbContext db) : IBursaryWriteRepo
 #pragma warning restore CA1304, CA1311
             .Select(i => i.Id)
             .ToListAsync(ct);
+    }
+
+    public Task<int> CloseExpiredAsync(DateOnly today, DateTimeOffset now, CancellationToken ct) =>
+        db.Bursaries
+            .Where(b => b.IsPublished && b.Status != BursaryStatus.Closed && b.ClosingDate != null && b.ClosingDate < today)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(b => b.Status, BursaryStatus.Closed)
+                .SetProperty(b => b.UpdatedAt, now), ct);
+
+    public Task<bool> HasOtherSourceSeenSinceAsync(Guid bursaryId, Guid sourceId, string url, DateTimeOffset since, CancellationToken ct)
+    {
+        var urls = new[] { url, new Uri(url).ToString() };
+        return db.BursarySources.AsNoTracking()
+            .AnyAsync(s => s.BursaryId == bursaryId
+                && !(s.SourceId == sourceId && urls.Contains(s.SourceUrl))
+                && s.LastSeenAt >= since, ct);
     }
 
     public void Add(Bursary bursary) => db.Bursaries.Add(bursary);

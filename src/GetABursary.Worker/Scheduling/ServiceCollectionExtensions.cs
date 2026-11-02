@@ -10,7 +10,6 @@ public static class ServiceCollectionExtensions
     {
         services.Configure<IngestionOptions>(configuration.GetSection(IngestionOptions.SectionName));
         services.AddScoped<IIngestionRunRepository, IngestionRunRepository>();
-        services.AddScoped<IIngestionPipeline, NoOpIngestionPipeline>();
         services.AddSingleton<IScheduleCalculator, ScheduleCalculator>();
         services.AddSingleton<IRunTrigger, RunTrigger>();
         services.AddHostedService<IngestionScheduler>();
