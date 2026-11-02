@@ -11,6 +11,17 @@ GetABursary helps South African students find bursaries they actually qualify fo
 2. Read `specs/03-conventions.md`. It's mandatory, and PRs that break it will be rejected.
 3. Only create or modify files listed in the task's **Scope**. If you need anything else, stop and escalate (below).
 
+## How to implement: smallest complete change ("ponytail")
+Product-owner rule (2026-11-02). Be lazy about the solution, never about finishing it.
+1. **Before writing:** read the task and the code it touches. List every place the change must reach (callers, tests, fixtures, config, DI registration). That is the scope. Extra features are not.
+2. **Take the first option that fully works:** does it need to exist at all → already in this repo (helper, service, component, pattern; reuse it the way surrounding code does) → .NET/Angular/standard library or platform → an installed dependency → a one-liner a reader gets at a glance → otherwise the minimum code that works.
+3. **No** abstractions, wrappers, options, config, interfaces with one implementation beyond what the layering rules require, or "for later" code. Keep the existing structure (Controller → Service → Repository, folders, conventions). Deletion beats addition.
+4. **Bug fixes:** grep every caller first, then fix the root cause once in the shared code.
+5. **Tests:** new non-trivial logic (a branch, loop, parser, money, security, data writes, a bug fix) gets at least one small test that fails when it breaks. Trivial changes need none beyond the task's acceptance criteria.
+6. **Known limits:** mark a deliberate shortcut with a one-line comment `// shortcut: <the limit>, <when to upgrade>`.
+7. **Never cut:** input validation at trust boundaries, error handling that prevents data loss, security, accessibility, anything the task asks for.
+8. **PR description:** end with one or two lines: what you skipped or didn't check, and any risk.
+
 ## Frontend work (anything under `src/web/`)
 - `specs/06-design.md` **governs** all visual design, copy and interface behaviour. Read §2–§8 before writing UI. If a task file or `05-web.md` disagrees with it, 06 wins.
 - Before opening the PR, go through the **§7 checklist** for every file you touched, and add a "Design checklist" section to the PR listing anything you couldn't meet and why.

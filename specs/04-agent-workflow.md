@@ -41,6 +41,10 @@
 
 **Status values** (task front-matter): `todo` → `ready` (dependencies done) → `in-progress` → `done` | `blocked`.
 
+## 2b. Engineering style (product-owner rule, 2026-11-02)
+- **Implementers** follow the "smallest complete change" rules in `AGENTS.md` (the *ponytail* approach).
+- **The reviewer** follows the *ponytail-review* approach (`claude-review.yml`): correct → safe → holds under load → tested → fast → lean; plain-English findings grouped Must / Should / Nice, each with what / problem / fix / if-we-skip; ends with a `VERDICT:` line for auto-merge.
+
 ## 3. What makes a good task (orchestrator checklist)
 - **Small:** one PR, ideally under about 300 changed lines (excluding generated migrations and fixtures).
 - **Self-contained:** the "Context" section lists the exact spec sections to read. The implementer should never need to guess.
