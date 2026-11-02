@@ -11,6 +11,11 @@ GetABursary helps South African students find bursaries they actually qualify fo
 2. Read `specs/03-conventions.md`. It's mandatory, and PRs that break it will be rejected.
 3. Only create or modify files listed in the task's **Scope**. If you need anything else, stop and escalate (below).
 
+## Frontend work (anything under `src/web/`)
+- `specs/06-design.md` **governs** all visual design, copy and interface behaviour. Read §2–§8 before writing UI. If a task file or `05-web.md` disagrees with it, 06 wins.
+- Before opening the PR, go through the **§7 checklist** for every file you touched, and add a "Design checklist" section to the PR listing anything you couldn't meet and why.
+- Never introduce: card grids with shadows, gradients, all-caps labels, middle-dot meta strings, `→` in button text, `transition: all`, hard-coded date formats, or colours outside the §3 tokens.
+
 ## Standing scope allowance (applies to every task)
 On top of your task's Scope, you **may** change these when your work legitimately needs it, without escalating:
 - **Test infrastructure:** test project `.csproj` files (adding packages already pinned in `Directory.Packages.props`), shared fixtures/factories (e.g. Postgres/Testcontainers fixtures, `WebApplicationFactory` subclasses), and test helpers under `tests/**` or `src/web/src/testing/**`.

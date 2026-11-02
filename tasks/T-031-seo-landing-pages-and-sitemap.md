@@ -5,7 +5,7 @@ phase: 4
 area: web
 model: sonnet
 status: todo
-depends_on: [T-028, T-029]
+depends_on: [T-028, T-029, T-032]
 requirements: [NFR-02]
 issue: 40
 ---
