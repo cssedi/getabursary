@@ -178,6 +178,19 @@ public sealed partial class AdminEndpointTests(AuthFixture fixture)
     }
 
     [Fact]
+    public async Task Patch_NullFieldCode_Returns400()
+    {
+        var bursary = await AddBursaryAsync();
+        using var client = await SignInAdminAsync();
+
+        using var bad = await client.PatchAsync(
+            $"/api/v1/admin/bursaries/{bursary.Id}",
+            new StringContent("{\"fieldCodes\":[null]}", System.Text.Encoding.UTF8, "application/json"));
+
+        Assert.Equal(HttpStatusCode.BadRequest, bad.StatusCode);
+    }
+
+    [Fact]
     public async Task Merge_AfterPatch_DoesNotOverwriteLockedFieldButUpdatesOthers()
     {
         var bursary = await AddBursaryAsync(name: "Merge Lock Original");

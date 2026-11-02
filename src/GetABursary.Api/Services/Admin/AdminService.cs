@@ -336,11 +336,13 @@ public sealed class AdminService(
 
     private async Task<Error?> SetFieldsAsync(Bursary b, string key, JsonElement v, CancellationToken ct)
     {
-        var codes = v.Deserialize<List<string>>()?.Select(c => c.Trim()).Distinct(StringComparer.Ordinal).ToList();
-        if (codes is null)
+        var raw = v.Deserialize<List<string?>>();
+        if (raw is null || raw.Any(string.IsNullOrWhiteSpace))
         {
             return AdminErrors.InvalidField(key, "must be a list of field-of-study codes");
         }
+
+        var codes = raw.Select(c => c!.Trim()).Distinct(StringComparer.Ordinal).ToList();
 
         var ids = (await bursaryWrites.GetFieldIdsByCodesAsync(codes, ct)).ToHashSet();
         if (ids.Count != codes.Count)
