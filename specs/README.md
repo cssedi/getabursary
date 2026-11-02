@@ -12,6 +12,7 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 | 05 | [Web app (Angular)](05-web.md) | Accepted v1.1 |
 | 06 | [Design system & interface rules](06-design.md) | Accepted v1.0 (governs frontend) |
 | 07 | [Accounts, saved bursaries & admin](07-accounts-and-admin.md) | Accepted v1.0 |
+| 08 | [Hosting cost analysis](08-hosting.md) | Draft v0.1 |
 
 ## Architecture Decision Records
 | ADR | Title | Status |
