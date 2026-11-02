@@ -4,7 +4,7 @@ title: Bursary detail page with SSR, SEO metadata and closed state
 phase: 4
 area: web
 model: haiku
-status: todo
+status: done
 depends_on: [T-026]
 requirements: [FR-06, FR-07, NFR-02]
 issue: 38
