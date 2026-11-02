@@ -337,6 +337,7 @@ export class SourcesPage {
     return `${error.slice(0, ERROR_PREVIEW).trimEnd()}…`;
   }
 
+  // shortcut: relative times are re-read on each render (a poll or a click), not on a timer; upgrade if admins keep the tab open.
   protected relative(iso: string): string {
     return relativeTime(iso);
   }
