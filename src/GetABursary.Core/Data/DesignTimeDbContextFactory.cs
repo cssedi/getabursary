@@ -7,7 +7,7 @@ namespace GetABursary.Core.Data;
 /// <summary>Lets <c>dotnet ef</c> create the context. Uses <c>ConnectionStrings__Default</c> or the local docker default.</summary>
 public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<GetABursaryDbContext>
 {
-    private const string LocalDefault = "Host=localhost;Port=5432;Database=getabursary;Username=getabursary;Password=localdev";
+    private const string LocalDefault = "Host=localhost;Port=5433;Database=getabursary;Username=getabursary;Password=localdev";
 
     public GetABursaryDbContext CreateDbContext(string[] args)
     {

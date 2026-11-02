@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-getabursary}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - getabursary-pgdata:/var/lib/postgresql/data
     healthcheck:

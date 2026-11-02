@@ -23,7 +23,7 @@ docker compose up -d db
 docker compose ps   # the db service should show "healthy" after a few seconds
 ```
 
-This starts PostgreSQL 17 on `localhost:5432`, with data kept in the named volume `getabursary-pgdata`. Stop it with:
+This starts PostgreSQL 17 on `localhost:5433` (not 5432, so it never clashes with another local Postgres), with data kept in the named volume `getabursary-pgdata`. Stop it with:
 
 ```bash
 docker compose down        # stops the container, keeps data
@@ -35,8 +35,8 @@ docker compose down -v     # stops it and deletes the data volume
 The API and the Worker both read `ConnectionStrings:Default`. Set it per project with `dotnet user-secrets` so it stays out of the repository. Run these from the repository root, once the projects exist:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=getabursary;Username=getabursary;Password=localdev" --project src/GetABursary.Api
-dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=getabursary;Username=getabursary;Password=localdev" --project src/GetABursary.Worker
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5433;Database=getabursary;Username=getabursary;Password=localdev" --project src/GetABursary.Api
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5433;Database=getabursary;Username=getabursary;Password=localdev" --project src/GetABursary.Worker
 ```
 
 Use the same values as in your `.env` if you changed them. Other settings, such as `Extraction:ApiKey` and `Reports:IpHashSalt` (or `Reports__IpHashSalt` as an environment variable), follow the same pattern: `dotnet user-secrets set "<Key>" "<value>" --project <project>`.
