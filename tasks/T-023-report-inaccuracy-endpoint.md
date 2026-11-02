@@ -27,6 +27,7 @@ You may create or modify **only**:
 - `src/GetABursary.Api/appsettings.json` (non-secret `Reports:*` defaults; salt stays empty)
 - `src/GetABursary.Core/Repositories/Reports/IListingReportRepository.cs`, `ListingReportRepository.cs`
 - `tests/GetABursary.Api.Tests/Reports/**`
+- `tests/GetABursary.Api.Tests/**` (widened by orchestrator 2026-11-02: Postgres-backed API test infrastructure)
 
 ## Requirements
 1. `POST /api/v1/bursaries/{id:guid}/reports` with body `CreateReportRequest { reason (ReportReason), comment? (≤ 1000), contactEmail? (valid email, ≤ 254) }` → `201 Created` with `{ id }`.

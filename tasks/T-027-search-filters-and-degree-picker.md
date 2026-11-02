@@ -23,6 +23,7 @@ You may create or modify **only**:
 - `src/web/src/app/features/home/**`
 - `src/web/src/app/features/search/search-state.service.ts`, `filter-panel/**`, `search.page.ts` (+ its template/styles/spec), and the `search` route entry
 - `src/web/src/app/shared/ui/**` (new shared components only)
+- `src/web/src/app/app.spec.ts` (widened by orchestrator 2026-11-02: update the placeholder-name assertions for `/` and `/search`)
 
 ## Requirements
 1. `DegreePickerComponent`: three dependent `<select>`s (institution → faculty → qualification) loading from `TaxonomyApi`; a change resets the levels below; labels for each select; emits `{ institutionId, facultyId, qualificationId }`; can be pre-filled from inputs. While loading, the select shows "Loading…" and is disabled.
