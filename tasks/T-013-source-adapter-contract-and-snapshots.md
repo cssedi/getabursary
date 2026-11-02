@@ -4,7 +4,7 @@ title: Source adapter contract, adapter registry and snapshot store
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-007, T-012]
 requirements: [FR-21, FR-22, FR-25]
 issue: 13
