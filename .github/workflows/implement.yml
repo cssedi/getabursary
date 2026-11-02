@@ -80,9 +80,11 @@ jobs:
                "Closes #${{ inputs.issue }}", the ticked acceptance criteria, and the verification commands you ran with results.
             If you are blocked (unclear spec, files outside Scope needed, approach doesn't work): do NOT guess.
             Run `gh issue comment ${{ inputs.issue }} --body "Lesdee, BLOCKED: <reason> ..."` with your question and options, then stop.
+            If you end WITHOUT opening a PR for any reason (blocked site, failing build, unclear spec), you MUST first post
+            `gh issue comment ${{ inputs.issue }} --body "Lesdee, BLOCKED: <what you tried, the exact error, and options>"`. Never stop silently.
           claude_args: |
             --model ${{ inputs.model == 'haiku' && 'claude-haiku-5-5' || 'claude-sonnet-5-5' }}
-            --max-turns 60
+            --max-turns 90
             --allowedTools "Edit,Write,Read,Glob,Grep,Bash(dotnet:*),Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(docker:*),Bash(git:*),Bash(gh pr create:*),Bash(gh issue view:*),Bash(gh issue comment:*),Bash(ls:*),Bash(mkdir:*),Bash(curl:*),WebFetch,WebSearch"
 
       - name: Clear in-progress label if a PR was opened
