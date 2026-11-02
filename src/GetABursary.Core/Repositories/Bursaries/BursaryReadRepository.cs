@@ -1,5 +1,6 @@
 using System.Text.Json;
 using GetABursary.Core.Data;
+using GetABursary.Core.Domain.Bursaries;
 using GetABursary.Core.Domain.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -106,6 +107,16 @@ public sealed class BursaryReadRepository(GetABursaryDbContext db) : IBursaryRea
 
         return new BursarySearchPage(items, total);
     }
+
+    public async Task<Bursary?> GetBySlugAsync(string slug, CancellationToken ct) =>
+        await db.Bursaries.AsNoTracking()
+            .Include(b => b.Funder)
+            .Include(b => b.Fields).ThenInclude(bf => bf.FieldOfStudy)
+            .Include(b => b.Qualifications).ThenInclude(bq => bq.Qualification).ThenInclude(q => q.Faculty).ThenInclude(f => f.Institution)
+            .Include(b => b.Institutions).ThenInclude(bi => bi.Institution)
+            .Include(b => b.Sources).ThenInclude(bs => bs.Source)
+            .AsSplitQuery()
+            .SingleOrDefaultAsync(b => b.Slug == slug, ct);
 
     private static NpgsqlParameter Param<T>(string name, NpgsqlDbType type, T? value) =>
         new(name, type) { Value = value is null ? DBNull.Value : value };

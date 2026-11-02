@@ -4,7 +4,7 @@ title: Bursary detail endpoint (closed bursaries return 410 with summary)
 phase: 3
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-021]
 requirements: [FR-06, FR-07]
 issue: 22
