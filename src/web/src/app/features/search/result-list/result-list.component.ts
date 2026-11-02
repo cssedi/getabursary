@@ -58,7 +58,9 @@ export const AD_SLOT_EVERY = 6;
               }
             }
           </ul>
-          <app-pagination [page]="r.page" [pageSize]="r.pageSize" [totalCount]="r.totalCount" />
+          @if (showPagination()) {
+            <app-pagination [page]="r.page" [pageSize]="r.pageSize" [totalCount]="r.totalCount" />
+          }
         }
       }
     </section>
@@ -70,6 +72,8 @@ export class ResultListComponent {
   readonly result = input<PagedResponse<BursarySummaryResponse> | null>(null);
   readonly loading = input(false);
   readonly error = input(false);
+  /** Pagination navigates to `/search`, so pages outside search (field landing) turn it off. */
+  readonly showPagination = input(true);
   readonly sort = input<SearchSort | undefined>();
   /** The average filter, used to make the empty message specific. */
   readonly average = input<number | undefined>();

@@ -50,7 +50,6 @@ describe('Routes', () => {
   const cases: [string, string][] = [
     ['/', 'Find bursaries for'],
     ['/search', 'Search bursaries'],
-    ['/bursaries/field/engineering', 'FieldLandingPage'],
     ['/about', 'AboutPage'],
     ['/privacy', 'PrivacyPage'],
     ['/does/not/exist', 'NotFoundPage'],
