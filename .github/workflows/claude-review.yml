@@ -31,6 +31,8 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           use_sticky_comment: true
+          # Implementer PRs are opened by the Claude bot; allow reviewing them (the reviewer only comments).
+          allowed_bots: 'claude'
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}

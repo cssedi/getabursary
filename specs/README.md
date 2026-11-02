@@ -4,7 +4,7 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 
 | # | Spec | Status |
 |---|---|---|
-| 00 | [Product brief & requirements](00-product-brief.md) | Accepted v0.3 |
+| 00 | [Product brief & requirements](00-product-brief.md) | Accepted v0.4 |
 | 01 | [Architecture](01-architecture.md) | Accepted v1.0 |
 | 02 | [Data model & matching](02-data-model.md) | Accepted v1.0 |
 | 03 | [Engineering conventions](03-conventions.md) | Accepted v1.0 |
@@ -19,8 +19,11 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 ## Requirement IDs
 `FR-xx` (functional) and `NFR-xx` (non-functional) are defined in `00-product-brief.md`. Task files list the IDs they deliver under `requirements:`, which gives traceability from requirement → task → issue → PR.
 
-## Still open (from the brief)
-- Q5: minimum marks, overall average only vs subject-specific marks (MVP: average now, subject requirements stored for later)
-- Q6: institutions beyond the 26 public universities
-- Q7: remembering logged-out users' filters
-- Anonymous → account merge behaviour for the tracker
+## Decision log
+| Date | Decision | Where |
+|---|---|---|
+| 2026-11-01 | PostgreSQL only | ADR-001 |
+| 2026-11-01 | Orchestrator + GitHub-Issue implementers | ADR-002 |
+| 2026-11-02 | Marks filter = overall average only | Brief FR-01, Q5 |
+| 2026-11-02 | MVP qualifications for the big 5 (UCT, Wits, UP, SU, UJ) | Brief FR-32 |
+| 2026-11-02 | Account required only for actions that save the user's own data | Brief FR-09, Architecture §3.3 |

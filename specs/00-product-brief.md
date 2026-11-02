@@ -1,6 +1,6 @@
 # 00 — Product Brief & Requirements
 
-> Status: **Accepted v0.3**. Product: **GetABursary** (`getabursary.co.za`).
+> Status: **Accepted v0.4** (2026-11-02). Product: **GetABursary** (`getabursary.co.za`).
 > Owner: product owner (@cssedi). Editor: orchestrator agent.
 > Every requirement has an ID (`FR-xx`, `NFR-xx`) so that later specs and task files can reference it.
 
@@ -48,7 +48,7 @@ South African students looking for bursaries have to search across many aggregat
   - **University**, then **Faculty**, then **Qualification** (e.g. *UCT → Engineering & the Built Environment → BSc(Eng) Electrical*)
   - **Field of study** (broader category, for students who haven't chosen a university yet)
   - **Study level**: Matric → 1st year, Undergraduate (year 1–4+), Honours, Master's, PhD
-  - **Minimum marks**: student enters their average (and optionally Maths/Science %); bursaries whose stated minimum is higher are excluded
+  - **Minimum marks**: student enters their **overall average %** (decided: no subject marks or APS in MVP); bursaries whose stated minimum average is higher are excluded
   - **Closing date range** and a **"Closing soon"** sort
   - **Show closed bursaries** checkbox (off by default)
 - **FR-02** Matching is **structured, not keyword-based**. Choosing a qualification resolves to the fields of study it belongs to, and bursaries tagged with those fields (or with that specific qualification or institution) are returned. See §7.
@@ -60,10 +60,13 @@ South African students looking for bursaries have to search across many aggregat
 - **FR-08** **Report an inaccuracy**: a small flag icon on each card and on the detail page opens a minimal form with a reason dropdown (*wrong closing date / wrong eligibility / broken link / bursary closed / duplicate / other*), an optional comment and an optional email. Login isn't required. Submitting creates an item in the admin review queue.
 
 ### 4.2 Accounts, saved bursaries & tracker
-- **FR-09 Anonymous-first (decided)**: every core feature (search, filters, detail, report, save, tracker) works **without an account**. No sign-up walls, no nagging prompts. Accounts are optional and only add things like syncing across devices. Anonymous saves and tracker data live on the device; how they merge into an account is to be refined later.
-- **FR-10** Optional sign-up and sign-in with email and password (with email confirmation) **and Google sign-in** (decided).
-- **FR-11** Optional student profile: study level, university, qualification, average mark. If set, it pre-fills the filters.
-- **FR-12** **Save** a bursary (heart/bookmark) from the results list or the detail page.
+- **FR-09 Account rule (decided)**: *if an action saves the user's own preferences or data, it requires an account; everything else doesn't.*
+  - **No account needed:** search, every filter, viewing details, following "Apply" links, reporting an inaccuracy. Filters live in the URL (shareable, bookmarkable) and aren't stored on the server or in the browser.
+  - **Account needed:** saving a bursary, the application tracker, the student profile, and (later) email reminders.
+  - **How the prompt works:** the save/track buttons are always visible. Tapping one while signed out opens a small sign-in/sign-up dialog (Google or email). After signing in, the action the user started **completes automatically**, so they don't have to tap again. No sign-up walls, banners or nagging anywhere else.
+- **FR-10** Sign-up and sign-in with email and password (with email confirmation) **and Google sign-in**.
+- **FR-11** Student profile (account needed): study level, university, qualification, average mark. If set, it pre-fills the filters.
+- **FR-12** **Save** a bursary (heart/bookmark) from the results list or the detail page (account needed; triggers the FR-09 dialog when signed out).
 - **FR-13** **Application tracker**: each saved bursary has a status:
   `Saved → Preparing → Applied → Shortlisted/Interview → Awarded | Unsuccessful | Withdrawn`
   with an optional applied date and notes.
@@ -83,7 +86,7 @@ South African students looking for bursaries have to search across many aggregat
 ### 4.4 Reference data (degree taxonomy)
 - **FR-30** Seed and maintain a taxonomy: **Institution → Faculty → Qualification**, and **Qualification ↔ Field of study** (many-to-many).
 - **FR-31** Use the South African **CESM** (Classification of Educational Subject Matter, used by the Department of Higher Education and Training (DHET)) as the backbone for fields of study, so mapping is consistent and defensible.
-- **FR-32** MVP coverage: the 26 public universities. Qualifications start with the most popular degrees per faculty, with the long tail added over time. *(Open question Q6: include TVET colleges and private institutions later?)*
+- **FR-32** MVP coverage (decided): faculties and qualifications for the **big 5: UCT, Wits, UP, SU and UJ**, with the most popular degrees per faculty first. All 26 public universities are still seeded as *institutions* (so bursaries limited to, say, UKZN can be recorded), but the university picker only shows institutions that have qualifications seeded. More universities, TVET colleges and private institutions come after the MVP.
 
 ### 4.5 Admin
 - **FR-40** Admin-only area (role-based, using the existing Identity + roles approach).
@@ -183,10 +186,10 @@ Notes: Cape Town costs roughly 20–25% more than Ireland or US-East but is fast
 - ~~Q1~~ **Decided:** PostgreSQL only (ADR-001).
 - ~~Q2~~ **Decided:** sub-agents run as Claude on GitHub, picking up GitHub Issues (via the GitHub Action) and opening PRs.
 - ~~Q3~~ **Decided:** task specs are markdown files in `/tasks` (source of truth); the orchestrator mirrors each one to a GitHub Issue.
-- ~~Q4~~ **Decided:** anonymous-first, with optional email/password + Google accounts (FR-09, FR-10). Details to be refined.
-- **Q5** Minimum marks: overall average only, or also subject-specific (Maths, Physical Science)? APS scores?
-- **Q6** Institutions: only the 26 public universities at MVP, or also TVET colleges and private institutions?
-- **Q7** Should the profile filters (FR-11) be remembered for logged-out users (in the browser only)?
+- ~~Q4~~ **Decided (revised 2026-11-02):** account required only for actions that save the user's own data (FR-09); email/password + Google (FR-10).
+- ~~Q5~~ **Decided:** overall average only for MVP. Subject requirements are still *extracted and stored* (shown on the detail page) but not filtered on.
+- ~~Q6~~ **Decided:** big 5 universities (UCT, Wits, UP, SU, UJ) for MVP (FR-32).
+- ~~Q7~~ **Decided:** no. Logged-out filters live only in the URL. Remembering defaults is the profile (FR-11, account needed).
 - ~~Q8~~ **Decided:** GetABursary, repo `cssedi/getabursary` (public).
 
 ---
