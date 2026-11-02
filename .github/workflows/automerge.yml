@@ -1,0 +1,99 @@
+# Auto-merge: once CI and the AI reviewer have both finished on a PR's latest commit,
+#   - VERDICT: APPROVE + all checks green + no human trigger  → merge, then start the autopilot
+#   - CHANGES REQUESTED or a failed check                      → start fix.yml on the PR (max 2 attempts)
+#   - anything needing a human (see HUMAN TRIGGERS)            → label needs:human + request the owner's review
+#
+# HUMAN TRIGGERS: verdict NEEDS HUMAN; label needs:human; PR body says "needs human review";
+# PR touches .github/, specs/, AGENTS.md or CLAUDE.md (agents never self-approve their own rules/pipeline);
+# 2 auto-fix attempts already used.
+# Switch: repository variable AUTOMERGE = on | off.
+name: Auto-merge
+
+on:
+  workflow_run:
+    workflows: [CI, Claude reviewer]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+  checks: read
+
+jobs:
+  decide:
+    if: vars.AUTOMERGE == 'on' && github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: automerge-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R: ${{ github.repository }}
+      OWNER: ${{ github.repository_owner }}
+      BRANCH: ${{ github.event.workflow_run.head_branch }}
+    steps:
+      - name: Decide and act
+        run: |
+          set -euo pipefail
+          pr=$(gh pr list -R "$R" --state open --head "$BRANCH" --json number --jq '.[0].number // empty')
+          [[ -z "$pr" ]] && { echo "No open PR for $BRANCH"; exit 0; }
+          json=$(gh pr view "$pr" -R "$R" --json headRefOid,isDraft,body,labels,files)
+          [[ $(jq -r .isDraft <<<"$json") == true ]] && { echo "Draft"; exit 0; }
+          sha=$(jq -r .headRefOid <<<"$json")
+
+          # 1. Wait until every check on the head commit has finished.
+          checks=$(gh api "repos/$R/commits/$sha/check-runs?per_page=100" --jq '[.check_runs[] | {name, status, conclusion}]')
+          for need in dotnet web task-files review; do
+            st=$(jq -r --arg n "$need" '[.[]|select(.name==$n)][0].status // "missing"' <<<"$checks")
+            [[ "$st" != completed ]] && { echo "Waiting for '$need' ($st)"; exit 0; }
+          done
+          failed=$(jq -r '[.[]|select(.status=="completed" and (.conclusion|IN("success","skipped","neutral")|not))|.name]|join(", ")' <<<"$checks")
+
+          # 2. Read the latest AI review verdict.
+          review=$(gh api "repos/$R/issues/$pr/comments?per_page=100" --jq '[.[]|select(.user.login=="claude[bot]" and (.body|contains("VERDICT:")))][-1].body // ""')
+          verdict=$(grep -oE 'VERDICT: (APPROVE|CHANGES REQUESTED|NEEDS HUMAN)' <<<"$review" | tail -1 | sed 's/VERDICT: //' || true)
+          echo "PR #$pr sha=${sha:0:7} verdict='${verdict:-none}' failed='${failed:-none}'"
+
+          # 3. Human triggers.
+          reasons=()
+          [[ "$verdict" == "NEEDS HUMAN" ]] && reasons+=("reviewer verdict is NEEDS HUMAN")
+          jq -e '.labels|map(.name)|index("needs:human")' <<<"$json" >/dev/null && reasons+=("labelled needs:human")
+          jq -r .body <<<"$json" | grep -qi "needs human review" && reasons+=("PR says it needs human review")
+          sensitive=$(jq -r '[.files[].path|select(test("^(\\.github/|specs/|AGENTS\\.md$|CLAUDE\\.md$)"))]|join(", ")' <<<"$json")
+          [[ -n "$sensitive" ]] && reasons+=("touches pipeline/spec files: $sensitive")
+
+          ask_human() {
+            if ! jq -e '.labels|map(.name)|index("needs:human")' <<<"$json" >/dev/null; then
+              gh label create needs:human -R "$R" --color d93f0b --description "Auto-merge paused: a human decision is needed" 2>/dev/null || true
+              gh pr edit "$pr" -R "$R" --add-label needs:human
+              gh pr comment "$pr" -R "$R" --body "Lesdee, auto-merge paused. A human is needed because: $1"
+            fi
+            gh pr edit "$pr" -R "$R" --add-reviewer "$OWNER" 2>/dev/null || true
+          }
+
+          if (( ${#reasons[@]} > 0 )); then ask_human "$(IFS='; '; echo "${reasons[*]}")"; exit 0; fi
+
+          # 4. Needs fixing? Ask the implementer (max 2 attempts), then escalate.
+          if [[ -n "$failed" || "$verdict" == "CHANGES REQUESTED" || -z "$verdict" ]]; then
+            attempts=$(gh api "repos/$R/issues/$pr/comments?per_page=100" --jq '[.[]|select(.body|contains("<!-- autofix -->"))]|length')
+            if (( attempts >= 2 )); then ask_human "2 auto-fix attempts used and it still isn't clean (failed: ${failed:-none}; verdict: ${verdict:-none})"; exit 0; fi
+            [[ -z "$verdict" && -z "$failed" ]] && { echo "No verdict yet"; exit 0; }
+            reason=""
+            [[ -n "$failed" ]] && reason+="Failing checks: $failed. "
+            [[ "$verdict" == "CHANGES REQUESTED" ]] && reason+="AI review requested changes. "
+            # Comments made with GITHUB_TOKEN can't trigger other workflows, so dispatch fix.yml directly.
+            # The hidden marker in this comment is what counts the attempts.
+            gh pr comment "$pr" -R "$R" --body "Lesdee, <!-- autofix --> starting auto-fix attempt $((attempts+1)) of 2. ${reason}"
+            gh workflow run fix.yml -R "$R" --ref main -f pr="$pr" -f attempt="$((attempts+1))" -f reason="$reason"
+            exit 0
+          fi
+
+          # 5. Clean: merge, then let the autopilot pick the next tasks.
+          if [[ "$verdict" == "APPROVE" ]]; then
+            gh pr merge "$pr" -R "$R" --merge --delete-branch --match-head-commit "$sha"
+            gh pr comment "$pr" -R "$R" --body "Lesdee, auto-merged: CI green and AI review approved (commit ${sha:0:7})."
+            # Merges made with GITHUB_TOKEN don't trigger push workflows, so start the autopilot explicitly.
+            gh workflow run autopilot.yml -R "$R" --ref main || true
+          fi

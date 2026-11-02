@@ -1,0 +1,71 @@
+# Fix run for an open PR. Dispatched by automerge.yml when checks fail or the AI review requests changes.
+name: Fix PR
+run-name: Fix PR #${{ inputs.pr }} (attempt ${{ inputs.attempt }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        type: number
+        required: true
+      attempt:
+        type: number
+        required: true
+      reason:
+        type: string
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: fix-${{ inputs.pr }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out the PR branch
+        run: gh pr checkout ${{ inputs.pr }} -R "$GITHUB_REPOSITORY"
+
+      - uses: actions/setup-dotnet@v4
+        if: ${{ hashFiles('global.json') != '' }}
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_bots: 'github-actions'
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR: #${{ inputs.pr }} (you are on its branch)
+            WHY: ${{ inputs.reason }}
+
+            You are an implementer agent fixing an existing PR for GetABursary (attempt ${{ inputs.attempt }} of 2).
+            1. Read AGENTS.md. Read the PR (`gh pr view ${{ inputs.pr }} --comments`), its task file, and the latest
+               review comment that contains "VERDICT:". For failing checks, read the logs (`gh run list --branch <branch>`, `gh run view <id> --log-failed`).
+            2. Fix every **Blocking** item and every failing check. Stay inside the task Scope (plus any scope approved in PR comments).
+            3. Run `dotnet build` and `dotnet test` (and the task's verify commands) until they pass.
+            4. Commit (Conventional Commits, mention the task ID) and `git push` to this same branch. Do NOT open a new PR.
+            5. Post one PR comment starting with "Lesdee," listing what you changed.
+            If a fix needs a decision you can't make, comment "Lesdee, BLOCKED: <reason>" on the PR and stop.
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 50
+            --allowedTools "Edit,Write,Read,Glob,Grep,Bash(dotnet:*),Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(docker:*),Bash(git:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh run list:*),Bash(gh run view:*),Bash(gh issue view:*),Bash(ls:*),Bash(mkdir:*)"
