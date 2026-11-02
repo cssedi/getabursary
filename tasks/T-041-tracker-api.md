@@ -4,7 +4,7 @@ title: Saved bursaries and application tracker API
 phase: 5
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-038]
 requirements: [FR-12, FR-13, FR-14]
 issue: 78
