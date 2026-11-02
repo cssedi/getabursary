@@ -22,10 +22,10 @@ A small flag icon on every result card and on the detail page opens an accessibl
 You may create or modify **only**:
 - `src/web/src/app/features/report/**`
 - `src/web/src/app/shared/ui/report-button/**`, `shared/ui/toast/**`
-- `src/web/src/app/features/search/bursary-card/**` and `src/web/src/app/features/bursary/**` (only to place the report button)
+- `src/web/src/app/features/search/bursary-row/**`, `src/web/src/app/features/search/result-list/**` and `src/web/src/app/features/bursary/**` (to place the report button / wire the row's existing `report` output to the dialog). *(Updated 2026-11-02: T-034 replaced cards with `bursary-row`.)*
 
 ## Requirements
-1. `ReportButtonComponent`: an icon-only button (flag SVG, `aria-label="Report a problem with this listing"`). Clicking it on a card must **not** follow the card link (stop propagation and prevent default).
+1. `ReportButtonComponent`: an icon-only button (flag SVG, `aria-label="Report a problem with this listing"`). Clicking it on a row must **not** follow the row's stretched link (stop propagation and prevent default).
 2. `ReportDialogComponent` (CDK Dialog): title "Report a problem"; required reason radio group (labels: Wrong closing date, Wrong eligibility, Broken link, Bursary has closed, Duplicate listing, Something else); comment textarea (max 1000, live counter); optional email (validated); Submit and Cancel. Focus is trapped, Esc closes it, and focus returns to the flag button.
 3. Submit → `ReportApi.create`. While sending, the button is disabled. `201` → close and show the toast "Thanks, we'll check it". `400` → inline field errors from `ApiError.errors`. `429` → inline "Too many reports from your connection. Please try again later." Other errors → inline generic message with retry.
 4. A minimal `ToastService` + `ToastComponent` (polite `aria-live` region, auto-dismiss after 4 s).
