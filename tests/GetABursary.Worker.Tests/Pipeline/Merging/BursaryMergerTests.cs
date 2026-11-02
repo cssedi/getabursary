@@ -236,6 +236,28 @@ public class BursaryMergerTests(PostgresFixture fixture)
     }
 
     [Fact]
+    public async Task MergeAsync_LockedStatus_IsNotOverwritten()
+    {
+        var sourceId = await CreateSourceAsync();
+        var created = await MergeAsync(sourceId, "Sibusiso Astronomy Scholarship", "Pi Trust", new DateOnly(2026, 12, 30));
+        await using (var db = fixture.CreateContext())
+        {
+            var b = await db.Bursaries.SingleAsync(x => x.Id == created.Outcome.BursaryId);
+            b.Status = BursaryStatus.Closed;
+            b.LockedFields = ["Status"];
+            await db.SaveChangesAsync();
+        }
+
+        var merged = await MergeAsync(sourceId, "Sibusiso Astronomy Scholarship", "Pi Trust", new DateOnly(2026, 12, 30), minAverage: 70m);
+
+        Assert.Equal(MergeKind.Merged, merged.Outcome.Kind);
+        await using var verify = fixture.CreateContext();
+        var bursary = await verify.Bursaries.SingleAsync(x => x.Id == created.Outcome.BursaryId);
+        Assert.Equal(BursaryStatus.Closed, bursary.Status);
+        Assert.Equal(70m, bursary.MinAverage);
+    }
+
+    [Fact]
     public async Task MergeAsync_LowConfidence_AddsOneReviewItemAcrossRepeatedMerges()
     {
         var sourceId = await CreateSourceAsync();
