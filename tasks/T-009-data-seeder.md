@@ -4,7 +4,7 @@ title: Implement idempotent DataSeeder for reference JSON
 phase: 1
 area: core
 model: haiku
-status: todo
+status: done
 depends_on: [T-006, T-008]
 requirements: [FR-30, FR-32]
 issue: 9

@@ -13,4 +13,8 @@
     <ProjectReference Include="..\GetABursary.Core\GetABursary.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\data\seed\**" Link="seed/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

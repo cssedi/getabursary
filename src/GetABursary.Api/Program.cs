@@ -1,6 +1,7 @@
 using GetABursary.Api.Extensions;
 using GetABursary.Core;
 using GetABursary.Core.Data;
+using GetABursary.Core.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Databas
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
     await db.Database.MigrateAsync();
+    await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync(CancellationToken.None);
 }
 
 app.UseExceptionHandler();

@@ -6,4 +6,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\data\seed\**" Link="seed/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
