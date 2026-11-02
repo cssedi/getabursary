@@ -25,7 +25,8 @@ export function toApiError(error: HttpErrorResponse): ApiError {
   const errors = parseProblemErrors(body['errors']);
   const extensions: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(body)) {
-    if (!STANDARD_PROBLEM_KEYS.has(key)) {
+    // `detail` stays readable here: Identity's login puts "NotAllowed" / "LockedOut" in it.
+    if (!STANDARD_PROBLEM_KEYS.has(key) || key === 'detail') {
       extensions[key] = value;
     }
   }

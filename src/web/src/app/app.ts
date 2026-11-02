@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from './core/auth/auth.service';
 import { FooterComponent } from './layout/footer.component';
 import { HeaderComponent } from './layout/header.component';
 
@@ -14,6 +15,10 @@ import { HeaderComponent } from './layout/header.component';
   `,
 })
 export class App {
+  constructor() {
+    void inject(AuthService).load();
+  }
+
   /** `<base href="/">` would turn a bare `#content` link into a navigation, so move focus directly. */
   protected skipToContent(event: Event): void {
     event.preventDefault();

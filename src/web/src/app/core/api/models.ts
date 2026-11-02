@@ -165,6 +165,13 @@ export interface CreateReportRequest {
   contactEmail?: string;
 }
 
+/** `GET /api/v1/me` (T-038). A 401 means signed out. */
+export interface MeResponse {
+  id: string;
+  email: string;
+  roles: string[];
+}
+
 /** `201 Created` body of the report endpoint (T-023). */
 export interface CreateReportResponse {
   id: string;
