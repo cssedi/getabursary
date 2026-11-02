@@ -4,7 +4,7 @@ title: Identity with cookie auth, email confirmation and admin seeding (API)
 phase: 5
 area: api
 model: sonnet
-status: todo
+status: done
 depends_on: []
 requirements: [FR-09, FR-10, FR-40]
 issue: 75

@@ -1,7 +1,9 @@
 using GetABursary.Api.Extensions;
+using GetABursary.Api.Services.Auth;
 using GetABursary.Core;
 using GetABursary.Core.Data;
 using GetABursary.Core.Data.Seeding;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,15 @@ builder.Services.AddCoreData(builder.Configuration);
 builder.Services.AddReportsFeature(builder.Configuration, builder.Environment);
 builder.Services.AddTaxonomyFeature();
 builder.Services.AddBursaryFeature();
+builder.Services.AddAuthFeature(builder.Configuration, builder.Environment);
+
+// shortcut: trusts X-Forwarded-* from any sender, so the API must only be reachable through Caddy/Cloudflare.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 var app = builder.Build();
 
@@ -23,9 +34,18 @@ if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Databas
     var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
     await db.Database.MigrateAsync();
     await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync(CancellationToken.None);
+    await AuthSeeder.SeedAsync(scope.ServiceProvider);
+}
+else if (!app.Environment.IsDevelopment() && !string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("Default")))
+{
+    // Production: the schema is migrated by the deploy step before the API starts.
+    using var scope = app.Services.CreateScope();
+    await AuthSeeder.SeedAsync(scope.ServiceProvider);
 }
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
+app.UseCsrfHeaderCheck();
 
 if (app.Environment.IsDevelopment())
 {
@@ -35,11 +55,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
 
 app.MapControllers();
+app.MapAuthEndpoints();
 
 app.Run();
 
