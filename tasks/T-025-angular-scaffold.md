@@ -4,7 +4,7 @@ title: Scaffold Angular SSR app with Tailwind, app shell and dev proxy
 phase: 4
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: []
 requirements: [NFR-01, NFR-02]
 issue: 34
