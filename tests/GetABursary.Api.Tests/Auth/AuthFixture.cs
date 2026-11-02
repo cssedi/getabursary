@@ -16,6 +16,9 @@ public sealed class AuthFixture : IAsyncLifetime
 {
     public const string AdminEmail = "boss@example.test";
 
+    /// <summary>A second admin so the admin endpoint tests never collide with the auth tests that register <see cref="AdminEmail"/>.</summary>
+    public const string AdminTestsEmail = "admin-tests@example.test";
+
     private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:17-alpine").Build();
 
     public ConcurrentQueue<string> Emails { get; } = new();
@@ -55,7 +58,7 @@ public sealed class AuthFixture : IAsyncLifetime
             builder.UseSetting("Database:MigrateOnStartup", "false");
             builder.UseSetting("ConnectionStrings:Default", connectionString);
             builder.UseSetting("Reports:IpHashSalt", "auth-test-salt");
-            builder.UseSetting("Admin:Emails", AdminEmail);
+            builder.UseSetting("Admin:Emails", $"{AdminEmail},{AdminTestsEmail}");
             builder.UseSetting("App:PublicBaseUrl", "https://web.example.test");
             builder.ConfigureLogging(logging => logging.AddProvider(new CaptureProvider(emails)));
         }
