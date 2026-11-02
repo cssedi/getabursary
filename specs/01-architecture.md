@@ -121,7 +121,7 @@ A failure in one adapter is caught, logged on that source's `IngestionRunSource`
 | API | ASP.NET Core controllers | Built-in OpenAPI; Swagger UI in Development only |
 | ORM | EF Core 10 + Npgsql | Migrations live in Core; snake_case naming via `EFCore.NamingConventions` |
 | DB | PostgreSQL 17 | `pg_trgm` for fuzzy dedupe of names; `pgvector` reserved for later |
-| Auth | ASP.NET Core Identity + JWT bearer; Google sign-in | Roles: `Student`, `Admin` (enum-seeded, as in ruru-api) |
+| Auth | ASP.NET Core Identity **cookie auth** via `MapIdentityApi` + Google sign-in ([ADR-003](adr/ADR-003-cookie-auth.md)) | Roles: `Student`, `Admin` |
 | Worker scheduling | `BackgroundService` + `Cronos` cron parsing | Default `0 3 * * *` (03:00 SAST) |
 | HTML parsing | AngleSharp | Playwright only if a source needs JavaScript (decided per adapter) |
 | HTTP resilience | `Microsoft.Extensions.Http.Resilience` | Retry + per-domain rate limiter |
@@ -134,7 +134,7 @@ A failure in one adapter is caught, logged on that source's `IngestionRunSource`
 ## 5. Configuration & secrets
 - All config goes through `appsettings.json` plus environment variables. **No secrets are committed** (public repo, NFR-07).
 - Locally, use `dotnet user-secrets` or a `.env` file (git-ignored). Only `.env.example` is committed.
-- Named settings: `ConnectionStrings:Default`, `Jwt:*`, `Auth:Google:*`, `Extraction:Provider`, `Extraction:ApiKey`, `Extraction:Model`, `Ingestion:Cron`, `Ingestion:UserAgent`.
+- Named settings: `ConnectionStrings:Default`, `Auth:Google:*`, `Admin:Emails`, `Email:Smtp:*`, `Extraction:Provider`, `Extraction:ApiKey`, `Extraction:Model`, `Ingestion:Cron`, `Ingestion:UserAgent`.
 
 ## 6. API surface (v1, MVP)
 

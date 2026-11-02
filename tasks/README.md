@@ -19,8 +19,8 @@ To start a task, add the **`agent:ready`** label to its issue. Do this only when
 | **2** | Ingestion worker: HTTP, adapters, extraction, dedupe | Detailed (T-011–T-019) |
 | **3** | Public read API: taxonomy, search, detail, reports | Detailed (T-020–T-023) |
 | **4** | Angular web app: SSR scaffold, API client, degree picker + filters, results, detail, report dialog, SEO pages | Detailed (T-025–T-036; design per spec 06) |
-| 5 | Accounts (Identity + Google), sign-in prompt, saved bursaries + tracker, admin review queue, source and taxonomy management | Roadmap; detailed when Phase 3 lands |
-| 6 | Launch: VPS deploy (Docker Compose + Caddy), ads + consent, privacy policy, monitoring, budget alerts | Roadmap |
+| **5** | **Epic A** accounts: Identity cookie auth, Google, sign-in dialog, saves + tracker (T-038–T-042). **Epic B** admin tab: review queue, editor, sources (T-043–T-046) | Detailed (spec 07) |
+| 6 | **Epic C** hosting: cost analysis done (specs/08-hosting.md); deploy, domain, ads + consent, privacy policy, monitoring | Roadmap; detailed after Phase 5 |
 
 ## Dependency graph (Phases 0–4)
 
@@ -77,6 +77,17 @@ graph LR
   T033 --> T036
   T034 --> T036
   T035 --> T036
+  T038[T-038 identity] --> T039[T-039 google]
+  T038 --> T040[T-040 web auth]
+  T038 --> T041[T-041 tracker api]
+  T040 --> T042[T-042 save + tracker page]
+  T041 --> T042
+  T038 --> T043[T-043 admin api]
+  T038 --> T044[T-044 sources api]
+  T040 --> T045[T-045 admin web]
+  T043 --> T045
+  T044 --> T046[T-046 sources web]
+  T045 --> T046
 ```
 
 **Can start immediately (in parallel):** T-001, T-002, T-008.
