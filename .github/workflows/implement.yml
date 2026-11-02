@@ -56,6 +56,8 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Runs are dispatched by autopilot.yml using GITHUB_TOKEN, i.e. the github-actions bot.
+          allowed_bots: 'github-actions'
           prompt: |
             REPO: ${{ github.repository }}
             ISSUE: #${{ inputs.issue }}
