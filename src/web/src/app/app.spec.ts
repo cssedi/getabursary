@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -31,8 +33,8 @@ describe('App shell', () => {
 
 describe('Routes', () => {
   const cases: [string, string][] = [
-    ['/', 'HomePage'],
-    ['/search', 'SearchPage'],
+    ['/', 'Find bursaries for your degree'],
+    ['/search', 'Search bursaries'],
     ['/bursaries/some-slug', 'BursaryDetailPage'],
     ['/bursaries/field/engineering', 'FieldLandingPage'],
     ['/about', 'AboutPage'],
@@ -42,7 +44,9 @@ describe('Routes', () => {
 
   for (const [url, name] of cases) {
     it(`${url} resolves to ${name}`, async () => {
-      TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
+      TestBed.configureTestingModule({
+        providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+      });
       const harness = await RouterTestingHarness.create();
       await harness.navigateByUrl(url);
       expect(harness.routeNativeElement?.textContent).toContain(name);

@@ -4,7 +4,7 @@ title: Degree picker, filter panel and URL-driven search state
 phase: 4
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-026]
 requirements: [FR-01, FR-02, FR-09, NFR-01]
 issue: 36
