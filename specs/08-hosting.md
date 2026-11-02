@@ -34,6 +34,27 @@ Add 15% if VAT is charged: about **R168/month**.
 
 **Why this one:** cheapest 4 GB option from a reliable provider, with backups and 20 TB of traffic included. Cloudflare caches static files and SSR pages close to SA users, which hides most of the Europe → SA delay (~160–180 ms), so pages still feel quick.
 
+## 2a. Availability tiers (owner: "can cost more, I want some availability")
+
+| Tier | Setup | If a server dies | Rand per month |
+|---|---|---|---|
+| 1. Single server (§2) | 1× CX23, daily backups | Down until restored, about 30–60 min | ≈ R146 |
+| **2. Recommended** | Hetzner **LB11** load balancer + **2× CX23** app servers (web + API on both; worker on one) + **managed Postgres** (DigitalOcean 1 node, daily backups + point-in-time restore) + Cloudflare cache | App keeps running. A DB failure means a few minutes while the provider replaces the node. Deploys don't take the site down (one server at a time) | ≈ R101 + R223 + R250 + R23 ≈ **R600** |
+| 3. Season mode | Tier 2, with DB upgraded to a primary + standby (automatic failover) | Survives an app or DB server failure in seconds | ≈ R101 + R223 + R998 + R23 ≈ **R1,350** |
+| 4. AWS Cape Town | 2× EC2 + ALB + RDS Multi-AZ, af-south-1 | Same as tier 3, hosted in SA | ≈ R2,000–2,500 (estimate) |
+
+**Plan:** launch on **tier 2**, switch the DB to tier 3 for the bursary season (Aug–Oct) if traffic justifies it, then back again. The resize is one setting with no code change.
+
+**Cheap extra:** in Cloudflare, cache the public search and detail pages for a few minutes, so students can still browse when the origin has a blip.
+
+**What running 2 app servers needs in code** (goes in the Phase 6 deploy tasks):
+- ASP.NET **Data Protection keys must be shared** (`PersistKeysToDbContext`). Otherwise a sign-in cookie made on server A is rejected by server B.
+- Only **one worker** runs (`Worker:Enabled=true` on one server), so a scrape never runs twice.
+- Migrations run once per deploy step, not on both servers at startup.
+- Rate limits are per server (acceptable).
+
+Prices: [Hetzner LB11 €5.39](https://cloudpricecheck-com.pages.dev/hetzner/hetzner-load-balancer-pricing), [DigitalOcean Postgres $15 single / $60 with standby](https://docs.digitalocean.com/products/databases/postgresql/details/pricing/), [RDS db.t4g.small af-south-1 ~$30 single-AZ](https://www.bytebase.com/dbcost/rds/instance/db.t4g.small.md).
+
 ## 3. Alternatives
 
 | Option | Specs | Rand per month | Trade-off |
@@ -64,6 +85,7 @@ Add 15% if VAT is charged: about **R168/month**.
 - **More than ~50k monthly users**, or the database is over 20 GB → split Postgres onto its own server or a managed DB.
 
 ## 7. Phase 6 tasks this implies (not yet written)
+0. Shared Data Protection keys in Postgres; `Worker:Enabled` flag; migrations as a separate deploy step (tier 2).
 1. `docker-compose.prod.yml` + Caddyfile + `.env.example` for prod (no secrets in repo).
 2. GitHub Action: build images → GHCR → deploy over SSH (secrets in repo settings, set by the owner).
 3. Nightly `pg_dump` → Cloudflare R2, with a restore test.
