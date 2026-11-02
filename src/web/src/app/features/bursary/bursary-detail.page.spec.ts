@@ -231,7 +231,7 @@ describe('BursaryDetailPage', () => {
     await navigation;
     await settle();
 
-    expect(el.textContent).toContain('NotFoundPage');
+    expect(el.textContent).toContain('Page not found');
     expect(el.querySelector('h1')?.textContent).not.toBe(bursaryDetail.name);
     expect(el.querySelector('app-error-state')).toBeNull();
   });

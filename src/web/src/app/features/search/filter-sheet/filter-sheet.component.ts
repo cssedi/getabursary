@@ -19,7 +19,7 @@ export interface FilterSheetData {
     <app-filter-panel idPrefix="sheet" />
     <button
       type="button"
-      class="show-results sticky bottom-0 mt-4 w-full rounded-control bg-jacaranda px-4 py-3 font-semibold text-paper"
+      class="show-results sticky bottom-0 mt-4 w-full rounded-control bg-jacaranda px-4 py-3 font-semibold text-paper hover:bg-ink active:bg-ink"
       (click)="ref.close()"
     >
       {{ label() }}
@@ -33,6 +33,7 @@ export interface FilterSheetData {
       display: block;
       box-sizing: border-box;
       max-height: 85dvh;
+      scroll-padding-bottom: 80px; /* the sticky button must not cover the focused field */
       overflow-y: auto;
       overscroll-behavior: contain;
       padding: 24px 16px calc(16px + env(safe-area-inset-bottom));

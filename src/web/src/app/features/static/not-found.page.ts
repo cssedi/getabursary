@@ -2,7 +2,10 @@ import { Component, RESPONSE_INIT, inject } from '@angular/core';
 
 @Component({
   selector: 'app-not-found-page',
-  template: '<h1 class="text-2xl font-bold">NotFoundPage</h1>',
+  template: `
+    <h1 class="text-2xl font-bold">Page not found</h1>
+    <p class="mt-2">Check the address, or go back to the home page.</p>
+  `,
 })
 export class NotFoundPage {
   constructor() {

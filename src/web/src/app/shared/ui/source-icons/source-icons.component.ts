@@ -10,7 +10,7 @@ import { SourceLink } from '../../../core/api/models';
         <a [href]="s.url" target="_blank" rel="noopener nofollow" [attr.title]="s.name" class="relative z-10 inline-flex">
           @if (failed().has(s.key)) {
             <span
-              class="source-initials inline-flex h-4 w-4 items-center justify-center rounded-full bg-gray-300 text-[8px] font-bold text-gray-900"
+              class="source-initials inline-flex h-4 w-4 items-center justify-center rounded-full bg-bloom text-[8px] font-bold text-ink"
               [attr.aria-label]="s.name"
               >{{ initials(s.name) }}</span
             >

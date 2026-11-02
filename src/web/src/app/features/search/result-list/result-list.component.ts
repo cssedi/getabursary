@@ -25,6 +25,7 @@ export const AD_SLOT_EVERY = 6;
     <section id="results">
       @if (loading()) {
         <div>
+          <p class="sr-only" role="status">Loading bursaries…</p>
           @for (n of [1, 2, 3]; track n) {
             <app-skeleton-card />
           }

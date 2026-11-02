@@ -33,15 +33,15 @@ function lowerFirst(text: string): string {
       </div>
       <div class="min-w-0 flex-1">
         <div class="flex items-start gap-2">
-          <h3 class="title min-w-0 flex-1 line-clamp-3 text-lg font-semibold [overflow-wrap:anywhere]">
+          <h2 class="title min-w-0 flex-1 line-clamp-3 text-lg font-semibold [overflow-wrap:anywhere]">
             @if (closed()) {
               {{ bursary().name }}
             } @else {
-              <a class="stretched-link text-jacaranda" [routerLink]="['/bursaries', bursary().slug]">{{
+              <a class="stretched-link text-jacaranda hover:underline" [routerLink]="['/bursaries', bursary().slug]">{{
                 bursary().name
               }}</a>
             }
-          </h3>
+          </h2>
           <app-report-button class="-mt-2 -mr-2" [bursaryId]="bursary().id" />
         </div>
         @if (bursary().funderName) {

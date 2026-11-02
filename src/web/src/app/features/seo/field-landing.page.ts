@@ -33,7 +33,7 @@ export function findFieldBySlug(fields: FieldOfStudyResponse[], slug: string): F
     @let v = view();
     @if (v.status === 'notFound') {
       <app-not-found-page />
-      <p class="mx-auto max-w-3xl p-4">We could not find that field of study.</p>
+      <p class="mx-auto max-w-3xl p-4">That field of study isn’t listed. Check the address or search for it.</p>
     } @else {
       <div class="mx-auto grid max-w-3xl gap-4 p-4">
         @if (v.status === 'ok') {

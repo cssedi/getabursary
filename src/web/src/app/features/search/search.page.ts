@@ -35,7 +35,7 @@ type SearchView =
       <h1 class="text-2xl font-bold lg:col-span-2">Search bursaries</h1>
       <button
         type="button"
-        class="filters-button justify-self-start rounded-control border border-jacaranda px-4 py-2 font-medium text-jacaranda lg:hidden"
+        class="filters-button justify-self-start rounded-control border border-jacaranda px-4 py-2 font-medium text-jacaranda hover:bg-bloom active:bg-bloom lg:hidden"
         aria-haspopup="dialog"
         (click)="state.setFiltersOpen(true)"
       >

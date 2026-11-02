@@ -179,14 +179,14 @@ describe('SearchPage', () => {
     http.expectOne((r) => r.url === SEARCH).flush(page(manyBursaries(20), { totalCount: 45 }));
     await settle();
     expect(el.textContent).toContain('Page 1 of 3');
-    expect(el.querySelector<HTMLButtonElement>('.prev')!.disabled).toBe(true);
-    el.querySelector<HTMLButtonElement>('.next')!.click();
+    expect(el.querySelector('.prev')!.getAttribute('aria-disabled')).toBe('true');
+    el.querySelector<HTMLAnchorElement>('a.next')!.click();
     await settle();
     expect(router.url).toBe('/search?page=2');
     http.expectOne((r) => r.url === SEARCH).flush(page(manyBursaries(20), { page: 2, totalCount: 45 }));
     await settle();
     expect(el.textContent).toContain('Page 2 of 3');
-    el.querySelector<HTMLButtonElement>('.prev')!.click();
+    el.querySelector<HTMLAnchorElement>('a.prev')!.click();
     await settle();
     expect(router.url).toBe('/search');
     http.expectOne((r) => r.url === SEARCH).flush(page(manyBursaries(20), { totalCount: 45 }));

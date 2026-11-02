@@ -22,8 +22,8 @@ const AVERAGE_DEBOUNCE_MS = 400;
           (selectionChange)="onDegree($event)"
         />
 
-        <details class="rounded-[var(--radius)] border border-gray-400 p-2">
-          <summary class="cursor-pointer font-medium">
+        <details class="rounded-control border border-line p-2">
+          <summary class="cursor-pointer font-medium hover:text-jacaranda">
             Field of study @if (criteria().fieldIds.length) { ({{ criteria().fieldIds.length }} selected) }
           </summary>
           <div class="mt-2 grid gap-3">
@@ -57,7 +57,8 @@ const AVERAGE_DEBOUNCE_MS = 400;
           <label [for]="idPrefix() + '-study-level'" class="font-medium">Study level</label>
           <select
             [id]="idPrefix() + '-study-level'"
-            class="rounded-[var(--radius)] border border-gray-400 p-2"
+            name="studyLevel"
+            class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
             (change)="state.update({ studyLevel: $any($event.target).value || undefined })"
           >
             <option value="" [selected]="!criteria().studyLevel">Any level</option>
@@ -71,11 +72,13 @@ const AVERAGE_DEBOUNCE_MS = 400;
           <label [for]="idPrefix() + '-average'" class="font-medium">Your average (%)</label>
           <input
             [id]="idPrefix() + '-average'"
+            name="average"
             type="number"
             min="0"
             max="100"
             inputmode="numeric"
-            class="rounded-[var(--radius)] border border-gray-400 p-2"
+            placeholder="e.g. 72…"
+            class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
             [value]="averageText()"
             (input)="onAverage($any($event.target).value)"
           />
@@ -85,8 +88,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
           <label [for]="idPrefix() + '-closing-from'" class="font-medium">Closing from</label>
           <input
             [id]="idPrefix() + '-closing-from'"
+            name="closingFrom"
             type="date"
-            class="rounded-[var(--radius)] border border-gray-400 p-2"
+            class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
             [value]="criteria().closingFrom ?? ''"
             (change)="state.update({ closingFrom: $any($event.target).value || undefined })"
           />
@@ -95,8 +99,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
           <label [for]="idPrefix() + '-closing-to'" class="font-medium">Closing to</label>
           <input
             [id]="idPrefix() + '-closing-to'"
+            name="closingTo"
             type="date"
-            class="rounded-[var(--radius)] border border-gray-400 p-2"
+            class="min-h-11 rounded-control border border-line bg-paper px-2 text-ink" autocomplete="off"
             [value]="criteria().closingTo ?? ''"
             (change)="state.update({ closingTo: $any($event.target).value || undefined })"
           />
@@ -113,7 +118,7 @@ const AVERAGE_DEBOUNCE_MS = 400;
 
         <button
           type="button"
-          class="rounded-control border border-jacaranda p-2 font-medium text-jacaranda"
+          class="min-h-11 rounded-control border border-jacaranda p-2 font-medium text-jacaranda hover:bg-bloom active:bg-bloom"
           (click)="state.clear()"
         >
           Clear filters

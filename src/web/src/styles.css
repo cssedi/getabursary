@@ -123,3 +123,12 @@ button:active {
 #content {
   scroll-margin-top: 16px;
 }
+
+/* The sticky apply bar must not cover a focused element. */
+html {
+  scroll-padding-bottom: 96px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
