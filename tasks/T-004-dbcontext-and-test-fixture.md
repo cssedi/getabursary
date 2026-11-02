@@ -4,7 +4,7 @@ title: Add EF Core DbContext, Postgres wiring and Testcontainers fixture
 phase: 0
 area: core
 model: sonnet
-status: todo
+status: done
 depends_on: [T-001, T-002, T-003]
 requirements: [NFR-06]
 issue: 4
@@ -27,6 +27,8 @@ You may create or modify **only**:
 - `src/GetABursary.Api/Program.cs`, `src/GetABursary.Api/appsettings*.json`
 - `src/GetABursary.Worker/Program.cs`, `src/GetABursary.Worker/appsettings*.json`
 - `tests/GetABursary.Core.Tests/**`
+- `tests/GetABursary.Api.Tests/**` (widened by orchestrator: test factory that sets `Database:MigrateOnStartup=false`)
+- `src/GetABursary.Api/GetABursary.Api.csproj` (widened by orchestrator: `Microsoft.EntityFrameworkCore.Design` package)
 
 ## Requirements
 1. Packages: `Npgsql.EntityFrameworkCore.PostgreSQL`, `EFCore.NamingConventions`, `Microsoft.EntityFrameworkCore.Design` (Api, private assets), `Testcontainers.PostgreSql` (tests).
