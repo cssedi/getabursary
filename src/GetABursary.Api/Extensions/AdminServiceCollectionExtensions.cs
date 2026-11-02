@@ -1,6 +1,7 @@
 using GetABursary.Api.Services.Admin;
 using GetABursary.Core.Repositories.Admin;
 using GetABursary.Core.Repositories.Bursaries;
+using GetABursary.Core.Repositories.Ingestion;
 
 namespace GetABursary.Api.Extensions;
 
@@ -15,6 +16,9 @@ public static class AdminServiceCollectionExtensions
         services.AddScoped<IBursaryWriteRepository, BursaryWriteRepository>();
         services.AddScoped<IFunderRepository, FunderRepository>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<IIngestionSourceRepository, IngestionSourceRepository>();
+        services.AddScoped<IIngestionRunRepository, IngestionRunRepository>();
+        services.AddScoped<IAdminSourceService, AdminSourceService>();
 
         return services;
     }

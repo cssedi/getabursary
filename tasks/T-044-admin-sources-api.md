@@ -4,7 +4,7 @@ title: Admin API - sources, run history and "run now"
 phase: 5
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-038]
 requirements: [FR-43]
 issue: 81
