@@ -4,7 +4,7 @@ title: Eligibility extractor (LLM implementation + deterministic fake)
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-009, T-013]
 requirements: [FR-02, FR-23]
 issue: 17

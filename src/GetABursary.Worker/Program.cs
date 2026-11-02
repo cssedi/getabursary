@@ -1,6 +1,7 @@
 using GetABursary.Core;
 using GetABursary.Core.Data.Seeding;
 using GetABursary.Core.Repositories.Ingestion;
+using GetABursary.Worker.Extraction;
 using GetABursary.Worker.Pipeline;
 using GetABursary.Worker.Scheduling;
 using GetABursary.Worker.Sources;
@@ -11,6 +12,7 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddCoreData(builder.Configuration);
 builder.Services.AddPoliteHttpClient();
 builder.Services.AddIngestionScheduling(builder.Configuration);
+builder.Services.AddEligibilityExtraction(builder.Configuration);
 builder.Services.AddSingleton<SourceAdapterRegistry>();
 builder.Services.AddScoped<IRawListingRepository, RawListingRepository>();
 builder.Services.AddScoped<ISnapshotStore, SnapshotStore>();
