@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, linkedSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, linkedSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { SearchSort, StudyLevel } from '../../../core/api/models';
+import { StudyLevel } from '../../../core/api/models';
 import { TaxonomyApi } from '../../../core/api/taxonomy-api';
 import { DegreePickerComponent, DegreeSelection } from '../../home/degree-picker.component';
-import { SEARCH_SORTS, STUDY_LEVELS, SearchStateService, parseAverage } from '../search-state.service';
+import { STUDY_LEVELS, SearchStateService, parseAverage } from '../search-state.service';
 
 const AVERAGE_DEBOUNCE_MS = 400;
 
@@ -14,17 +14,7 @@ const AVERAGE_DEBOUNCE_MS = 400;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section aria-label="Filters" class="grid gap-3">
-      <button
-        type="button"
-        class="rounded-[var(--radius)] border border-gray-400 p-2 text-left font-medium md:hidden"
-        aria-controls="filter-panel-body"
-        [attr.aria-expanded]="open()"
-        (click)="open.set(!open())"
-      >
-        Filters — {{ activeCount() }} {{ activeCount() === 1 ? 'filter' : 'filters' }} active
-      </button>
-
-      <div id="filter-panel-body" class="gap-4 md:grid" [class.grid]="open()" [class.hidden]="!open()">
+      <div class="grid gap-4">
         <app-degree-picker
           [institutionId]="criteria().institutionId"
           [facultyId]="criteria().facultyId"
@@ -64,9 +54,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
         </details>
 
         <div class="grid gap-1">
-          <label for="filter-study-level" class="font-medium">Study level</label>
+          <label [for]="idPrefix() + '-study-level'" class="font-medium">Study level</label>
           <select
-            id="filter-study-level"
+            [id]="idPrefix() + '-study-level'"
             class="rounded-[var(--radius)] border border-gray-400 p-2"
             (change)="state.update({ studyLevel: $any($event.target).value || undefined })"
           >
@@ -78,9 +68,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
         </div>
 
         <div class="grid gap-1">
-          <label for="filter-average" class="font-medium">Your average (%)</label>
+          <label [for]="idPrefix() + '-average'" class="font-medium">Your average (%)</label>
           <input
-            id="filter-average"
+            [id]="idPrefix() + '-average'"
             type="number"
             min="0"
             max="100"
@@ -92,9 +82,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
         </div>
 
         <div class="grid gap-1">
-          <label for="filter-closing-from" class="font-medium">Closing from</label>
+          <label [for]="idPrefix() + '-closing-from'" class="font-medium">Closing from</label>
           <input
-            id="filter-closing-from"
+            [id]="idPrefix() + '-closing-from'"
             type="date"
             class="rounded-[var(--radius)] border border-gray-400 p-2"
             [value]="criteria().closingFrom ?? ''"
@@ -102,9 +92,9 @@ const AVERAGE_DEBOUNCE_MS = 400;
           />
         </div>
         <div class="grid gap-1">
-          <label for="filter-closing-to" class="font-medium">Closing to</label>
+          <label [for]="idPrefix() + '-closing-to'" class="font-medium">Closing to</label>
           <input
-            id="filter-closing-to"
+            [id]="idPrefix() + '-closing-to'"
             type="date"
             class="rounded-[var(--radius)] border border-gray-400 p-2"
             [value]="criteria().closingTo ?? ''"
@@ -120,19 +110,6 @@ const AVERAGE_DEBOUNCE_MS = 400;
           />
           Show closed bursaries
         </label>
-
-        <div class="grid gap-1">
-          <label for="filter-sort" class="font-medium">Sort by</label>
-          <select
-            id="filter-sort"
-            class="rounded-[var(--radius)] border border-gray-400 p-2"
-            (change)="state.update({ sort: $any($event.target).value || undefined })"
-          >
-            @for (s of sorts; track s.value) {
-              <option [value]="s.value" [selected]="s.value === (criteria().sort ?? 'BestMatch')">{{ s.label }}</option>
-            }
-          </select>
-        </div>
 
         <button
           type="button"
@@ -151,25 +128,12 @@ export class FilterPanelComponent {
 
   protected readonly criteria = this.state.criteria;
   protected readonly levels: readonly StudyLevel[] = STUDY_LEVELS;
-  protected readonly sorts: readonly { value: SearchSort; label: string }[] = SEARCH_SORTS;
-  protected readonly open = signal(false);
+  /** Prefix for control ids, so the page panel and the mobile sheet copy never share ids. */
+  readonly idPrefix = input('filter');
   protected readonly fields = toSignal(this.taxonomy.fields().pipe(catchError(() => of([]))), { initialValue: [] });
 
   /** Text in the average box; follows the URL (e.g. when filters are cleared). */
   protected readonly averageText = linkedSignal(() => this.criteria().average?.toString() ?? '');
-
-  protected readonly activeCount = computed(() => {
-    const c = this.criteria();
-    return [
-      c.institutionId || c.qualificationId,
-      c.fieldIds.length > 0,
-      c.studyLevel,
-      c.average !== undefined,
-      c.closingFrom,
-      c.closingTo,
-      c.includeClosed,
-    ].filter(Boolean).length;
-  });
 
   private averageTimer: ReturnType<typeof setTimeout> | undefined;
 

@@ -34,7 +34,7 @@ describe('FilterPanelComponent (on /search)', () => {
     await open('/search');
     const showClosed = Array.from(el.querySelectorAll('label')).find((l) => l.textContent?.includes('Show closed'));
     expect(showClosed?.querySelector<HTMLInputElement>('input')?.checked).toBe(false);
-    expect(el.textContent).toContain('0 filters active');
+    expect(el.textContent).toContain('Filters (0)');
   });
 
   it('showClosed_ticked_writesUrlAndReplacesHistory', async () => {

@@ -4,7 +4,7 @@ title: Home page hero as a fill-in-the-blanks search sentence
 phase: 4
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-032]
 requirements: [FR-01, FR-32]
 issue: 56

@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   selector: 'app-empty-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="rounded-control bg-paper p-6 text-center" role="status">
+    <div class="border-y border-line py-6" role="status">
       <p class="mb-3">{{ message() }}</p>
       @if (actionLabel()) {
         <button

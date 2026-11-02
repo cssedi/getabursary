@@ -50,6 +50,7 @@ describe('SearchStateService', () => {
       includeClosed: true,
       sort: 'Newest',
       page: 3,
+      filtersOpen: false,
     });
 
     await state.update({ page: 3 });

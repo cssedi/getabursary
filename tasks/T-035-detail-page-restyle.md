@@ -4,7 +4,7 @@ title: Restyle bursary detail page with date block and sticky apply bar
 phase: 4
 area: web
 model: haiku
-status: todo
+status: done
 depends_on: [T-032]
 requirements: [FR-06, FR-07]
 issue: 58

@@ -74,11 +74,11 @@ describe('BursaryDetailPage', () => {
     expect(el.querySelector('app-closing-date-badge')).not.toBeNull();
     expect(el.querySelectorAll('app-source-icons a').length).toBe(2);
     expect(headings()).toEqual([
-      'About',
       'Who can apply',
       'Fields of study and qualifications',
-      "What's covered",
+      'What’s covered',
       'Work-back obligation',
+      'About this bursary',
     ]);
     expect(el.textContent).toContain(bursaryDetail.summary);
     expect(el.textContent).toContain('Mathematics: 70%');
@@ -99,14 +99,47 @@ describe('BursaryDetailPage', () => {
     await navigation;
     await settle();
 
-    const apply = Array.from(el.querySelectorAll('a')).find(
-      (a) => a.textContent?.trim() === "Apply on funder's site",
-    )!;
+    const apply = el.querySelector<HTMLAnchorElement>('.apply-bar a')!;
+    expect(apply.textContent?.trim()).toBe(`Apply on ${bursaryDetail.funderName}’s site`);
     expect(apply.getAttribute('href')).toBe(bursaryDetail.applyUrl);
     expect(apply.getAttribute('target')).toBe('_blank');
     const rel = apply.getAttribute('rel')!.split(' ');
     expect(rel).toContain('noopener');
     expect(rel).toContain('nofollow');
+  });
+
+  it('open_noFunderName_applyLabelUsesGenericFallback', async () => {
+    const { navigation } = await open();
+    (await nextRequest(DETAIL_URL)).flush({ ...bursaryDetail, funderName: null });
+    await navigation;
+    await settle();
+
+    expect(el.querySelector('.apply-bar a')?.textContent?.trim()).toBe(
+      'Apply on the funder’s site',
+    );
+  });
+
+  it('open_applyUrl_rendersStickyApplyBarAndReservesPageSpace', async () => {
+    const { navigation } = await open();
+    (await nextRequest(DETAIL_URL)).flush(bursaryDetail);
+    await navigation;
+    await settle();
+
+    // The 768 px media query lives in the component styles; here we check the structure it targets.
+    expect(el.querySelector('.detail')!.classList).toContain('with-apply-bar');
+    const bar = el.querySelector('.apply-bar')!;
+    expect(bar.parentElement).toBe(el.querySelector('.detail'));
+    expect(bar.querySelector('a.apply-button')).not.toBeNull();
+  });
+
+  it('open_noApplyUrl_rendersNoApplyBar', async () => {
+    const { navigation } = await open();
+    (await nextRequest(DETAIL_URL)).flush({ ...bursaryDetail, applyUrl: null });
+    await navigation;
+    await settle();
+
+    expect(el.querySelector('.apply-bar')).toBeNull();
+    expect(el.querySelector('.detail')!.classList).not.toContain('with-apply-bar');
   });
 
   it('open_adSlot_isHidden', async () => {
@@ -177,9 +210,11 @@ describe('BursaryDetailPage', () => {
     expect(el.querySelector('app-closed-bursary')).not.toBeNull();
     expect(el.querySelector('h1')?.textContent).toBe(closedBursary.name);
     expect(el.textContent).toContain('This bursary closed on 30 Sept 2026.');
+    expect(el.querySelector('app-closing-date-badge')).not.toBeNull();
     expect(el.querySelectorAll('app-source-icons a').length).toBe(1);
     expect(headings()).toEqual([]);
-    expect(el.textContent).not.toContain('Apply on funder');
+    expect(el.textContent).not.toContain('Apply on');
+    expect(el.querySelector('.apply-bar')).toBeNull();
     expect(el.querySelector('.ad-slot')).toBeNull();
     expect(document.head.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe(
       'noindex',

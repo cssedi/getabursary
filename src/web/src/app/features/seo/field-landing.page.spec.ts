@@ -48,7 +48,7 @@ describe('FieldLandingPage', () => {
 
     const el = harness.routeNativeElement as HTMLElement;
     expect(el.querySelector('h1')?.textContent).toContain('Engineering bursaries in South Africa');
-    expect(el.querySelectorAll('app-bursary-card').length).toBe(3);
+    expect(el.querySelectorAll('app-bursary-row').length).toBe(3);
     const refine = el.querySelector<HTMLAnchorElement>('a[href^="/search"]')!;
     expect(refine.textContent?.trim()).toBe('Refine by your degree');
     expect(refine.getAttribute('href')).toBe(`/search?fieldIds=${fields[0].id}`);

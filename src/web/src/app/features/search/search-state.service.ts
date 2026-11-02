@@ -25,6 +25,8 @@ export interface SearchCriteria {
   includeClosed: boolean;
   sort?: SearchSort;
   page: number;
+  /** UI-only: the mobile filter sheet is open (`filters=open`); never sent to the API. */
+  filtersOpen: boolean;
 }
 
 const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -67,6 +69,7 @@ export function parseCriteria(get: (key: string) => string | null): SearchCriter
     includeClosed: get('includeClosed') === 'true',
     sort: SEARCH_SORTS.find((s) => s.value === sort)?.value,
     page: Number.isInteger(page) && page >= 1 ? page : 1,
+    filtersOpen: get('filters') === 'open',
   };
 }
 
@@ -84,6 +87,7 @@ export function toQueryParams(c: Partial<SearchCriteria>): Params {
   if (c.includeClosed) params['includeClosed'] = 'true';
   if (c.sort) params['sort'] = c.sort;
   if (c.page !== undefined && c.page > 1) params['page'] = c.page;
+  if (c.filtersOpen) params['filters'] = 'open';
   return params;
 }
 
@@ -113,6 +117,21 @@ export class SearchStateService {
     if (c.sort) params.sort = c.sort;
     if (c.page > 1) params.page = c.page;
     return params;
+    // Same params → same object, so toggling the filter sheet does not refetch.
+  }, { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) });
+
+  /** How many filters are set; shown on the mobile "Filters (3)" button. */
+  readonly activeCount = computed(() => {
+    const c = this.criteria();
+    return [
+      c.institutionId || c.qualificationId,
+      c.fieldIds.length > 0,
+      c.studyLevel,
+      c.average !== undefined,
+      c.closingFrom,
+      c.closingTo,
+      c.includeClosed,
+    ].filter(Boolean).length;
   });
 
   /** Writes changes to the URL (replacing history). Any change other than `page` resets `page` to 1. */
@@ -122,8 +141,17 @@ export class SearchStateService {
     return this.router.navigate(['/search'], { queryParams: toQueryParams(next), replaceUrl: true });
   }
 
-  /** Empties the URL: every filter, the sort and the page. */
+  /** Opens or closes the mobile filter sheet, keeping everything else in the URL. */
+  setFiltersOpen(filtersOpen: boolean): Promise<boolean> {
+    return this.router.navigate(['/search'], {
+      queryParams: toQueryParams({ ...this.criteria(), filtersOpen }),
+      replaceUrl: true,
+    });
+  }
+
+  /** Empties the URL: every filter, the sort and the page (an open filter sheet stays open). */
   clear(): Promise<boolean> {
-    return this.router.navigate(['/search'], { replaceUrl: true });
+    const queryParams = toQueryParams({ filtersOpen: this.criteria().filtersOpen });
+    return this.router.navigate(['/search'], { queryParams, replaceUrl: true });
   }
 }
