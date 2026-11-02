@@ -1,19 +1,14 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { catchError, defaultIfEmpty, forkJoin, map, of, startWith, switchMap } from 'rxjs';
-import { FacultyResponse, QualificationResponse, StudyLevel } from '../../core/api/models';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { FacultyQualificationsResponse, StudyLevel } from '../../core/api/models';
 import { TaxonomyApi } from '../../core/api/taxonomy-api';
 import { STUDY_LEVELS, parseAverage, toQueryParams } from '../search/search-state.service';
 
-interface DegreeGroup {
-  faculty: FacultyResponse;
-  degrees: QualificationResponse[];
-}
-
 interface Degrees {
   loading: boolean;
-  groups: DegreeGroup[];
+  groups: FacultyQualificationsResponse[];
 }
 
 /** Home: the search is the hero, a fill-in-the-blanks sentence (specs/06-design §5). */
@@ -40,9 +35,9 @@ interface Degrees {
               <option value="">Loading degrees…</option>
             } @else {
               <option value="">Any degree</option>
-              @for (group of degrees().groups; track group.faculty.id) {
-                <optgroup [label]="group.faculty.name">
-                  @for (d of group.degrees; track d.id) {
+              @for (group of degrees().groups; track group.id) {
+                <optgroup [label]="group.name">
+                  @for (d of group.qualifications; track d.id) {
                     <option [value]="d.id">{{ d.name }}</option>
                   }
                 </optgroup>
@@ -144,20 +139,12 @@ export class HomePage {
   });
   protected readonly fields = toSignal(this.api.fields().pipe(catchError(() => of([]))), { initialValue: [] });
 
-  // shortcut: one request per faculty (no "all degrees at a university" endpoint); add one if it gets slow.
   protected readonly degrees = toSignal(
     toObservable(this.institutionId).pipe(
       switchMap((id) =>
         id
-          ? this.api.faculties(id).pipe(
-              switchMap((faculties) =>
-                forkJoin(
-                  faculties.map((faculty) =>
-                    this.api.qualifications(faculty.id).pipe(map((degrees): DegreeGroup => ({ faculty, degrees }))),
-                  ),
-                ).pipe(defaultIfEmpty([] as DegreeGroup[])),
-              ),
-              map((groups): Degrees => ({ loading: false, groups: groups.filter((g) => g.degrees.length) })),
+          ? this.api.qualificationsByInstitution(id).pipe(
+              map((groups): Degrees => ({ loading: false, groups: groups.filter((g) => g.qualifications.length) })),
               catchError(() => of<Degrees>({ loading: false, groups: [] })),
               startWith<Degrees>({ loading: true, groups: [] }),
             )
@@ -187,10 +174,10 @@ export class HomePage {
       this.averageEl().nativeElement.focus();
       return;
     }
-    const group = this.degrees().groups.find((g) => g.degrees.some((d) => d.id === this.degreeId()));
+    const group = this.degrees().groups.find((g) => g.qualifications.some((d) => d.id === this.degreeId()));
     const queryParams = toQueryParams({
       institutionId,
-      facultyId: group?.faculty.id,
+      facultyId: group?.id,
       qualificationId: this.degreeId(),
       studyLevel: this.studyLevel(),
       average,

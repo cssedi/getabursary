@@ -83,6 +83,35 @@ public sealed class TaxonomyEndpointTests : IDisposable
     }
 
     [Fact]
+    public async Task GetQualificationsByInstitution_KnownInstitution_ReturnsFacultiesInPerFacultyOrderWithTheirQualifications()
+    {
+        var institutionId = await InstitutionIdAsync("uct");
+
+        using var response = await _client.GetAsync($"/api/v1/taxonomy/institutions/{institutionId}/qualifications");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var grouped = await response.Content.ReadFromJsonAsync<FacultyQualificationsResponse[]>();
+        Assert.NotNull(grouped);
+        using var facultiesResponse = await _client.GetAsync($"/api/v1/taxonomy/institutions/{institutionId}/faculties");
+        var faculties = await facultiesResponse.Content.ReadFromJsonAsync<FacultyResponse[]>();
+        Assert.Equal(faculties!.Select(f => f.Id), grouped.Select(f => f.Id));
+        var commerce = grouped.Single(f => f.Slug == "commerce");
+        Assert.NotEmpty(commerce.Qualifications);
+        using var qualificationsResponse = await _client.GetAsync($"/api/v1/taxonomy/faculties/{commerce.Id}/qualifications");
+        var expected = await qualificationsResponse.Content.ReadFromJsonAsync<QualificationResponse[]>();
+        Assert.Equal(expected!.Select(q => q.Id), commerce.Qualifications.Select(q => q.Id));
+        Assert.All(commerce.Qualifications, q => Assert.NotEmpty(q.FieldCodes));
+    }
+
+    [Fact]
+    public async Task GetQualificationsByInstitution_UnknownInstitution_Returns404ProblemDetailsWithCode()
+    {
+        using var response = await _client.GetAsync($"/api/v1/taxonomy/institutions/{Guid.CreateVersion7()}/qualifications");
+
+        await AssertProblemAsync(response, HttpStatusCode.NotFound, "Taxonomy.InstitutionNotFound");
+    }
+
+    [Fact]
     public async Task GetQualifications_KnownFaculty_Returns200WithFieldCodes()
     {
         var facultyId = await FacultyIdAsync("uct", "commerce");

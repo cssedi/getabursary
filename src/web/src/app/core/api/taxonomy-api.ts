@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from './api-base-url';
-import { FacultyResponse, FieldOfStudyResponse, InstitutionResponse, QualificationResponse } from './models';
+import {
+  FacultyQualificationsResponse,
+  FacultyResponse,
+  FieldOfStudyResponse,
+  InstitutionResponse,
+  QualificationResponse,
+} from './models';
 import { toHttpParams } from './query-params';
 
 /** Read-only taxonomy endpoints that fill the degree picker and the field filter (FR-01). */
@@ -20,6 +26,13 @@ export class TaxonomyApi {
   faculties(institutionId: string): Observable<FacultyResponse[]> {
     return this.http.get<FacultyResponse[]>(
       `${this.baseUrl}/api/v1/taxonomy/institutions/${encodeURIComponent(institutionId)}/faculties`,
+    );
+  }
+
+  /** Every faculty of an institution with its qualifications, in one request. */
+  qualificationsByInstitution(institutionId: string): Observable<FacultyQualificationsResponse[]> {
+    return this.http.get<FacultyQualificationsResponse[]>(
+      `${this.baseUrl}/api/v1/taxonomy/institutions/${encodeURIComponent(institutionId)}/qualifications`,
     );
   }
 

@@ -46,6 +46,28 @@ public sealed class TaxonomyRepository(GetABursaryDbContext db) : ITaxonomyRepos
                 q.QualificationFields.Select(qf => qf.FieldOfStudy.Code).OrderBy(code => code).ToList()))
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<FacultyQualificationsSummary>?> GetFacultiesWithQualificationsAsync(Guid institutionId, CancellationToken ct) =>
+        await db.Institutions.AsNoTracking()
+            .Where(i => i.Id == institutionId)
+            .Select(i => i.Faculties
+                .OrderBy(f => f.Name)
+                .Select(f => new FacultyQualificationsSummary(
+                    f.Id,
+                    f.Name,
+                    f.Slug,
+                    f.Qualifications
+                        .OrderBy(q => q.Name)
+                        .Select(q => new QualificationSummary(
+                            q.Id,
+                            q.Name,
+                            q.Abbreviation,
+                            q.StudyLevel,
+                            q.Slug,
+                            q.QualificationFields.Select(qf => qf.FieldOfStudy.Code).OrderBy(code => code).ToList()))
+                        .ToList()))
+                .ToList())
+            .SingleOrDefaultAsync(ct);
+
     public async Task<IReadOnlyList<FieldOfStudySummary>> GetFieldsOfStudyAsync(CancellationToken ct) =>
         await db.FieldsOfStudy.AsNoTracking()
             .OrderBy(f => f.Code)

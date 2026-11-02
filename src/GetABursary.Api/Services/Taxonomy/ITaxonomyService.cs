@@ -14,6 +14,9 @@ public interface ITaxonomyService
     /// <summary>Qualifications of a faculty. Fails with <c>Taxonomy.FacultyNotFound</c> for an unknown id.</summary>
     Task<Result<IReadOnlyList<QualificationResponse>>> GetQualificationsAsync(Guid facultyId, CancellationToken ct);
 
+    /// <summary>Faculties of an institution, each with its qualifications, in one call. Fails with <c>Taxonomy.InstitutionNotFound</c> for an unknown id.</summary>
+    Task<Result<IReadOnlyList<FacultyQualificationsResponse>>> GetQualificationsByInstitutionAsync(Guid institutionId, CancellationToken ct);
+
     /// <summary>Fields of study as a two-level tree (first order with nested second order).</summary>
     Task<Result<IReadOnlyList<FieldOfStudyResponse>>> GetFieldsOfStudyAsync(CancellationToken ct);
 }

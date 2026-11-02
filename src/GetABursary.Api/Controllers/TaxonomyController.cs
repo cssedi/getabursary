@@ -46,6 +46,18 @@ public class TaxonomyController(ITaxonomyService taxonomy) : ControllerBase
         return result.ToActionResult(this);
     }
 
+    /// <summary>Faculties of an institution with their qualifications, in one request (the home page degree picker).</summary>
+    [HttpGet("institutions/{id:guid}/qualifications")]
+    [ResponseCache(Duration = 3600)]
+    [ProducesResponseType<FacultyQualificationsResponse[]>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetQualificationsByInstitution(Guid id, CancellationToken ct = default)
+    {
+        var result = await taxonomy.GetQualificationsByInstitutionAsync(id, ct);
+
+        return result.ToActionResult(this);
+    }
+
     /// <summary>Fields of study as a tree: first-order (CESM) fields with their second-order children.</summary>
     [HttpGet("fields")]
     [ResponseCache(Duration = 3600)]

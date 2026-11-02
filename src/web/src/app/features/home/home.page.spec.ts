@@ -5,6 +5,11 @@ import { Router, provideRouter } from '@angular/router';
 import { faculties, fields, institutions, qualifications } from '../../../testing/fixtures';
 import { HomePage } from './home.page';
 
+const degreesByFaculty = [
+  { ...faculties[0], qualifications: qualifications.slice(0, 2) },
+  { ...faculties[1], qualifications: qualifications.slice(2) },
+];
+
 async function setup() {
   TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()] });
   const http = TestBed.inject(HttpTestingController);
@@ -29,10 +34,7 @@ async function setup() {
   };
   const chooseUniversity = async () => {
     await choose('#home-university', institutions[0].id);
-    http.expectOne(`/api/v1/taxonomy/institutions/${institutions[0].id}/faculties`).flush(faculties);
-    await flush();
-    http.expectOne(`/api/v1/taxonomy/faculties/${faculties[0].id}/qualifications`).flush(qualifications.slice(0, 2));
-    http.expectOne(`/api/v1/taxonomy/faculties/${faculties[1].id}/qualifications`).flush(qualifications.slice(2));
+    http.expectOne(`/api/v1/taxonomy/institutions/${institutions[0].id}/qualifications`).flush(degreesByFaculty);
     await flush();
   };
   const submit = async () => {
@@ -45,10 +47,20 @@ async function setup() {
     input.dispatchEvent(new Event('input'));
     await flush();
   };
-  return { el, $, navigate, choose, chooseUniversity, submit, type };
+  return { el, $, http, navigate, choose, chooseUniversity, submit, type };
 }
 
 describe('HomePage', () => {
+  it('universityPick_makesOneDegreesRequest', async () => {
+    const { choose, http } = await setup();
+    await choose('#home-university', institutions[0].id);
+    const taxonomyRequests = http.match((r) => r.url.startsWith('/api/v1/taxonomy/institutions/'));
+    expect(taxonomyRequests.map((r) => r.request.url)).toEqual([
+      `/api/v1/taxonomy/institutions/${institutions[0].id}/qualifications`,
+    ]);
+    taxonomyRequests[0].flush(degreesByFaculty);
+  });
+
   it('degreeSelect_beforeUniversity_isDisabledWithPlaceholder', async () => {
     const { $ } = await setup();
     const degree = $<HTMLSelectElement>('#home-degree');

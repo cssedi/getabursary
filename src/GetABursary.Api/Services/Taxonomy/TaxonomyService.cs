@@ -46,18 +46,39 @@ public sealed class TaxonomyService(ITaxonomyRepository repository) : ITaxonomyS
 
         var qualifications = await repository.GetQualificationsAsync(facultyId, ct);
 
-        return qualifications
-            .Select(q => new QualificationResponse
+        return qualifications.Select(ToResponse).ToList();
+    }
+
+    public async Task<Result<IReadOnlyList<FacultyQualificationsResponse>>> GetQualificationsByInstitutionAsync(Guid institutionId, CancellationToken ct)
+    {
+        var faculties = await repository.GetFacultiesWithQualificationsAsync(institutionId, ct);
+
+        if (faculties is null)
+        {
+            return TaxonomyErrors.InstitutionNotFound(institutionId);
+        }
+
+        return faculties
+            .Select(f => new FacultyQualificationsResponse
             {
-                Id = q.Id,
-                Name = q.Name,
-                Abbreviation = q.Abbreviation,
-                StudyLevel = q.StudyLevel,
-                Slug = q.Slug,
-                FieldCodes = q.FieldCodes.Order(StringComparer.Ordinal).ToList(),
+                Id = f.Id,
+                Name = f.Name,
+                Slug = f.Slug,
+                Qualifications = f.Qualifications.Select(ToResponse).ToList(),
             })
             .ToList();
     }
+
+    private static QualificationResponse ToResponse(QualificationSummary q) =>
+        new()
+        {
+            Id = q.Id,
+            Name = q.Name,
+            Abbreviation = q.Abbreviation,
+            StudyLevel = q.StudyLevel,
+            Slug = q.Slug,
+            FieldCodes = q.FieldCodes.Order(StringComparer.Ordinal).ToList(),
+        };
 
     public async Task<Result<IReadOnlyList<FieldOfStudyResponse>>> GetFieldsOfStudyAsync(CancellationToken ct)
     {
