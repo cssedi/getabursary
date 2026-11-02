@@ -4,7 +4,7 @@ title: Report-an-inaccuracy endpoint with rate limiting
 phase: 3
 area: api
 model: haiku
-status: todo
+status: done
 depends_on: [T-003, T-007]
 requirements: [FR-08, NFR-04]
 issue: 23

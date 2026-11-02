@@ -11,6 +11,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddCommon();
 builder.Services.AddCoreData(builder.Configuration);
+builder.Services.AddReportsFeature(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -33,6 +34,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 
