@@ -215,9 +215,9 @@ public sealed class BursaryMerger(
         b.ExtractionConfidence = unchangedText ? Math.Max(b.ExtractionConfidence, confidence) : confidence;
 
         var today = clock.Today;
-        b.Status = b.ClosingDate is not { } closing ? BursaryStatus.Unknown
+        Set(b, nameof(Bursary.Status), () => b.Status = b.ClosingDate is not { } closing ? BursaryStatus.Unknown
             : closing < today ? BursaryStatus.Closed
-            : BursaryStatus.Open;
+            : BursaryStatus.Open);
 
         if (!b.IsLocked(EligibilityLock))
         {

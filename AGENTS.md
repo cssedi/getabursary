@@ -36,6 +36,7 @@ Anything else outside Scope still means: stop and escalate.
 
 ## Non-negotiable rules
 - **Layering:** Controller → Service → Repository. Controllers are thin and services return `Result<T>`. Repositories never take request DTOs and contain no business rules.
+- **Match sibling conventions:** before writing a file, read a sibling of the same kind and copy its style. Controller actions use a block body: `var result = await service.XAsync(..., ct);`, a blank line, then `return result.ToActionResult(this);` (see `TaxonomyController`). No expression-bodied actions and no inline `(await ...).ToActionResult(this)`. The reviewer must flag any deviation from sibling conventions as **Should fix**.
 - **Tests are required.** Add the tests your task's acceptance criteria name. `dotnet build` (warnings are errors) and `dotnet test` must pass. Adapter tests use saved HTML fixtures, never the live network.
 - **No secrets.** This repo is public. Never commit keys, real connection strings or personal data. Use `.env.example` placeholders.
 - Use `Guid.CreateVersion7()` for IDs and the injected `IClock` for time. Every I/O method is `async`, takes a `CancellationToken`, and ends in `Async`.

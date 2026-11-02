@@ -18,6 +18,7 @@ builder.Services.AddTaxonomyFeature();
 builder.Services.AddBursaryFeature();
 builder.Services.AddTrackerFeature();
 builder.Services.AddAuthFeature(builder.Configuration, builder.Environment);
+builder.Services.AddAdminFeature();
 
 // shortcut: trusts X-Forwarded-* from any sender, so the API must only be reachable through Caddy/Cloudflare.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>

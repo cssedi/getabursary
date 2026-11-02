@@ -4,7 +4,7 @@ title: Admin API - review queue, publish/close, bursary search and edit with loc
 phase: 5
 area: api
 model: sonnet
-status: todo
+status: done
 depends_on: [T-038]
 requirements: [FR-40, FR-41, FR-42]
 issue: 80
