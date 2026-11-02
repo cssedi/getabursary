@@ -42,7 +42,9 @@ import {
           <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
           <div class="flex items-start gap-2">
             <h1 class="min-w-0 flex-1 text-2xl font-bold [overflow-wrap:anywhere]">{{ b.name }}</h1>
-            <app-save-button class="-mt-2" [bursaryId]="b.id" [name]="b.name" />
+            @if (b.status !== 'Closed') {
+              <app-save-button class="-mt-2" [bursaryId]="b.id" [name]="b.name" />
+            }
             <app-report-button class="-mt-2 -mr-2" [bursaryId]="b.id" />
           </div>
           @if (b.funderName) {

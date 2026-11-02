@@ -15,6 +15,7 @@ export class TrackerStore {
   private readonly api = inject(TrackerApi);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly pending = new Set<string>();
   private loading: Promise<TrackerEntryResponse[]> | undefined;
 
   private readonly _ids = signal<ReadonlySet<string>>(new Set());
@@ -51,6 +52,7 @@ export class TrackerStore {
   }
 
   toggle(bursaryId: string): void {
+    if (this.pending.has(bursaryId)) return; // a request for this bursary is still in flight
     if (this._ids().has(bursaryId)) void this.remove(bursaryId);
     else this.auth.requireAuth({ type: 'save', bursaryId });
   }
@@ -64,18 +66,22 @@ export class TrackerStore {
       this.toast.show(SAVE_FAILED);
       return;
     }
-    if (this._ids().has(bursaryId)) return;
+    if (this._ids().has(bursaryId) || this.pending.has(bursaryId)) return;
+    this.pending.add(bursaryId);
     this.setSaved(bursaryId, true);
     try {
       await firstValueFrom(this.api.upsert(bursaryId, { status: 'Saved', appliedOn: null, notes: null }));
     } catch {
       this.setSaved(bursaryId, false);
       this.toast.show(SAVE_FAILED);
+    } finally {
+      this.pending.delete(bursaryId);
     }
   }
 
   /** Removes optimistically; resolves false (after rolling back) if the API refuses. */
   async remove(bursaryId: string): Promise<boolean> {
+    this.pending.add(bursaryId);
     this.setSaved(bursaryId, false);
     try {
       await firstValueFrom(this.api.remove(bursaryId));
@@ -84,6 +90,8 @@ export class TrackerStore {
       this.setSaved(bursaryId, true);
       this.toast.show(REMOVE_FAILED);
       return false;
+    } finally {
+      this.pending.delete(bursaryId);
     }
   }
 

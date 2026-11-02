@@ -108,6 +108,19 @@ describe('SaveButtonComponent', () => {
     expect(TestBed.inject(ToastService).message()).toContain('Couldn’t save');
   });
 
+  it('click_twiceWhileSaving_sendsOnlyThePut', async () => {
+    const { fixture, button } = await render(true);
+    button.click();
+    await tick(fixture);
+    button.click();
+    await tick(fixture);
+    const put = http.expectOne('/api/v1/me/tracker/' + openBursary.id);
+    expect(put.request.method).toBe('PUT');
+    put.flush(ENTRY);
+    await tick(fixture);
+    expect(button.getAttribute('aria-pressed')).toBe('true');
+  });
+
   it('click_saved_removes_andRollsBackOnError', async () => {
     const { fixture, button } = await render(true, [ENTRY]);
     expect(button.getAttribute('aria-pressed')).toBe('true');
