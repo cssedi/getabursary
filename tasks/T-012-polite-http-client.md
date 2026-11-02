@@ -4,7 +4,7 @@ title: Polite HTTP page fetcher with robots.txt, rate limiting and retries
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-001, T-003]
 requirements: [FR-27, NFR-05]
 issue: 12
