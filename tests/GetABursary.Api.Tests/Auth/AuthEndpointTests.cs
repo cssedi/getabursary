@@ -2,6 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using GetABursary.Core.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GetABursary.Api.Tests.Auth;
 
@@ -115,6 +118,30 @@ public sealed partial class AuthEndpointTests(AuthFixture fixture)
         await RegisterAsync(client, email);
 
         Assert.StartsWith("https://web.example.test/account/confirm?userId=", LastLinkFor(email), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Register_StudentRoleMissing_RollsBackUserSoRetryWorks()
+    {
+        var email = NewEmail();
+        using var client = fixture.Factory.CreateClient();
+        using var scope = fixture.Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
+        var role = await db.Roles.AsNoTracking().SingleAsync(r => r.Name == "Student");
+        await db.Roles.Where(r => r.Id == role.Id).ExecuteDeleteAsync();
+        try
+        {
+            using var failed = await client.PostAsync("/api/v1/auth/register", JsonContent.Create(new { email, password = Password }));
+            Assert.Equal(HttpStatusCode.InternalServerError, failed.StatusCode);
+            Assert.False(await db.Users.AnyAsync(u => u.Email == email));
+        }
+        finally
+        {
+            db.Roles.Add(role);
+            await db.SaveChangesAsync();
+        }
+
+        await RegisterAsync(client, email);
     }
 
     private static string NewEmail() => $"user-{Guid.NewGuid():N}@example.test";

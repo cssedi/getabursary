@@ -1,4 +1,6 @@
+using System.Threading.RateLimiting;
 using GetABursary.Api.Services.Auth;
+using GetABursary.Api.Services.Reports;
 using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Users;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +10,8 @@ namespace GetABursary.Api.Extensions;
 public static class AuthServiceCollectionExtensions
 {
     public const string CsrfHeader = "X-Requested-With";
+
+    public const string AuthRateLimitPolicy = "auth";
 
     public const string CsrfHeaderValue = "getabursary";
 
@@ -45,6 +49,11 @@ public static class AuthServiceCollectionExtensions
             };
         });
 
+        services.AddRateLimiter(limiter => limiter.AddPolicy<string>(AuthRateLimitPolicy, context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                ClientIp.From(context),
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = 60, Window = TimeSpan.FromHours(1), QueueLimit = 0 })));
+
         services.AddOptions<SmtpOptions>().Bind(configuration.GetSection(SmtpOptions.SectionName));
         if (environment.IsDevelopment())
         {
@@ -61,7 +70,7 @@ public static class AuthServiceCollectionExtensions
     /// <summary>Maps Identity's endpoints under <c>/api/v1/auth</c>, plus <c>logout</c> (which MapIdentityApi does not provide).</summary>
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/v1/auth");
+        var group = app.MapGroup("/api/v1/auth").RequireRateLimiting(AuthRateLimitPolicy);
         group.MapIdentityApi<User>();
         group.MapPost("/logout", async (SignInManager<User> signInManager) =>
         {

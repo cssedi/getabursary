@@ -1,3 +1,4 @@
+using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -18,13 +19,27 @@ public class AppUserManager(
     IdentityErrorDescriber errors,
     IServiceProvider services,
     ILogger<UserManager<User>> logger,
-    IConfiguration configuration)
+    IConfiguration configuration,
+    GetABursaryDbContext dbContext)
     : UserManager<User>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
 {
     public override async Task<IdentityResult> CreateAsync(User user)
     {
+        // One transaction so a failed role save never leaves a user without a role.
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(CancellationToken);
         var result = await base.CreateAsync(user);
-        return result.Succeeded ? await AddToRoleAsync(user, UserRoles.Student) : result;
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        result = await AddToRoleAsync(user, UserRoles.Student);
+        if (result.Succeeded)
+        {
+            await transaction.CommitAsync(CancellationToken);
+        }
+
+        return result;
     }
 
     public override async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
