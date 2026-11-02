@@ -11,7 +11,7 @@ namespace GetABursary.Api.Tests.Taxonomy;
 [Collection(TaxonomyPostgresFixtureDefinition.Name)]
 public sealed class TaxonomyEndpointTests : IDisposable
 {
-    private static readonly string[] BigFiveWithQualifications = ["uct", "wits"];
+    private static readonly string[] BigFiveWithQualifications = ["uct", "uj", "up", "wits"];
 
     private readonly TaxonomyPostgresFixture _fixture;
     private readonly WebApplicationFactory<Program> _factory;

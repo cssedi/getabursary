@@ -4,7 +4,7 @@ title: Seed faculties + popular qualifications for UJ and UP from university PDF
 phase: 1
 area: data
 model: sonnet
-status: todo
+status: done
 depends_on: [T-010]
 requirements: [FR-01, FR-30, FR-32]
 issue: 31
