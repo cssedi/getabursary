@@ -11,6 +11,13 @@ GetABursary helps South African students find bursaries they actually qualify fo
 2. Read `specs/03-conventions.md`. It's mandatory, and PRs that break it will be rejected.
 3. Only create or modify files listed in the task's **Scope**. If you need anything else, stop and escalate (below).
 
+## Standing scope allowance (applies to every task)
+On top of your task's Scope, you **may** change these when your work legitimately needs it, without escalating:
+- **Test infrastructure:** test project `.csproj` files (adding packages already pinned in `Directory.Packages.props`), shared fixtures/factories (e.g. Postgres/Testcontainers fixtures, `WebApplicationFactory` subclasses), and test helpers under `tests/**` or `src/web/src/testing/**`.
+- **Existing tests broken by your intended change:** update assertions in existing spec/test files (e.g. `src/web/src/app/app.spec.ts`, or route tests that hit a page you're replacing) so they test the new, correct behaviour. Never delete a test just to make it pass, and never weaken what it checks.
+- List every such file under a **"Scope allowance used"** heading in the PR description, with one line each on why.
+Anything else outside Scope still means: stop and escalate.
+
 ## Non-negotiable rules
 - **Layering:** Controller → Service → Repository. Controllers are thin and services return `Result<T>`. Repositories never take request DTOs and contain no business rules.
 - **Tests are required.** Add the tests your task's acceptance criteria name. `dotnet build` (warnings are errors) and `dotnet test` must pass. Adapter tests use saved HTML fixtures, never the live network.

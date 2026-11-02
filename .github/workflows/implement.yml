@@ -53,6 +53,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install PDF tools (for tasks that read source PDFs)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

@@ -45,6 +45,7 @@ jobs:
                no secrets; no unjustified dependencies; migrations follow the rules; PR description starts with 'Lesdee,'.
             4. Post ONE summary comment starting with 'Lesdee,' and a verdict line: `VERDICT: APPROVE`, `VERDICT: CHANGES REQUESTED`
                or `VERDICT: NEEDS HUMAN`. List blocking issues first, then optional suggestions. Use inline comments for specific lines.
+            The "Standing scope allowance" in AGENTS.md (test infrastructure; existing tests updated for the intended change) is in Scope when listed in the PR.
             Scope changes approved in a PR/issue comment by the repo owner (@cssedi) or in an "orchestrator note" comment count as in Scope.
             Use NEEDS HUMAN only for decisions an agent can't make (product/spec choices, data that must be checked by a person, security).
             Always end with exactly one VERDICT line.
