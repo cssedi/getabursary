@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <UserSecretsId>dotnet-GetABursary.Worker-57573722-eeaa-4f04-b67b-92a93e106835</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GetABursary.Core\GetABursary.Core.csproj" />
+  </ItemGroup>
+
+</Project>
