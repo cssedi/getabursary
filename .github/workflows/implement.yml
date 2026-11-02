@@ -69,7 +69,8 @@ jobs:
             2. Create the branch `task/${{ inputs.task_id }}` from main.
             3. Implement ONLY this task, inside its Scope, with the tests it requires.
             4. Run `dotnet build` and `dotnet test` (and any "How to verify" commands) until they pass.
-            5. Set `status: done` in the task file's front-matter. Commit (Conventional Commits, mention ${{ inputs.task_id }}) and push.
+            5. Set `status: done` in the task file's front-matter. Commit (Conventional Commits, mention ${{ inputs.task_id }}).
+               Right before pushing, run `git fetch origin main && git rebase origin/main` (main may have moved; a stale base gets the push rejected), re-run the build/tests if the rebase changed anything, then push.
             6. Open ONE pull request with `gh pr create --base main`. The body must start with "Lesdee," and contain
                "Closes #${{ inputs.issue }}", the ticked acceptance criteria, and the verification commands you ran with results.
             If you are blocked (unclear spec, files outside Scope needed, approach doesn't work): do NOT guess.

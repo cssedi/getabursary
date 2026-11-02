@@ -29,7 +29,7 @@ You may create or modify **only**:
 4. Routes from spec §3 as **lazy-loaded placeholder components**, each showing its page name: `HomePage`, `SearchPage`, `BursaryDetailPage`, `FieldLandingPage`, `AboutPage`, `PrivacyPage`, `NotFoundPage`. `NotFoundPage` sets HTTP 404 during SSR (use the `RESPONSE_INIT`/response token provided by `@angular/ssr` for your version).
 5. `provideHttpClient(withFetch())` and an `API_BASE_URL` injection token: `''` in the browser, `process.env['API_INTERNAL_URL'] ?? 'http://localhost:5266'` on the server.
 6. `proxy.conf.json` forwarding `/api` to `http://localhost:5266`, wired into `ng serve`.
-7. `angular.json` budgets: initial ≤ 250 KB (error), any component style ≤ 6 KB (error).
+7. `angular.json` budgets (raw sizes): initial `maximumWarning: 300kB`, `maximumError: 350kB`; any component style `maximumError: 6kB`. (Revised 2026-11-02 after the BLOCKED comment: Angular budgets are raw, not compressed.)
 8. Install `@angular/cdk` (used by later tasks).
 9. npm scripts: `start`, `build`, `test` (must work with `-- --watch=false`), `lint` (Angular ESLint), `serve:ssr`.
 10. `src/web/README.md`: how to run (`npm ci`, `npm start`, run the API on 5266), test and build.

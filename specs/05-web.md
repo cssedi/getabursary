@@ -54,7 +54,7 @@ In production one origin serves everything: Caddy routes `/api/*` to the .NET AP
 - **Report (FR-08):** the dialog has a reason (required radio list), comment (≤ 1000, with a counter) and an optional email. Submit → `POST /api/v1/bursaries/{id}/reports`. `201` → "Thanks, we'll check it" toast. `429` → "Too many reports from your connection, try later". `400` → inline field errors.
 
 ## 7. Non-functional
-- **Performance budget (NFR-01):** initial JS ≤ 250 KB compressed, CSS ≤ 30 KB, set as `budgets` in `angular.json` (error level). No web fonts: use the system font stack. Images are lazy-loaded.
+- **Performance budget (NFR-01):** Angular budgets measure **raw (uncompressed)** size. Initial bundle: warning at 300 KB raw, error at 350 KB raw (≈ 90–100 KB over the network). Any component style: error at 6 KB. Set in `angular.json`. *(Revised 2026-11-02: the bare scaffold alone is ~270 KB raw.)* No web fonts: use the system font stack. Images are lazy-loaded.
 - **Accessibility:** WCAG 2.1 AA. Form controls have labels, focus is visible, the dialog traps focus and closes on Esc, colour contrast ≥ 4.5:1, and the layout works at 320 px wide.
 - **SEO (NFR-02):** unique `<title>` and meta description per page, canonical URLs, `robots.txt`, `sitemap.xml` (an SSR server route that lists open bursaries and field pages via the API), and JSON-LD on the detail page (`Grant`-like `MonetaryGrant` schema.org type where fields allow).
 - **Ads:** not in Phase 4. Leave a `<div class="ad-slot" data-slot="results-inline">` placeholder every 6 cards and one on the detail page, hidden for now (Phase 6 wires up AdSense and consent).

@@ -62,7 +62,7 @@ jobs:
                review comment that contains "VERDICT:". For failing checks, read the logs (`gh run list --branch <branch>`, `gh run view <id> --log-failed`).
             2. Fix every **Blocking** item and every failing check. Stay inside the task Scope (plus any scope approved in PR comments).
             3. Run `dotnet build` and `dotnet test` (and the task's verify commands) until they pass.
-            4. Commit (Conventional Commits, mention the task ID) and `git push` to this same branch. Do NOT open a new PR.
+            4. Commit (Conventional Commits, mention the task ID). Before pushing, run `git fetch origin main && git merge --no-edit origin/main` (a stale base gets the push rejected), then `git push` to this same branch. Do NOT open a new PR.
             5. Post one PR comment starting with "Lesdee," listing what you changed.
             If a fix needs a decision you can't make, comment "Lesdee, BLOCKED: <reason>" on the PR and stop.
           claude_args: |
