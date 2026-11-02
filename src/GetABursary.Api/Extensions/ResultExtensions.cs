@@ -50,6 +50,27 @@ public static class ResultExtensions
         return controller.StatusCode(status, problem);
     }
 
+    /// <summary>
+    /// <c>410 Gone</c> with <paramref name="error"/> in <c>errors</c> and <paramref name="payload"/> beside it under
+    /// <paramref name="key"/> in the ProblemDetails extensions (the closed-bursary summary).
+    /// </summary>
+    public static IActionResult ToGoneActionResult(this ControllerBase controller, Error error, string key, object payload)
+    {
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(error);
+        ArgumentNullException.ThrowIfNull(payload);
+
+        var problem = new ProblemDetails
+        {
+            Title = error.Message,
+            Status = StatusCodes.Status410Gone,
+        };
+        problem.Extensions[ErrorsExtensionKey] = new[] { new ProblemError(error.Code, error.Message) };
+        problem.Extensions[key] = payload;
+
+        return controller.StatusCode(StatusCodes.Status410Gone, problem);
+    }
+
     private static int MapStatusCode(ErrorType type) => type switch
     {
         ErrorType.Validation => StatusCodes.Status400BadRequest,

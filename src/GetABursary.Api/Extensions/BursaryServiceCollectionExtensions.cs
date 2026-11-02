@@ -6,7 +6,7 @@ namespace GetABursary.Api.Extensions;
 
 public static class BursaryServiceCollectionExtensions
 {
-    /// <summary>Registers bursary search (FR-01–FR-03): repositories and matching service.</summary>
+    /// <summary>Registers bursary search (FR-01–FR-03) and bursary detail (FR-06, FR-07): repositories and services.</summary>
     public static IServiceCollection AddBursaryFeature(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -14,6 +14,7 @@ public static class BursaryServiceCollectionExtensions
         services.AddScoped<IBursaryReadRepository, BursaryReadRepository>();
         services.AddScoped<IQualificationResolutionRepository, QualificationResolutionRepository>();
         services.AddScoped<IBursaryMatchingService, BursaryMatchingService>();
+        services.AddScoped<IBursaryService, BursaryService>();
 
         return services;
     }
