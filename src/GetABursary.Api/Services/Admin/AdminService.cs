@@ -249,6 +249,15 @@ public sealed class AdminService(
                     ? SetSet(b, nameof(Bursary.Coverage), coverage, b.Coverage, x => b.Coverage = x)
                     : AdminErrors.InvalidField(key, "must be a list of valid coverage items");
 
+            case "ispublished":
+                if (v.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+                {
+                    return AdminErrors.InvalidField(key, "must be true or false");
+                }
+
+                b.IsPublished = v.GetBoolean(); // not a locked field
+                return null;
+
             case "fundername":
                 return await SetFunderAsync(b, key, v, ct);
 

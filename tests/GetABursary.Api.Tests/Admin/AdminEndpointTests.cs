@@ -164,6 +164,27 @@ public sealed partial class AdminEndpointTests(AuthFixture fixture)
     }
 
     [Fact]
+    public async Task Patch_IsPublished_PublishesAndUnpublishesWithoutLocking()
+    {
+        var bursary = await AddBursaryAsync();
+        using var client = await SignInAdminAsync();
+
+        using var publish = await PatchAsync(client, bursary.Id, new { isPublished = true });
+        var published = await publish.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(published.GetProperty("isPublished").GetBoolean());
+        Assert.Contains(bursary.Id, await PublicSearchIdsAsync(client));
+
+        using var unpublish = await PatchAsync(client, bursary.Id, new { isPublished = false });
+        var unpublished = await unpublish.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.False(unpublished.GetProperty("isPublished").GetBoolean());
+        Assert.Empty(unpublished.GetProperty("lockedFields").EnumerateArray());
+        Assert.DoesNotContain(bursary.Id, await PublicSearchIdsAsync(client));
+
+        using var bad = await PatchAsync(client, bursary.Id, new { isPublished = "yes" });
+        Assert.Equal(HttpStatusCode.BadRequest, bad.StatusCode);
+    }
+
+    [Fact]
     public async Task Patch_InvalidValues_Return400AndChangeNothing()
     {
         var bursary = await AddBursaryAsync();
