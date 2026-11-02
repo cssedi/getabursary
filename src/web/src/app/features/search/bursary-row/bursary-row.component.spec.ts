@@ -1,3 +1,6 @@
+import { Dialog } from '@angular/cdk/dialog';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BursarySummaryResponse } from '../../../core/api/models';
@@ -6,11 +9,19 @@ import { TODAY } from '../../../shared/format/today';
 import { BursaryRowComponent } from './bursary-row.component';
 
 describe('BursaryRowComponent', () => {
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    TestBed.inject(Dialog).closeAll();
+  });
 
   function render(bursary: BursarySummaryResponse, index = 0) {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: TODAY, useValue: '2026-11-02' }],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: TODAY, useValue: '2026-11-02' },
+      ],
     });
     const fixture = TestBed.createComponent(BursaryRowComponent);
     fixture.componentRef.setInput('bursary', bursary);
@@ -44,14 +55,14 @@ describe('BursaryRowComponent', () => {
     expect(el.querySelector('.report-flag')!.classList.contains('z-10')).toBe(true);
   });
 
-  it('flag_click_emitsReportAndDoesNotNavigate', () => {
-    const { fixture, el } = render(openBursary);
-    const reported = vi.fn();
-    fixture.componentInstance.report.subscribe(reported);
+  it('flag_click_opensReportDialogAndDoesNotNavigate', () => {
+    const { el } = render(openBursary);
     const click = new MouseEvent('click', { bubbles: true, cancelable: true });
     el.querySelector('.report-flag')!.dispatchEvent(click);
-    expect(reported).toHaveBeenCalledTimes(1);
+    TestBed.tick();
+    expect(click.defaultPrevented).toBe(true);
     expect(el.querySelector('.report-flag')!.closest('a')).toBeNull();
+    expect(document.querySelector('[role="dialog"]')!.textContent).toContain('Report a problem');
   });
 
   it('closedRow_hasNoLink_isAriaDisabled_showsClosedAndSources', () => {
