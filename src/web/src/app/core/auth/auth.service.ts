@@ -84,15 +84,27 @@ export class AuthService {
   }
 
   private async openDialog(): Promise<void> {
+    try {
+      await this.showDialog();
+    } catch {
+      // Injector destroyed (app torn down) while the dialog chunks were loading.
+    }
+  }
+
+  private async showDialog(): Promise<void> {
     const { SignInDialogComponent } = await import('../../features/account/sign-in-dialog.component');
     // Lazy: the CDK dialog stack is ~80 kB and most visits never sign in.
     const { Dialog } = await import('@angular/cdk/dialog');
-    this.injector.get(Dialog).open(SignInDialogComponent, {
+    const ref = this.injector.get(Dialog).open(SignInDialogComponent, {
       ariaLabel: 'Sign in',
       width: '420px',
       maxWidth: 'calc(100vw - 32px)',
       panelClass: 'auth-dialog-panel',
       backdropClass: 'auth-dialog-backdrop',
+    });
+    // Closed without signing in: the user gave up, so don't replay the action later.
+    ref.closed.subscribe(() => {
+      if (!this._user()) this.clearPending();
     });
   }
 
