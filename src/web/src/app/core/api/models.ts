@@ -176,3 +176,31 @@ export interface MeResponse {
 export interface CreateReportResponse {
   id: string;
 }
+
+export const TRACKER_STATUSES = [
+  'Saved',
+  'Preparing',
+  'Applied',
+  'Shortlisted',
+  'Awarded',
+  'Unsuccessful',
+  'Withdrawn',
+] as const;
+
+export type TrackerStatus = (typeof TRACKER_STATUSES)[number];
+
+/** One saved bursary: `GET /api/v1/me/tracker` (T-041). */
+export interface TrackerEntryResponse {
+  bursary: BursarySummaryResponse;
+  status: TrackerStatus;
+  appliedOn: string | null;
+  notes: string | null;
+  updatedAt: string;
+}
+
+/** Body of `PUT /api/v1/me/tracker/{bursaryId}`. The API replaces all three fields. */
+export interface UpsertTrackerRequest {
+  status: TrackerStatus;
+  appliedOn: string | null;
+  notes: string | null;
+}

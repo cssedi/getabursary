@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { bursaryDetailResolver } from './features/bursary/bursary-detail.resolver';
+import { signedInGuard } from './features/tracker/tracker.guard';
 
 export const routes: Routes = [
   { path: '', title: 'GetABursary', loadComponent: () => import('./features/home/home.page').then((m) => m.HomePage) },
@@ -10,6 +11,12 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always',
     resolve: { bursary: bursaryDetailResolver },
     loadComponent: () => import('./features/bursary/bursary-detail.page').then((m) => m.BursaryDetailPage),
+  },
+  {
+    path: 'my-bursaries',
+    title: 'My bursaries',
+    canActivate: [signedInGuard],
+    loadComponent: () => import('./features/tracker/tracker.page').then((m) => m.TrackerPage),
   },
   { path: 'account/confirm', title: 'Confirm your email', loadComponent: () => import('./features/account/confirm.page').then((m) => m.ConfirmPage) },
   { path: 'account/forgot', title: 'Reset your password', loadComponent: () => import('./features/account/forgot.page').then((m) => m.ForgotPage) },

@@ -198,6 +198,16 @@ describe('BursaryDetailPage', () => {
     expect(jsonLd.applicationDeadline).toBe(bursaryDetail.closingDate);
   });
 
+  it('open_statusClosed_hidesSaveButton', async () => {
+    const { navigation } = await open();
+    (await nextRequest(DETAIL_URL)).flush({ ...bursaryDetail, status: 'Closed' });
+    await navigation;
+    await settle();
+
+    expect(el.querySelector('h1')).not.toBeNull();
+    expect(el.querySelector('app-save-button')).toBeNull();
+  });
+
   it('closed_410_rendersSummaryOnlyWithNoindex', async () => {
     const { navigation } = await open(`/bursaries/${closedBursary.slug}`);
     (await nextRequest(`/api/v1/bursaries/${closedBursary.slug}`)).flush(

@@ -4,7 +4,7 @@ title: Save button on rows and detail, and the "My bursaries" tracker page
 phase: 5
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-040, T-041]
 requirements: [FR-09, FR-12, FR-13, FR-14]
 issue: 79
