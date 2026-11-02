@@ -4,7 +4,7 @@ title: Bursary merger with deduplication rules and locked-field protection
 phase: 2
 area: worker
 model: sonnet
-status: todo
+status: done
 depends_on: [T-017]
 requirements: [FR-05, FR-24, FR-41, FR-42]
 issue: 18
