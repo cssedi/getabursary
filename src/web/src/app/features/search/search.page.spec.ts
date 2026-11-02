@@ -24,8 +24,9 @@ describe('SearchPage', () => {
     harness = await RouterTestingHarness.create();
     await harness.navigateByUrl(url);
     harness.detectChanges();
-    http.expectOne('/api/v1/taxonomy/institutions').flush(institutions);
-    http.expectOne('/api/v1/taxonomy/fields').flush(fields);
+    // match, not expectOne: a sheet opened by the URL adds a second filter panel (a second request each)
+    http.match('/api/v1/taxonomy/institutions').forEach((r) => r.flush(institutions));
+    http.match('/api/v1/taxonomy/fields').forEach((r) => r.flush(fields));
     el = harness.routeNativeElement as HTMLElement;
   }
 
@@ -55,8 +56,65 @@ describe('SearchPage', () => {
     http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries, { totalCount: 23 }));
     await settle();
     expect(el.textContent).toContain('23 bursaries match');
-    expect(el.querySelectorAll('app-bursary-card').length).toBe(3);
+    expect(el.querySelectorAll('app-bursary-row').length).toBe(3);
     expect(el.querySelectorAll('app-skeleton-card').length).toBe(0);
+    expect(el.querySelector('.count')!.getAttribute('aria-live')).toBe('polite');
+    expect(el.querySelector('.count')!.closest('div')!.querySelector('select')).not.toBeNull();
+  });
+
+  it('sort_changed_writesUrl', async () => {
+    await open('/search');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries));
+    await settle();
+    const select = el.querySelector<HTMLSelectElement>('#results-sort')!;
+    select.value = 'ClosingSoonest';
+    select.dispatchEvent(new Event('change'));
+    await settle();
+    expect(router.url).toBe('/search?sort=ClosingSoonest');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries));
+  });
+
+  it('filterSheet_opensFromButton_syncsUrl_reportsCount_andClosesWithoutRefetch', async () => {
+    await open('/search?studyLevel=Honours');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries, { totalCount: 23 }));
+    await settle();
+    expect(el.querySelector('.filters-button')!.textContent).toContain('Filters (1)');
+    expect(document.querySelector('app-filter-sheet')).toBeNull();
+
+    el.querySelector<HTMLButtonElement>('.filters-button')!.click();
+    await settle();
+    expect(router.url).toBe('/search?studyLevel=Honours&filters=open');
+    const sheet = document.querySelector('app-filter-sheet')!;
+    expect(sheet).not.toBeNull();
+    http.match((r) => r.url.startsWith('/api/v1/taxonomy')).forEach((r) => r.flush([]));
+    const show = sheet.querySelector<HTMLButtonElement>('.show-results')!;
+    expect(show.textContent).toContain('Show 23 bursaries');
+
+    show.click();
+    await settle();
+    expect(router.url).toBe('/search?studyLevel=Honours');
+    expect(document.querySelector('app-filter-sheet')).toBeNull();
+    // Opening and closing the sheet changes no search criteria, so no second request.
+  });
+
+  it('filterSheet_urlWithFiltersOpen_opensAndEscapeCloses', async () => {
+    await open('/search?filters=open');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries, { totalCount: 1 }));
+    await settle();
+    http.match((r) => r.url.startsWith('/api/v1/taxonomy')).forEach((r) => r.flush([]));
+    expect(document.querySelector('app-filter-sheet')).not.toBeNull();
+
+    document.querySelector('app-filter-sheet')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+    await settle();
+    expect(document.querySelector('app-filter-sheet')).toBeNull();
+    expect(router.url).toBe('/search');
+  });
+
+  it('empty_withAverage_namesTheAverage', async () => {
+    await open('/search?average=75');
+    http.expectOne((r) => r.url === SEARCH).flush(page([]));
+    await settle();
+    expect(el.textContent).toContain('No bursaries match a 75% average. Lower it to see more.');
   });
 
   it('criteriaChange_cancelsInFlightRequestAndSearchesAgain', async () => {
@@ -93,7 +151,7 @@ describe('SearchPage', () => {
     http.expectOne((r) => r.url === SEARCH).flush(page([openBursary]));
     await settle();
     expect(el.querySelector('app-error-state')).toBeNull();
-    expect(el.querySelectorAll('app-bursary-card').length).toBe(1);
+    expect(el.querySelectorAll('app-bursary-row').length).toBe(1);
   });
 
   it('adSlot_afterEverySixthCard_isHidden', async () => {
@@ -103,7 +161,7 @@ describe('SearchPage', () => {
     const slots = el.querySelectorAll<HTMLElement>('.ad-slot');
     expect(slots.length).toBe(2);
     expect(slots[0].hidden).toBe(true);
-    expect(slots[0].previousElementSibling!.querySelector('app-bursary-card')).not.toBeNull();
+    expect(slots[0].previousElementSibling!.querySelector('app-bursary-row')).not.toBeNull();
     expect(slots[0].previousElementSibling!.previousElementSibling).not.toBeNull();
     expect(el.querySelectorAll('li').length).toBe(15);
     expect(el.querySelectorAll('li')[6].classList.contains('ad-slot')).toBe(true);

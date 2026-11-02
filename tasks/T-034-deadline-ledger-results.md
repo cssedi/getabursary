@@ -4,7 +4,7 @@ title: Restyle search results as the deadline ledger, with mobile filter sheet
 phase: 4
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-032]
 requirements: [FR-03, FR-04, FR-05, FR-06]
 issue: 57

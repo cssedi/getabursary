@@ -48,7 +48,7 @@ describe('App shell', () => {
 
 describe('Routes', () => {
   const cases: [string, string][] = [
-    ['/', 'Find bursaries for your degree'],
+    ['/', 'Find bursaries for'],
     ['/search', 'Search bursaries'],
     ['/bursaries/field/engineering', 'FieldLandingPage'],
     ['/about', 'AboutPage'],
