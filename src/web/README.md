@@ -10,6 +10,10 @@ npm start            # http://localhost:4200, /api is proxied to http://localhos
 ```
 Run the API on port 5266 (`dotnet run --project src/GetABursary.Api`) for data.
 
+## SEO
+- `/robots.txt` and `/sitemap.xml` are served by `src/server.ts`. `PUBLIC_BASE_URL` (default `https://getabursary.co.za`) sets the absolute URLs. The sitemap reads the API at `API_INTERNAL_URL`, is cached for 1 hour, and returns 503 if the API fails.
+- The home page links to six field landing pages from a hard-coded list in `src/app/features/seo/featured-fields.ts`. Slugs must match `data/seed/fields-of-study.json`.
+
 ## Test, lint, build
 ```bash
 npm test -- --watch=false

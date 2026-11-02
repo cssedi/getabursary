@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { StudyLevel } from '../../core/api/models';
+import { FEATURED_FIELDS } from '../seo/featured-fields';
 import { STUDY_LEVELS, parseAverage, toQueryParams } from '../search/search-state.service';
 import { DegreePickerComponent, DegreeSelection } from './degree-picker.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [DegreePickerComponent],
+  imports: [DegreePickerComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="mx-auto grid max-w-xl gap-4 p-4">
@@ -45,12 +46,23 @@ import { DegreePickerComponent, DegreeSelection } from './degree-picker.componen
           Search
         </button>
       </form>
+      <nav aria-labelledby="home-fields-heading" class="grid gap-2">
+        <h2 id="home-fields-heading" class="text-lg font-bold">Browse bursaries by field of study</h2>
+        <ul class="grid gap-1">
+          @for (f of featuredFields; track f.slug) {
+            <li>
+              <a class="underline" [routerLink]="['/bursaries/field', f.slug]">{{ f.name }} bursaries</a>
+            </li>
+          }
+        </ul>
+      </nav>
     </section>
   `,
 })
 export class HomePage {
   private readonly router = inject(Router);
 
+  protected readonly featuredFields = FEATURED_FIELDS;
   protected readonly levels = STUDY_LEVELS;
   protected readonly degree = signal<DegreeSelection>({});
   protected readonly studyLevel = signal<StudyLevel | undefined>(undefined);

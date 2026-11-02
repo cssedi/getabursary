@@ -6,6 +6,14 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import {
+  buildRobotsTxt,
+  buildSitemapXml,
+  createSitemapCache,
+  loadSitemapSlugs,
+  normaliseBaseUrl,
+  respondWithSitemap,
+} from './app/features/seo/sitemap';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -23,6 +31,23 @@ const angularApp = new AngularNodeAppEngine();
  * });
  * ```
  */
+
+const publicBaseUrl = normaliseBaseUrl(process.env['PUBLIC_BASE_URL']);
+const apiInternalUrl = process.env['API_INTERNAL_URL'] ?? 'http://localhost:5266';
+const sitemapCache = createSitemapCache(async () => {
+  const { fieldSlugs, bursarySlugs } = await loadSitemapSlugs(apiInternalUrl, fetch);
+  return buildSitemapXml(publicBaseUrl, fieldSlugs, bursarySlugs);
+});
+
+app.get('/robots.txt', (_req, res) => {
+  res.type('text/plain').send(buildRobotsTxt(publicBaseUrl));
+});
+
+app.get('/sitemap.xml', async (_req, res) => {
+  const { status, contentType, body } = await respondWithSitemap(sitemapCache, Date.now());
+  if (status === 503) res.set('Retry-After', '300');
+  res.status(status).type(contentType).send(body);
+});
 
 /**
  * Serve static files from /browser

@@ -56,4 +56,15 @@ describe('HomePage', () => {
       average: 72,
     });
   });
+
+  it('render_always_linksSixFieldLandingPages', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()] });
+    const fixture = TestBed.createComponent(HomePage);
+    fixture.detectChanges();
+    const links = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>('a[href^="/bursaries/field/"]'),
+    );
+    expect(links.length).toBe(6);
+    expect(links[0].getAttribute('href')).toBe('/bursaries/field/engineering');
+  });
 });
