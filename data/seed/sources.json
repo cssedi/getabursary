@@ -1,6 +1,6 @@
 [
   { "key": "zabursaries", "name": "ZA Bursaries", "baseUrl": "https://www.zabursaries.co.za", "iconUrl": "https://www.zabursaries.co.za/favicon.ico", "enabled": true, "crawlDelayMs": 3000 },
-  { "key": "studytrust", "name": "StudyTrust", "baseUrl": "https://studytrust.org.za", "iconUrl": "https://studytrust.org.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
+  { "key": "studytrust", "name": "StudyTrust", "baseUrl": "https://studytrust.org.za", "iconUrl": "https://studytrust.org.za/favicon.ico", "enabled": true, "crawlDelayMs": 3000 },
   { "key": "allbursaries", "name": "AllBursaries", "baseUrl": "https://allbursaries.co.za", "iconUrl": "https://allbursaries.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
   { "key": "gocareers", "name": "GoCareers", "baseUrl": "https://gocareers.co.za", "iconUrl": "https://gocareers.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },
   { "key": "fundiconnect", "name": "FundiConnect", "baseUrl": "https://fundiconnect.co.za", "iconUrl": "https://fundiconnect.co.za/favicon.ico", "enabled": false, "crawlDelayMs": 3000 },

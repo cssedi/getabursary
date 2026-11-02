@@ -7,6 +7,7 @@ using GetABursary.Worker.Pipeline.Jobs;
 using GetABursary.Worker.Pipeline.Merging;
 using GetABursary.Worker.Scheduling;
 using GetABursary.Worker.Sources;
+using GetABursary.Worker.Sources.Adapters.StudyTrust;
 using GetABursary.Worker.Sources.Http;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddEligibilityExtraction(builder.Configuration);
 builder.Services.AddBursaryMerging();
 builder.Services.AddIngestionPipeline();
 builder.Services.AddSingleton<ISourceAdapter, GetABursary.Worker.Sources.Adapters.ZaBursaries.ZaBursariesAdapter>();
+builder.Services.AddSingleton<ISourceAdapter, StudyTrustAdapter>();
 builder.Services.AddSingleton<SourceAdapterRegistry>();
 builder.Services.AddScoped<IRawListingRepository, RawListingRepository>();
 builder.Services.AddScoped<ISnapshotStore, SnapshotStore>();
