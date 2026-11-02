@@ -17,6 +17,7 @@ builder.Services.AddIngestionScheduling(builder.Configuration);
 builder.Services.AddEligibilityExtraction(builder.Configuration);
 builder.Services.AddBursaryMerging();
 builder.Services.AddIngestionPipeline();
+builder.Services.AddSingleton<ISourceAdapter, GetABursary.Worker.Sources.Adapters.ZaBursaries.ZaBursariesAdapter>();
 builder.Services.AddSingleton<SourceAdapterRegistry>();
 builder.Services.AddScoped<IRawListingRepository, RawListingRepository>();
 builder.Services.AddScoped<ISnapshotStore, SnapshotStore>();
