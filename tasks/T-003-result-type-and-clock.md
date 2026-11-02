@@ -4,7 +4,7 @@ title: Add Result<T>, Error, IClock and Result-to-HTTP mapping
 phase: 0
 area: core
 model: haiku
-status: todo
+status: done
 depends_on: [T-001]
 requirements: [NFR-06]
 issue: 3
