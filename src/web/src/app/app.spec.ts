@@ -1,11 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { App } from './app';
 import { routes } from './app.routes';
 import { API_BASE_URL } from './core/api/api-base-url';
+import { bursaryDetail } from '../testing/fixtures';
 
 describe('App shell', () => {
   beforeEach(async () => {
@@ -35,12 +36,25 @@ describe('Routes', () => {
   const cases: [string, string][] = [
     ['/', 'Find bursaries for your degree'],
     ['/search', 'Search bursaries'],
-    ['/bursaries/some-slug', 'BursaryDetailPage'],
     ['/bursaries/field/engineering', 'FieldLandingPage'],
     ['/about', 'AboutPage'],
     ['/privacy', 'PrivacyPage'],
     ['/does/not/exist', 'NotFoundPage'],
   ];
+
+  it('/bursaries/:slug resolves the bursary before rendering BursaryDetailPage', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    const harness = await RouterTestingHarness.create();
+    // The resolver waits for the API, so the navigation settles only after the request is answered.
+    const navigation = harness.navigateByUrl('/bursaries/anglo-american-engineering-bursary-2027');
+    const request = await vi.waitFor(() => http.expectOne('/api/v1/bursaries/anglo-american-engineering-bursary-2027'));
+    request.flush(bursaryDetail);
+    await navigation;
+    expect(harness.routeNativeElement?.querySelector('h1')?.textContent).toBe(bursaryDetail.name);
+  });
 
   for (const [url, name] of cases) {
     it(`${url} resolves to ${name}`, async () => {
