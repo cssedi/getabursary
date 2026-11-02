@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace GetABursary.Api.Tests.Health;
 
-public class HealthEndpointTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class HealthEndpointTests(ApiFactory factory) : IClassFixture<ApiFactory>
 {
     [Fact]
     public async Task Get_Health_ReturnsOkWithStatusOk()
