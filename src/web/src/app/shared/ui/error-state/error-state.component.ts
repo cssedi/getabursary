@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   selector: 'app-error-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="rounded-control bg-paper p-6 text-center" role="alert">
+    <div class="border-y border-line py-6" role="alert">
       <p class="mb-3">{{ message() }}</p>
       <button
         type="button"
@@ -17,6 +17,6 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   `,
 })
 export class ErrorStateComponent {
-  readonly message = input('Something went wrong loading bursaries.');
+  readonly message = input("Bursaries didn't load. Check your connection and try again.");
   readonly retry = output<void>();
 }
