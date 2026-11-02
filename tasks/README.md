@@ -36,7 +36,7 @@ graph LR
   T008[T-008 seed JSON] --> T009[T-009 seeder]
   T006 --> T009
   T008 --> T010[T-010 faculties UCT+Wits]
-  T010 --> T024[T-024 faculties UP+SU+UJ from PDFs]
+  T010 --> T024[T-024 faculties UJ+UP from PDFs]
   T007 --> T011[T-011 worker host]
   T001 --> T012[T-012 polite http]
   T003 --> T012

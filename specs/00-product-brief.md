@@ -86,7 +86,7 @@ South African students looking for bursaries have to search across many aggregat
 ### 4.4 Reference data (degree taxonomy)
 - **FR-30** Seed and maintain a taxonomy: **Institution → Faculty → Qualification**, and **Qualification ↔ Field of study** (many-to-many).
 - **FR-31** Use the South African **CESM** (Classification of Educational Subject Matter, used by the Department of Higher Education and Training (DHET)) as the backbone for fields of study, so mapping is consistent and defensible.
-- **FR-32** MVP coverage (decided): faculties and qualifications for the **big 5: UCT, Wits, UP, SU and UJ**, with the most popular degrees per faculty first. All 26 public universities are still seeded as *institutions* (so bursaries limited to, say, UKZN can be recorded), but the university picker only shows institutions that have qualifications seeded. More universities, TVET colleges and private institutions come after the MVP.
+- **FR-32** MVP coverage (decided): faculties and qualifications for **UCT, Wits, UJ and UP** (SU deferred 2026-11-02: no usable source; UP from 2021 yearbook extracts until refreshed), with the most popular degrees per faculty first. All 26 public universities are still seeded as *institutions* (so bursaries limited to, say, UKZN can be recorded), but the university picker only shows institutions that have qualifications seeded. More universities, TVET colleges and private institutions come after the MVP.
 
 ### 4.5 Admin
 - **FR-40** Admin-only area (role-based, using the existing Identity + roles approach).
