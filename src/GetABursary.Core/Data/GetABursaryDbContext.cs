@@ -5,6 +5,7 @@ using GetABursary.Core.Domain.Ingestion;
 using GetABursary.Core.Domain.Reports;
 using GetABursary.Core.Domain.Taxonomy;
 using GetABursary.Core.Domain.Users;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,10 @@ using Microsoft.EntityFrameworkCore;
 namespace GetABursary.Core.Data;
 
 public class GetABursaryDbContext(DbContextOptions<GetABursaryDbContext> options, IClock clock)
-    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options), IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
+
     public DbSet<FieldOfStudy> FieldsOfStudy => Set<FieldOfStudy>();
 
     public DbSet<Institution> Institutions => Set<Institution>();

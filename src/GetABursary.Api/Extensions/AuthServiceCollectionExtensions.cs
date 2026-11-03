@@ -4,6 +4,7 @@ using GetABursary.Api.Services.Reports;
 using GetABursary.Core.Data;
 using GetABursary.Core.Domain.Users;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 
 namespace GetABursary.Api.Extensions;
@@ -22,6 +23,12 @@ public static class AuthServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(environment);
+
+        // Keys live in Postgres so sign-in cookies survive restarts and work across instances (spec 08 §2c).
+        // shortcut: keys are stored unencrypted; add ProtectKeysWithCertificate if the DB is shared or backups leave our control.
+        services.AddDataProtection()
+            .SetApplicationName("getabursary")
+            .PersistKeysToDbContext<GetABursaryDbContext>();
 
         services.AddIdentityApiEndpoints<User>(options =>
             {

@@ -4,7 +4,7 @@ title: Dockerfiles, production compose, Caddy, migrate step and persisted Data P
 phase: 6
 area: infra
 model: sonnet
-status: todo
+status: done
 depends_on: []
 requirements: [NFR-07]
 issue: 93

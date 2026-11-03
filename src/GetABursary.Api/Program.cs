@@ -1,3 +1,4 @@
+using GetABursary.Api;
 using GetABursary.Api.Extensions;
 using GetABursary.Api.Services.Auth;
 using GetABursary.Core;
@@ -29,6 +30,13 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 var app = builder.Build();
+
+if (args.Contains("--migrate"))
+{
+    // One-shot deploy step: schema, reference seed, admin seed, then exit (an exception exits non-zero).
+    await MigrateMode.RunAsync(app.Services);
+    return 0;
+}
 
 if (app.Environment.IsDevelopment() && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 {
@@ -66,5 +74,21 @@ app.MapControllers();
 app.MapAuthEndpoints();
 
 app.Run();
+return 0;
+
+namespace GetABursary.Api
+{
+    public static class MigrateMode
+    {
+        public static async Task RunAsync(IServiceProvider services)
+        {
+            using var scope = services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<GetABursaryDbContext>();
+            await db.Database.MigrateAsync();
+            await scope.ServiceProvider.GetRequiredService<IDataSeeder>().SeedAsync(CancellationToken.None);
+            await AuthSeeder.SeedAsync(scope.ServiceProvider);
+        }
+    }
+}
 
 public partial class Program;
