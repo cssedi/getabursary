@@ -46,7 +46,7 @@ Add 15% if VAT is charged: about **R168/month**.
 
 - **Why Neon over Postgres on the same server:** the data survives a server rebuild, there's nothing to patch or back up, and you can make a branch (a full copy) to test migrations.
 - **Limits (free):** 1 project and small storage (sources say 0.5–3 GB; we need well under 100 MB). The DB **sleeps after 5 min idle**, so the first request after a quiet spell takes about half a second longer. The nightly scrape wakes it.
-- **Config:** `ConnectionStrings:Default` gets `SSL Mode=Require` and the Neon *pooled* host. The connection string is a secret in the server's `.env`, never in the repo.
+- **Config:** `ConnectionStrings:Default` gets `SSL Mode=Require` and the Neon **direct** host (not the `-pooler` one; see `deploy/.env.prod.example`). The connection string is a secret in the server's `.env`, never in the repo.
 - **Fallback:** Supabase free (500 MB, Frankfurt, pauses after 1 week with no traffic).
 - **Going to prod:** move to §2a tier 2 (or Neon's paid plan). Moving is a `pg_dump`/`pg_restore` plus a connection-string change.
 
@@ -60,7 +60,7 @@ Browser ─▶ Cloudflare (proxy, TLS) ─▶ Caddy :443 (Cloudflare Origin CA c
                                         ├─ /api/*, /signin-google ─▶ api:8080
                                         └─ everything else       ─▶ web:4000 (SSR; API_INTERNAL_URL=http://api:8080)
 worker (nightly scrape) ─┐
-api ─────────────────────┴─▶ Neon (SSL, pooled host)
+api ─────────────────────┴─▶ Neon (SSL, direct host)
 ```
 - **Images** are built in GitHub Actions (linux/amd64) and pushed to GHCR, never built on the server (1 GB isn't enough). Tags: the commit sha, plus `latest`.
 - **Migrations:** a one-shot `migrate` service (the API image run with `--migrate`) applies EF migrations and the reference seed, then exits. The deploy runs it before `up -d`.

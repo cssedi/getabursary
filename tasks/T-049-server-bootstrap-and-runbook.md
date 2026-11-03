@@ -24,7 +24,7 @@ The owner can go from a fresh Ubuntu server to a running site by following one d
 2. `docs/DEPLOY.md`, plain-language numbered steps for a non-expert:
    1. Cloudflare: add the domain; at the registrar, change the nameservers; add an **A record** `@` → server IPv4 (proxied, orange cloud) and `www` CNAME → `@` (proxied); SSL/TLS mode **Full (strict)**; create an **Origin Certificate** and save it as `/opt/getabursary/certs/origin.pem` and `origin.key`.
    2. Copy the script up and run it: `scp deploy/bootstrap.sh root@<ip>:` then `ssh root@<ip> bash bootstrap.sh`.
-   3. Fill in `/opt/getabursary/.env` with `nano`: where each value comes from (Neon dashboard → **pooled** connection string; Google Cloud console; Brevo SMTP; the extraction API key; `openssl rand -hex 32` for the salt).
+   3. Fill in `/opt/getabursary/.env` with `nano`: where each value comes from (Neon dashboard → Connect → turn **Connection pooling off** → copy the parts into the format in `.env.prod.example`; Google Cloud console; Brevo SMTP; the extraction API key; `openssl rand -hex 32` for the salt).
    4. First manual deploy: `docker compose --profile tools run --rm migrate` then `docker compose up -d` (from `/opt/getabursary`); how to check logs (`docker compose logs -f api`); how to know it works (open the site; `/api/v1/health`).
    5. Making yourself admin (`Admin__Emails`), then a restart.
    6. Troubleshooting: out of memory (`free -h`, `docker stats`), 502 from Cloudflare, Neon sleeping (the first request is slow).
