@@ -4,7 +4,7 @@ title: Server bootstrap script and deploy runbook (Hetzner + Cloudflare + Neon)
 phase: 6
 area: infra
 model: haiku
-status: todo
+status: done
 depends_on: [T-047]
 requirements: [NFR-07]
 issue: 95
