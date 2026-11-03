@@ -1,0 +1,25 @@
+# TLS terminates here with a Cloudflare Origin CA certificate; Cloudflare proxies in front.
+www.{$SITE_DOMAIN} {
+	tls /certs/origin.pem /certs/origin.key
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}
+
+{$SITE_DOMAIN} {
+	tls /certs/origin.pem /certs/origin.key
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	@api path /api/* /signin-google*
+	handle @api {
+		reverse_proxy api:8080
+	}
+
+	handle {
+		reverse_proxy web:4000
+	}
+}

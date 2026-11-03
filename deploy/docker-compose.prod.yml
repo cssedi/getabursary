@@ -1,0 +1,61 @@
+# Production stack (spec 08 §2c). The database is external (Neon), so there is no db service.
+# Run: docker compose -f docker-compose.prod.yml up -d
+# Migrate first: docker compose -f docker-compose.prod.yml run --rm migrate
+# On the server this file, Caddyfile and .env all sit in /opt/getabursary/.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+services:
+  migrate:
+    image: ghcr.io/cssedi/getabursary-api:${IMAGE_TAG:-latest}
+    command: ["--migrate"]
+    env_file: .env
+    restart: "no"
+    profiles: ["tools"]
+    logging: *logging
+
+  api:
+    image: ghcr.io/cssedi/getabursary-api:${IMAGE_TAG:-latest}
+    env_file: .env
+    restart: unless-stopped
+    mem_limit: 300m
+    logging: *logging
+
+  worker:
+    image: ghcr.io/cssedi/getabursary-worker:${IMAGE_TAG:-latest}
+    env_file: .env
+    restart: unless-stopped
+    mem_limit: 300m
+    logging: *logging
+
+  web:
+    image: ghcr.io/cssedi/getabursary-web:${IMAGE_TAG:-latest}
+    env_file: .env
+    environment:
+      API_INTERNAL_URL: http://api:8080
+    restart: unless-stopped
+    mem_limit: 256m
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /opt/getabursary/certs:/certs:ro
+      - caddy_data:/data
+    depends_on:
+      - api
+      - web
+    restart: unless-stopped
+    mem_limit: 64m
+    logging: *logging
+
+volumes:
+  caddy_data:
