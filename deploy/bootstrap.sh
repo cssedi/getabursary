@@ -102,21 +102,21 @@ while read -r cidr; do
 done <<< "$cf_ranges"
 # Docker publishes ports through its own iptables rules, which skip ufw's INPUT rules. Limit them
 # in DOCKER-USER too (the ufw-docker pattern). Only IPv4 here: Docker doesn't publish IPv6 by default.
-if ! grep -q 'BEGIN GETABURSARY' /etc/ufw/after.rules; then
-  public_if=$(ip -4 route show default | awk 'NR==1 {print $5}')
-  [[ -n $public_if ]] || { echo "No default network interface found." >&2; exit 1; }
-  {
-    echo '# BEGIN GETABURSARY (deploy/bootstrap.sh): Docker bypasses ufw, so limit published web ports here'
-    echo '*filter'
-    echo ':DOCKER-USER - [0:0]'
-    while read -r cidr; do
-      echo "-A DOCKER-USER -i $public_if -p tcp -m multiport --dports 80,443 -s $cidr -j RETURN"
-    done < <(grep -v ':' <<< "$cf_ranges")
-    echo "-A DOCKER-USER -i $public_if -p tcp -m multiport --dports 80,443 -j DROP"
-    echo 'COMMIT'
-    echo '# END GETABURSARY'
-  } >> /etc/ufw/after.rules
-fi
+# Rewritten on every run so the Cloudflare ranges stay current.
+public_if=$(ip -4 route show default | awk 'NR==1 {print $5}')
+[[ -n $public_if ]] || { echo "No default network interface found." >&2; exit 1; }
+sed -i '/^# BEGIN GETABURSARY/,/^# END GETABURSARY/d' /etc/ufw/after.rules
+{
+  echo '# BEGIN GETABURSARY (deploy/bootstrap.sh): Docker bypasses ufw, so limit published web ports here'
+  echo '*filter'
+  echo ':DOCKER-USER - [0:0]'
+  while read -r cidr; do
+    echo "-A DOCKER-USER -i $public_if -p tcp -m multiport --dports 80,443 -s $cidr -j RETURN"
+  done < <(grep -v ':' <<< "$cf_ranges")
+  echo "-A DOCKER-USER -i $public_if -p tcp -m multiport --dports 80,443 -j DROP"
+  echo 'COMMIT'
+  echo '# END GETABURSARY'
+} >> /etc/ufw/after.rules
 ufw --force enable
 ufw reload
 
