@@ -4,7 +4,7 @@ title: Deploy workflow - build images to GHCR and roll out to the server over SS
 phase: 6
 area: infra
 model: sonnet
-status: todo
+status: done
 depends_on: [T-047]
 requirements: [NFR-07]
 issue: 94
@@ -36,3 +36,6 @@ Every green commit on main is built into images and deployed to the test server 
 ```bash
 npx --yes actionlint .github/workflows/deploy.yml || docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:latest
 ```
+
+## Done by the orchestrator (2026-11-03)
+Agent tokens can't push workflow files, so the orchestrator wrote `.github/workflows/deploy.yml` directly. T-049 documents it in `docs/DEPLOY.md`.

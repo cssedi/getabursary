@@ -17,7 +17,7 @@ The owner can go from a fresh Ubuntu server to a running site by following one d
 - `AGENTS.md`, `specs/03-conventions.md`, **`specs/08-hosting.md` §2b–§2c**, `specs/01-architecture.md` §5
 
 ## Scope
-- `deploy/bootstrap.sh` (new), `docs/DEPLOY.md` (new; T-048 adds its own section later, so leave a heading "Automatic deploys" with "Coming in T-048")
+- `deploy/bootstrap.sh` (new), `docs/DEPLOY.md` (new), `.gitignore` (add `deploy/.env`)
 
 ## Requirements
 1. `deploy/bootstrap.sh` (bash, `set -euo pipefail`, idempotent, run as root once): apt update/upgrade; install Docker Engine + compose plugin from Docker's apt repo; `unattended-upgrades`; a 2 GB swap file (`vm.swappiness=10`); user `deploy` in the `docker` group with the root account's `authorized_keys`; disable SSH password login; `ufw`: allow 22, allow 80/443 **only from Cloudflare's published IPv4/IPv6 ranges** (fetched from cloudflare.com/ips-v4 and ips-v6); `/opt/getabursary` and `/opt/getabursary/certs` owned by `deploy`; copy `.env.prod.example` to `/opt/getabursary/.env` (mode 600) **only if it doesn't exist**.
@@ -28,6 +28,7 @@ The owner can go from a fresh Ubuntu server to a running site by following one d
    4. First manual deploy: `docker compose --profile tools run --rm migrate` then `docker compose up -d` (from `/opt/getabursary`); how to check logs (`docker compose logs -f api`); how to know it works (open the site; `/api/v1/health`).
    5. Making yourself admin (`Admin__Emails`), then a restart.
    6. Troubleshooting: out of memory (`free -h`, `docker stats`), 502 from Cloudflare, Neon sleeping (the first request is slow).
+   7. **Automatic deploys** (read `.github/workflows/deploy.yml`): create a deploy SSH key pair on the Mac (`ssh-keygen -t ed25519 -f ~/.ssh/getabursary_deploy -N ""`), add the public half to the server's `deploy` user, and add the GitHub **secrets** `DEPLOY_HOST`, `DEPLOY_USER` (= `deploy`), `DEPLOY_SSH_KEY` (the private half), `DEPLOY_KNOWN_HOSTS` (output of `ssh-keyscan <ip>`), plus the **variables** `SITE_DOMAIN` (= `getabursary.co.za`) and `DEPLOY` (= `on`). After the first image build, make the 3 GHCR packages **public** (GitHub → Packages → each package → Settings → Change visibility) so the server can pull without a login. Rollback: Actions → Deploy → Run workflow with an older commit sha.
    Secrets never go in the repo, issues or chat.
 
 ## Acceptance criteria

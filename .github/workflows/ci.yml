@@ -78,3 +78,13 @@ jobs:
           node-version: '22'
       - name: Validate task front-matter and dependency graph
         run: node scripts/sync-issues.mjs --check
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images (no push)
+        run: |
+          for f in src/GetABursary.Api/Dockerfile src/GetABursary.Worker/Dockerfile src/web/Dockerfile; do
+            if [ -f "$f" ]; then docker build -f "$f" . ; else echo "$f not there yet (T-047). Skipping."; fi
+          done
