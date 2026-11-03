@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Bootstraps a fresh Ubuntu server for GetABursary (spec 08 §2c, docs/DEPLOY.md step 2).
-# Run once as root: bash bootstrap.sh
+# Run by .github/workflows/deploy.yml as root whenever this file changes (or by hand: bash bootstrap.sh).
 # Safe to run again: every step checks whether it is already done, so a second run changes nothing.
 set -euo pipefail
 
 APP_DIR=/opt/getabursary
-ENV_EXAMPLE_URL=https://raw.githubusercontent.com/cssedi/getabursary/main/deploy/.env.prod.example
 export DEBIAN_FRONTEND=noninteractive
 
 if [[ $EUID -ne 0 ]]; then
@@ -37,8 +36,11 @@ if [[ ! -f /etc/apt/keyrings/docker.asc ]]; then
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   chmod a+r /etc/apt/keyrings/docker.asc
 fi
+codename=${UBUNTU_CODENAME:-$VERSION_CODENAME}
+# Very new Ubuntu releases can be missing from Docker's repo for a while; the 24.04 (noble) packages work on them.
+curl -fsI "https://download.docker.com/linux/ubuntu/dists/$codename/Release" >/dev/null || codename=noble
 printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu %s stable\n' \
-  "$(dpkg --print-architecture)" "${UBUNTU_CODENAME:-$VERSION_CODENAME}" > /etc/apt/sources.list.d/docker.list
+  "$(dpkg --print-architecture)" "$codename" > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 systemctl enable --now docker
@@ -120,17 +122,7 @@ sed -i '/^# BEGIN GETABURSARY/,/^# END GETABURSARY/d' /etc/ufw/after.rules
 ufw --force enable
 ufw reload
 
-echo "==> App folder and .env"
+echo "==> App folder"
 install -d -m 755 -o deploy -g deploy "$APP_DIR"
-install -d -m 700 -o deploy -g deploy "$APP_DIR/certs"
-if [[ ! -e $APP_DIR/.env ]]; then
-  tmp=$(mktemp)
-  curl -fsSL "$ENV_EXAMPLE_URL" -o "$tmp"
-  install -m 600 -o deploy -g deploy "$tmp" "$APP_DIR/.env"
-  rm -f "$tmp"
-fi
-# Enforce on every run: the file holds secrets.
-chown deploy:deploy "$APP_DIR/.env"
-chmod 600 "$APP_DIR/.env"
 
-echo "==> Done. Next: docs/DEPLOY.md step 3 (fill in $APP_DIR/.env)."
+echo "==> Done."

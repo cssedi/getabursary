@@ -48,7 +48,6 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - /opt/getabursary/certs:/certs:ro
       - caddy_data:/data
     depends_on:
       - api

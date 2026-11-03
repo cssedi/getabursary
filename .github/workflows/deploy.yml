@@ -81,43 +81,127 @@ jobs:
     environment: test
     env:
       TAG: ${{ inputs.image_tag || needs.build.outputs.tag }}
+      HOST: ${{ secrets.DEPLOY_HOST }}
+      SITE: ${{ vars.SITE_DOMAIN }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-      - name: Skip until the deploy files exist
-        id: present
-        run: if [ -f deploy/docker-compose.prod.yml ]; then echo "ok=true" >> "$GITHUB_OUTPUT"; else echo "ok=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Check the required settings
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DB_URL: ${{ secrets.NEON_DATABASE_URL }}
+          ADMINS: ${{ secrets.ADMIN_EMAILS }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          missing=""
+          [ -n "$HOST" ] || missing="$missing secret:DEPLOY_HOST"
+          [ -n "$SSH_KEY" ] || missing="$missing secret:DEPLOY_SSH_KEY"
+          [ -n "$DB_URL" ] || missing="$missing secret:NEON_DATABASE_URL"
+          [ -n "$ADMINS" ] || missing="$missing secret:ADMIN_EMAILS"
+          [ -n "$ADMIN_PASSWORD" ] || missing="$missing secret:ADMIN_PASSWORD"
+          [ -n "$SITE" ] || missing="$missing variable:SITE_DOMAIN"
+          if [ -n "$missing" ]; then echo "::error::Missing settings (see docs/DEPLOY.md):$missing"; exit 1; fi
+
       - name: Set up SSH
-        if: steps.present.outputs.ok == 'true'
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
         run: |
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
-      - name: Copy compose file and Caddyfile
-        if: steps.present.outputs.ok == 'true'
-        run: scp -i ~/.ssh/deploy_key deploy/docker-compose.prod.yml deploy/Caddyfile "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/getabursary/"
-      - name: Pull, migrate, start
-        if: steps.present.outputs.ok == 'true'
+          # shortcut: trust the server's host key on first sight unless DEPLOY_KNOWN_HOSTS pins it.
+          if [ -n "$KNOWN_HOSTS" ]; then printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts; else ssh-keyscan -t ed25519 "$HOST" > ~/.ssh/known_hosts; fi
+          printf 'Host target\n  HostName %s\n  User root\n  IdentityFile ~/.ssh/deploy_key\n  ServerAliveInterval 30\n' "$HOST" > ~/.ssh/config
+
+      - name: Prepare the server (first time, or when bootstrap.sh changes)
         run: |
-          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" "set -e
+          want=$(sha256sum deploy/bootstrap.sh | cut -d' ' -f1)
+          have=$(ssh target "cat /opt/getabursary/.bootstrap.sha 2>/dev/null || true")
+          if [ "$want" = "$have" ]; then echo "Server already prepared."; exit 0; fi
+          scp deploy/bootstrap.sh target:/root/bootstrap.sh
+          ssh target "bash /root/bootstrap.sh && echo $want > /opt/getabursary/.bootstrap.sha"
+
+      - name: Write the settings file (.env) from GitHub secrets
+        env:
+          DB_URL: ${{ secrets.NEON_DATABASE_URL }}
+          ADMINS: ${{ secrets.ADMIN_EMAILS }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          EXTRACTION_KEY: ${{ secrets.EXTRACTION_API_KEY }}
+          GOOGLE_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+        run: |
+          umask 077
+          # Neon gives a postgresql:// URL; Npgsql wants key=value. Always use the direct host (drop "-pooler"):
+          # EF migrations need a session lock the transaction pooler can't hold, and Npgsql pools on our side.
+          conn=$(python3 - <<'PY'
+          import os, urllib.parse as u
+          p = u.urlparse(os.environ["DB_URL"].strip())
+          host = (p.hostname or "").replace("-pooler", "")
+          db = (p.path or "/").lstrip("/") or "neondb"
+          print(f"Host={host};Port={p.port or 5432};Database={db};Username={u.unquote(p.username or '')};"
+                f"Password={u.unquote(p.password or '')};SSL Mode=Require;Maximum Pool Size=10;Timeout=30")
+          PY
+          )
+          provider=fake; [ -n "$EXTRACTION_KEY" ] && provider=anthropic
+          {
+            echo "ASPNETCORE_ENVIRONMENT=Production"
+            echo "SITE_DOMAIN=$SITE"
+            echo "App__PublicBaseUrl=https://$SITE"
+            echo "ConnectionStrings__Default=$conn"
+            echo "Admin__Emails=$ADMINS"
+            echo "Admin__InitialPassword=$ADMIN_PASSWORD"
+            echo "Extraction__Provider=$provider"
+            echo "Extraction__Model=claude-haiku-5-5"
+            echo "Extraction__ApiKey=$EXTRACTION_KEY"
+            echo "Auth__Google__ClientId=$GOOGLE_ID"
+            echo "Auth__Google__ClientSecret=$GOOGLE_SECRET"
+            echo "Email__Smtp__Host=$SMTP_HOST"
+            echo "Email__Smtp__Port=587"
+            echo "Email__Smtp__User=$SMTP_USER"
+            echo "Email__Smtp__Password=$SMTP_PASSWORD"
+            echo "Email__Smtp__From=$SMTP_FROM"
+          } > env.generated
+          scp env.generated target:/opt/getabursary/env.generated
+          rm -f env.generated
+          # The IP-hash salt is made once on the server and kept, so it never changes and never leaves the server.
+          ssh target 'set -e; cd /opt/getabursary
+            [ -s salt ] || (umask 077; openssl rand -hex 32 > salt)
+            { cat env.generated; echo "Reports__IpHashSalt=$(cat salt)"; } > .env
+            rm -f env.generated; chmod 600 .env salt'
+
+      - name: Copy compose file and Caddyfile
+        run: scp deploy/docker-compose.prod.yml deploy/Caddyfile target:/opt/getabursary/
+
+      - name: Pull, migrate, start
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # The job's short-lived token lets the server pull the images, so they can stay private.
+          printf '%s' "$GHCR_TOKEN" | ssh target "docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+          ssh target "set -e
             cd /opt/getabursary
             export IMAGE_TAG='${TAG}'
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml --profile tools run --rm migrate
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
-            docker image prune -af --filter 'until=72h'"
+            docker image prune -af --filter 'until=72h'
+            docker logout ghcr.io"
+
       - name: Smoke check
-        if: steps.present.outputs.ok == 'true'
         run: |
-          for i in $(seq 1 12); do
-            if curl -fsS "https://${{ vars.SITE_DOMAIN }}/api/v1/health"; then echo; echo "Healthy."; exit 0; fi
+          for i in $(seq 1 24); do
+            if curl -fsS "https://$SITE/api/v1/health"; then echo; echo "Healthy: https://$SITE"; exit 0; fi
             sleep 5
           done
-          echo "Health check failed after 60 s."; exit 1
+          echo "::error::https://$SITE/api/v1/health didn't answer within 2 minutes. On the server: docker compose -f /opt/getabursary/docker-compose.prod.yml logs api"
+          exit 1
+
       - name: Remove key
         if: always()
         run: rm -f ~/.ssh/deploy_key

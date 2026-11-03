@@ -30,9 +30,13 @@ public static class AuthServiceCollectionExtensions
             .SetApplicationName("getabursary")
             .PersistKeysToDbContext<GetABursaryDbContext>();
 
+        // shortcut: a Production server with no SMTP host (test server) can't send confirm emails, so it doesn't require them.
+        // Set Email:Smtp:Host before real users sign up.
+        var mailConfigured = !string.IsNullOrWhiteSpace(configuration[$"{SmtpOptions.SectionName}:Host"]);
+
         services.AddIdentityApiEndpoints<User>(options =>
             {
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = environment.IsDevelopment() || mailConfigured;
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
             })
@@ -77,9 +81,8 @@ public static class AuthServiceCollectionExtensions
                 ClientIp.From(context),
                 _ => new FixedWindowRateLimiterOptions { PermitLimit = configuration.GetValue("Auth:RateLimitPerHour", 60), Window = TimeSpan.FromHours(1), QueueLimit = 0 })));
 
-        // shortcut: with no SMTP host set (test server, mail not set up yet), emails go to the log, so the owner can
-        // copy confirm/reset links from `docker compose logs api`. Set Email:Smtp:Host before real users sign up.
-        if (environment.IsDevelopment() || string.IsNullOrWhiteSpace(configuration[$"{SmtpOptions.SectionName}:Host"]))
+        // With no SMTP host, emails (e.g. password reset links) go to the log: `docker compose logs api`.
+        if (environment.IsDevelopment() || !mailConfigured)
         {
             services.AddSingleton<IEmailSender<User>, LogEmailSender>();
         }

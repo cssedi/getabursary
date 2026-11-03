@@ -6,14 +6,15 @@
 	}
 }
 
-# TLS terminates here with a Cloudflare Origin CA certificate; Cloudflare proxies in front.
+# Cloudflare (SSL mode "Full") talks HTTPS to Caddy, which uses its own self-signed cert (tls internal),
+# so there is no certificate to create by hand. shortcut: switch to a Cloudflare Origin cert + "Full (strict)" for prod.
 www.{$SITE_DOMAIN} {
-	tls /certs/origin.pem /certs/origin.key
+	tls internal
 	redir https://{$SITE_DOMAIN}{uri} permanent
 }
 
 {$SITE_DOMAIN} {
-	tls /certs/origin.pem /certs/origin.key
+	tls internal
 	encode zstd gzip
 
 	header {
