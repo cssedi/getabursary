@@ -33,7 +33,6 @@ services:
 
   web:
     image: ghcr.io/cssedi/getabursary-web:${IMAGE_TAG:-latest}
-    env_file: .env
     environment:
       API_INTERNAL_URL: http://api:8080
     restart: unless-stopped
@@ -42,7 +41,8 @@ services:
 
   caddy:
     image: caddy:2
-    env_file: .env
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN}
     ports:
       - "80:80"
       - "443:443"
