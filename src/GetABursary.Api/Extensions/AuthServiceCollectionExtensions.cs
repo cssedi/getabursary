@@ -25,6 +25,7 @@ public static class AuthServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(environment);
 
         // Keys live in Postgres so sign-in cookies survive restarts and work across instances (spec 08 §2c).
+        // shortcut: keys are stored unencrypted; add ProtectKeysWithCertificate if the DB is shared or backups leave our control.
         services.AddDataProtection()
             .SetApplicationName("getabursary")
             .PersistKeysToDbContext<GetABursaryDbContext>();
