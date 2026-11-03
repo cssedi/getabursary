@@ -35,6 +35,8 @@ services:
     image: ghcr.io/cssedi/getabursary-web:${IMAGE_TAG:-latest}
     environment:
       API_INTERNAL_URL: http://api:8080
+      # Angular SSR answers 400 for hosts it doesn't know (host-header protection).
+      NG_ALLOWED_HOSTS: ${SITE_DOMAIN},www.${SITE_DOMAIN}
     restart: unless-stopped
     mem_limit: 256m
     logging: *logging
