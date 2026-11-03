@@ -13,6 +13,7 @@ coverage*/
 .env
 .env.*
 !.env.example
+deploy/.env
 appsettings.*.local.json
 
 # Node / Angular
