@@ -2,9 +2,23 @@
 
 This is the test setup from `specs/08-hosting.md` §2b–§2c: one Hetzner server running the site, Neon as the database, Cloudflare in front, and GitHub Actions doing the builds. You don't need to know Linux. Copy the commands exactly, and replace `<ip>` with your server's IPv4 address and `example.co.za` with your domain.
 
-Before you start you need: a Hetzner server (Ubuntu 22.04 or 24.04) with your SSH key added when you create it, a domain, a free Cloudflare account, and a free Neon project in Frankfurt.
+Before you start you need: a Hetzner server (Ubuntu 24.04 or newer) with your SSH key added when you create it, a domain, a free Cloudflare account, and a free Neon project in Frankfurt.
 
 Keep secrets out of the repo, issues and chat. Passwords, keys and connection strings live only on the server's `.env`, in the password manager you use, and in GitHub's secrets.
+
+## Checklist
+
+| # | What | Where | Done when |
+|---|---|---|---|
+| 1 | DNS records + **Full (strict)** + Origin certificate | Cloudflare | You have the certificate and key text |
+| 2 | Run the setup script | Your Mac → server | It prints "Done" |
+| 3 | Save the certificate on the server | Server | 2 files in `/opt/getabursary/certs` |
+| 4 | Fill in `.env` (Neon **direct** connection, domain, your email, salt) | Server | No `changeme` left |
+| 5 | First manual deploy | Server | `https://<domain>/api/v1/health` answers |
+| 6 | Sign up, confirm via the log, become admin | Browser + server | You see "Admin" in the account menu |
+| 7 | Deploy key + GitHub secrets/variables + public packages | Mac + GitHub | The next merge deploys by itself |
+
+Not needed yet: mail (Brevo), Google sign-in, the Anthropic key. Leave those settings empty, or `fake` for extraction.
 
 ## 1. Cloudflare: point the domain at the server
 
@@ -70,8 +84,8 @@ It already has every setting, with placeholder values such as `changeme` and `ex
 | `ConnectionStrings__Default` | The Neon connection from step 2c. Use the **direct** host (no `-pooler` in it). Keep `SSL Mode=Require`. |
 | `App__PublicBaseUrl` | `https://` plus your domain, for example `https://getabursary.co.za`. |
 | `Admin__Emails` | Your own email address. See step 5. |
-| `Auth__Google__ClientId` and `Auth__Google__ClientSecret` | Google Cloud console → APIs & Services → Credentials → OAuth client ID (type **Web application**). Add `https://<your domain>/signin-google` as an authorised redirect URI. Leave both empty to turn off Google sign-in. |
-| `Email__Smtp__Host`, `Port`, `User`, `Password`, `From` | Brevo → SMTP & API. Use the SMTP host, port 587, your login, and an SMTP key from Brevo as the password. `From` is an address on your domain. |
+| `Auth__Google__ClientId` and `Auth__Google__ClientSecret` | **Leave empty for now** (Google sign-in stays off). Later: Google Cloud console → APIs & Services → Credentials → OAuth client ID (type **Web application**). Add `https://<your domain>/signin-google` as an authorised redirect URI. Leave both empty to turn off Google sign-in. |
+| `Email__Smtp__Host`, `Port`, `User`, `Password`, `From` | **Leave `Host` empty for now.** Emails (confirm, reset password) are then written to the API log instead of sent; see step 5. Later: Brevo → SMTP & API. Use the SMTP host, port 587, your login, and an SMTP key from Brevo as the password. `From` is an address on your domain. |
 | `Extraction__Provider` | `fake` (no AI calls, safe for testing) or `anthropic`. |
 | `Extraction__ApiKey` | Your extraction API key. Leave it as the placeholder while `Extraction__Provider=fake`. |
 | `Reports__IpHashSalt` | Run `openssl rand -hex 32` on the server, copy the output, and paste it here. Don't change it once the site is live. |
@@ -119,9 +133,17 @@ Use `-f docker-compose.prod.yml` on every command, because the file isn't named 
    docker compose -f docker-compose.prod.yml --profile tools run --rm migrate
    docker compose -f docker-compose.prod.yml up -d
    ```
-3. Sign in on the site with that email address. You now have the admin role.
+3. On the site, click **Sign in → Create account** with that email address.
+4. While mail isn't set up, the confirmation link goes to the log. On the server, run:
+   ```bash
+   docker compose -f docker-compose.prod.yml logs api | grep -i "confirm"
+   ```
+   Copy the `https://…/account/confirm?...` link from the output and open it in your browser. (Use the same trick for "forgot password" links.)
+5. Sign in. You now have the admin role, and the account menu shows **Admin**.
 
 ## 6. When something goes wrong
+
+- **`docker-ce` can't be found while the setup script runs (very new Ubuntu).** Docker may not publish packages for your Ubuntu version yet. Run `curl -fsSL https://get.docker.com | sh`, then run `bash bootstrap.sh` again.
 
 - **The site is slow or out of memory.** Run `free -h` to see memory and swap, and `docker stats` to see what each container uses. Each container has a memory limit, so the one using the most is the one to look at. If the server is always full, it's too small for the load and needs a bigger Hetzner plan.
 - **Cloudflare shows "502 Bad Gateway".** Cloudflare reached the server, but the site behind it didn't answer. Run `docker compose -f docker-compose.prod.yml ps` to see whether everything is `running`. Then check `logs -f caddy` and `logs -f api`. Also confirm that the SSL mode is **Full (strict)** and that `certs/origin.pem` and `origin.key` are the right files.
