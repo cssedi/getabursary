@@ -209,6 +209,16 @@ jobs:
           echo "::error::https://$SITE/api/v1/health didn't answer within 2 minutes. On the server: docker compose -f /opt/getabursary/docker-compose.prod.yml logs api"
           exit 1
 
+      - name: Diagnose (status codes only; logs stay on the server because this repo's Actions logs are public)
+        if: failure()
+        run: |
+          ssh target "cd /opt/getabursary
+            echo '--- containers'; docker compose -f docker-compose.prod.yml ps --format 'table {{.Service}}\t{{.State}}\t{{.Status}}'
+            echo '--- api direct';  docker compose -f docker-compose.prod.yml exec -T web wget -S -q -O /dev/null http://api:8080/api/v1/health 2>&1 | grep -m1 HTTP || echo 'api: no answer'
+            echo '--- web direct';  docker compose -f docker-compose.prod.yml exec -T web wget -S -q -O /dev/null http://localhost:4000/ 2>&1 | grep -m1 HTTP || echo 'web: no answer'
+            echo '--- via caddy';   for p in / /api/v1/health; do printf '%s ' \$p; curl -sk -o /dev/null -w '%{http_code}\n' --resolve $SITE:443:127.0.0.1 https://$SITE\$p; done
+            echo '--- api errors (exception types only)'; docker compose -f docker-compose.prod.yml logs --tail 300 api 2>&1 | grep -oE '[A-Za-z.]+Exception' | sort | uniq -c || true"
+
       - name: Remove key
         if: always()
         run: rm -f ~/.ssh/deploy_key
