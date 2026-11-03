@@ -56,7 +56,7 @@ Sources: [Neon pg_trgm](https://neon.com/docs/extensions/pg_trgm), [free Postgre
 Owner's setup: a **Hetzner Falkenstein** shared-vCPU x86 server (small: assume **1 vCPU / 1–2 GB RAM / 20 GB**), **Neon free in AWS eu-central-1 (Frankfurt)**, domain at a SA registrar with DNS on **Cloudflare (proxied)**.
 
 ```
-Browser ─▶ Cloudflare (proxy, TLS) ─▶ Caddy :443 (Cloudflare Origin CA cert)
+Browser ─▶ Cloudflare (proxy, TLS, SSL mode Full) ─▶ Caddy :443 (tls internal, self-signed)
                                         ├─ /api/*, /signin-google ─▶ api:8080
                                         └─ everything else       ─▶ web:4000 (SSR; API_INTERNAL_URL=http://api:8080)
 worker (nightly scrape) ─┐
@@ -66,7 +66,9 @@ api ─────────────────────┴─▶ Neo
 - **Migrations:** a one-shot `migrate` service (the API image run with `--migrate`) applies EF migrations and the reference seed, then exits. The deploy runs it before `up -d`.
 - **Memory:** 2 GB swap file; `.NET` workstation GC + `DOTNET_GCConserveMemory`; compose `mem_limit`s (api 300m, worker 300m, web 256m, caddy 64m).
 - **Data Protection keys** are stored in Postgres, so sign-in cookies survive container restarts and redeploys.
-- **Secrets** live only in `/opt/getabursary/.env` on the server (mode 600) and in GitHub Actions secrets for SSH. Nothing secret goes in the repo or the images (the images are public on GHCR because the repo is public).
+- **One-click deploys (owner, 2026-11-03: "too many manual steps"):** `deploy.yml` prepares the server (`bootstrap.sh`, re-run when it changes), writes `/opt/getabursary/.env` (mode 600) from GitHub secrets (Neon URL → Npgsql direct host), and pulls private GHCR images with the job token. The IP-hash salt is generated on the server once. Owner steps: `docs/DEPLOY.md` (Cloudflare SSL mode, SSH key, secrets, run).
+- **No mail yet:** without `Email:Smtp:Host`, Production doesn't require email confirmation and logs email links. The admin account is created confirmed by the migrate step from `Admin:InitialPassword`.
+- **Secrets** live only in GitHub Actions secrets and the server's `.env`. Nothing secret goes in the repo or the images.
 - **Firewall:** 22 open; 80/443 only from Cloudflare IP ranges.
 - **Deploy gate:** `vars.DEPLOY == 'on'` (the owner sets it after the first manual deploy works).
 

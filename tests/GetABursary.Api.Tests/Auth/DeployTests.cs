@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using GetABursary.Api;
 using GetABursary.Core.Data;
+using GetABursary.Core.Domain.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +32,24 @@ public sealed class DeployTests : IAsyncLifetime
         Assert.True(await db.Institutions.AnyAsync());
         Assert.True(await db.Sources.AnyAsync());
         Assert.True(await db.Roles.AnyAsync());
+    }
+
+    [Fact]
+    public async Task Migrate_AdminWithInitialPassword_CreatesConfirmedAdminOnce()
+    {
+        var email = $"owner-{Guid.NewGuid():N}@example.test";
+        await using var factory = NewFactory(("Admin:Emails", email), ("Admin:InitialPassword", "Initial-Passw0rd!"));
+
+        await MigrateMode.RunAsync(factory.Services);
+        await MigrateMode.RunAsync(factory.Services);
+
+        using var scope = factory.Services.CreateScope();
+        var users = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var user = await users.FindByEmailAsync(email);
+        Assert.NotNull(user);
+        Assert.True(user.EmailConfirmed);
+        Assert.True(await users.IsInRoleAsync(user, UserRoles.Admin));
+        Assert.True(await users.CheckPasswordAsync(user, "Initial-Passw0rd!"));
     }
 
     [Fact]
@@ -67,9 +87,14 @@ public sealed class DeployTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, me.StatusCode);
     }
 
-    private WebApplicationFactory<Program> NewFactory() =>
+    private WebApplicationFactory<Program> NewFactory(params (string Key, string Value)[] settings) =>
         new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
+            foreach (var (key, value) in settings)
+            {
+                builder.UseSetting(key, value);
+            }
+
             builder.UseSetting("Database:MigrateOnStartup", "false");
             builder.UseSetting("ConnectionStrings:Default", _container.GetConnectionString());
             builder.UseSetting("Reports:IpHashSalt", "deploy-test-salt");
