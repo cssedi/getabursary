@@ -47,7 +47,7 @@ GitHub → the repo → **Settings → Secrets and variables → Actions**.
 | `DEPLOY_SSH_KEY` | Run `cat ~/.ssh/getabursary_deploy` and paste **everything**, including the `-----BEGIN` and `-----END` lines. |
 | `NEON_DATABASE_URL` | Neon → your project → **Connect** → copy the connection string that starts with `postgresql://`. Pooled or not doesn't matter: the deploy uses the direct host automatically. |
 | `ADMIN_EMAILS` | Your email address. |
-| `ADMIN_PASSWORD` | A password for your admin account (8+ characters). The first deploy creates the account with it. Changing this secret later does nothing to an existing account. |
+| `ADMIN_PASSWORD` | A password for your admin account (8+ characters, no single quote `'`). The first deploy creates the account with it. Changing this secret later does nothing to an existing account. |
 
 **Variables** tab → **New repository variable**:
 

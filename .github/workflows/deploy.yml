@@ -112,6 +112,7 @@ jobs:
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
           # shortcut: trust the server's host key on first sight unless DEPLOY_KNOWN_HOSTS pins it.
+          # shortcut: the key logs in as root (bootstrap needs it). Move app steps to the deploy user before prod.
           if [ -n "$KNOWN_HOSTS" ]; then printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts; else ssh-keyscan -t ed25519 "$HOST" > ~/.ssh/known_hosts; fi
           printf 'Host target\n  HostName %s\n  User root\n  IdentityFile ~/.ssh/deploy_key\n  ServerAliveInterval 30\n' "$HOST" > ~/.ssh/config
 
@@ -149,30 +150,36 @@ jobs:
           PY
           )
           provider=fake; [ -n "$EXTRACTION_KEY" ] && provider=anthropic
+          # Single-quoted so compose takes values literally ($ in a password stays $). A quote or newline can't be
+          # written safely, so such a value stops the deploy with a clear message.
+          kv() {
+            case "$2" in *"'"*|*$'\n'*) echo "::error::$1 contains a single quote or a newline. Change that secret."; exit 1;; esac
+            printf "%s='%s'\n" "$1" "$2"
+          }
           {
-            echo "ASPNETCORE_ENVIRONMENT=Production"
-            echo "SITE_DOMAIN=$SITE"
-            echo "App__PublicBaseUrl=https://$SITE"
-            echo "ConnectionStrings__Default=$conn"
-            echo "Admin__Emails=$ADMINS"
-            echo "Admin__InitialPassword=$ADMIN_PASSWORD"
-            echo "Extraction__Provider=$provider"
-            echo "Extraction__Model=claude-haiku-5-5"
-            echo "Extraction__ApiKey=$EXTRACTION_KEY"
-            echo "Auth__Google__ClientId=$GOOGLE_ID"
-            echo "Auth__Google__ClientSecret=$GOOGLE_SECRET"
-            echo "Email__Smtp__Host=$SMTP_HOST"
-            echo "Email__Smtp__Port=587"
-            echo "Email__Smtp__User=$SMTP_USER"
-            echo "Email__Smtp__Password=$SMTP_PASSWORD"
-            echo "Email__Smtp__From=$SMTP_FROM"
+            kv ASPNETCORE_ENVIRONMENT Production
+            kv SITE_DOMAIN "$SITE"
+            kv App__PublicBaseUrl "https://$SITE"
+            kv ConnectionStrings__Default "$conn"
+            kv Admin__Emails "$ADMINS"
+            kv Admin__InitialPassword "$ADMIN_PASSWORD"
+            kv Extraction__Provider "$provider"
+            kv Extraction__Model claude-haiku-5-5
+            kv Extraction__ApiKey "$EXTRACTION_KEY"
+            kv Auth__Google__ClientId "$GOOGLE_ID"
+            kv Auth__Google__ClientSecret "$GOOGLE_SECRET"
+            kv Email__Smtp__Host "$SMTP_HOST"
+            kv Email__Smtp__Port 587
+            kv Email__Smtp__User "$SMTP_USER"
+            kv Email__Smtp__Password "$SMTP_PASSWORD"
+            kv Email__Smtp__From "$SMTP_FROM"
           } > env.generated
           scp env.generated target:/opt/getabursary/env.generated
           rm -f env.generated
           # The IP-hash salt is made once on the server and kept, so it never changes and never leaves the server.
           ssh target 'set -e; cd /opt/getabursary
             [ -s salt ] || (umask 077; openssl rand -hex 32 > salt)
-            { cat env.generated; echo "Reports__IpHashSalt=$(cat salt)"; } > .env
+            { cat env.generated; echo "Reports__IpHashSalt='"'"'$(cat salt)'"'"'"; } > .env
             rm -f env.generated; chmod 600 .env salt'
 
       - name: Copy compose file and Caddyfile
