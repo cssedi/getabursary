@@ -84,7 +84,7 @@ It already has every setting, with placeholder values such as `changeme` and `ex
 | `ConnectionStrings__Default` | The Neon connection from step 2c. Use the **direct** host (no `-pooler` in it). Keep `SSL Mode=Require`. |
 | `App__PublicBaseUrl` | `https://` plus your domain, for example `https://getabursary.co.za`. |
 | `Admin__Emails` | Your own email address. See step 5. |
-| `Auth__Google__ClientId` and `Auth__Google__ClientSecret` | **Leave empty for now** (Google sign-in stays off). Later: Google Cloud console → APIs & Services → Credentials → OAuth client ID (type **Web application**). Add `https://<your domain>/signin-google` as an authorised redirect URI. Leave both empty to turn off Google sign-in. |
+| `Auth__Google__ClientId` and `Auth__Google__ClientSecret` | **Leave empty for now** (Google sign-in stays off). Later: Google Cloud console → APIs & Services → Credentials → OAuth client ID (type **Web application**). Add `https://<your domain>/signin-google` as an authorised redirect URI. |
 | `Email__Smtp__Host`, `Port`, `User`, `Password`, `From` | **Leave `Host` empty for now.** Emails (confirm, reset password) are then written to the API log instead of sent; see step 5. Later: Brevo → SMTP & API. Use the SMTP host, port 587, your login, and an SMTP key from Brevo as the password. `From` is an address on your domain. |
 | `Extraction__Provider` | `fake` (no AI calls, safe for testing) or `anthropic`. |
 | `Extraction__ApiKey` | Your extraction API key. Leave it as the placeholder while `Extraction__Provider=fake`. |
