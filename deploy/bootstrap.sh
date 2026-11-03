@@ -85,7 +85,7 @@ KbdInteractiveAuthentication no
 EOF
 sshd -t
 systemctl reload ssh
-sshd -T | grep -qx 'passwordauthentication no' || {
+sshd -T | grep -x 'passwordauthentication no' >/dev/null || {  # not -q: an early exit breaks the pipe under pipefail
   echo "sshd still allows passwords. Check /etc/ssh/sshd_config.d/." >&2
   exit 1
 }
