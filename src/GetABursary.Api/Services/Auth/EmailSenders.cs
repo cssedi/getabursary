@@ -45,7 +45,7 @@ public abstract class LinkEmailSender(IConfiguration configuration) : IEmailSend
     private string WebUrl(string path) => (configuration["App:PublicBaseUrl"] ?? "http://localhost:4200").TrimEnd('/') + path;
 }
 
-/// <summary>Development sender: writes the email to the log.</summary>
+/// <summary>Writes the email to the log. Used in Development and whenever <c>Email:Smtp:Host</c> is empty.</summary>
 public sealed partial class LogEmailSender(IConfiguration configuration, ILogger<LogEmailSender> logger) : LinkEmailSender(configuration)
 {
     protected override Task SendAsync(string recipient, string subject, string body)

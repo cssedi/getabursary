@@ -77,7 +77,9 @@ public static class AuthServiceCollectionExtensions
                 ClientIp.From(context),
                 _ => new FixedWindowRateLimiterOptions { PermitLimit = configuration.GetValue("Auth:RateLimitPerHour", 60), Window = TimeSpan.FromHours(1), QueueLimit = 0 })));
 
-        if (environment.IsDevelopment())
+        // shortcut: with no SMTP host set (test server, mail not set up yet), emails go to the log, so the owner can
+        // copy confirm/reset links from `docker compose logs api`. Set Email:Smtp:Host before real users sign up.
+        if (environment.IsDevelopment() || string.IsNullOrWhiteSpace(configuration[$"{SmtpOptions.SectionName}:Host"]))
         {
             services.AddSingleton<IEmailSender<User>, LogEmailSender>();
         }
