@@ -20,7 +20,7 @@ To start a task, add the **`agent:ready`** label to its issue. Do this only when
 | **3** | Public read API: taxonomy, search, detail, reports | Detailed (T-020–T-023) |
 | **4** | Angular web app: SSR scaffold, API client, degree picker + filters, results, detail, report dialog, SEO pages | Detailed (T-025–T-036; design per spec 06) |
 | **5** | **Epic A** accounts: Identity cookie auth, Google, sign-in dialog, saves + tracker (T-038–T-042). **Epic B** admin tab: review queue, editor, sources (T-043–T-046) | Detailed (spec 07) |
-| 6 | **Epic C** hosting: cost analysis done (specs/08-hosting.md); deploy, domain, ads + consent, privacy policy, monitoring | Roadmap; detailed after Phase 5 |
+| **6** | **Epic C** hosting: cost analysis (spec 08). **6a test deploy:** containers + compose + Caddy (T-047), deploy workflow (T-048), bootstrap + runbook (T-049). Later: ads + consent, privacy policy, delete account, profile | 6a detailed |
 
 ## Dependency graph (Phases 0–4)
 
@@ -88,6 +88,8 @@ graph LR
   T043 --> T045
   T044 --> T046[T-046 sources web]
   T045 --> T046
+  T047[T-047 containers] --> T048[T-048 deploy workflow]
+  T047 --> T049[T-049 bootstrap + runbook]
 ```
 
 **Can start immediately (in parallel):** T-001, T-002, T-008.

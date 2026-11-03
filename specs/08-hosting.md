@@ -52,6 +52,24 @@ Add 15% if VAT is charged: about **R168/month**.
 
 Sources: [Neon pg_trgm](https://neon.com/docs/extensions/pg_trgm), [free Postgres tiers 2026 (Koyeb)](https://www.koyeb.com/blog/top-postgresql-database-free-tiers-in-2026), [selfhost.dev comparison](https://selfhost.dev/managed-postgresql-comparison-2026/).
 
+## 2c. Test deployment design (decided 2026-11-03)
+Owner's setup: a **Hetzner Falkenstein** shared-vCPU x86 server (small: assume **1 vCPU / 1–2 GB RAM / 20 GB**), **Neon free in AWS eu-central-1 (Frankfurt)**, domain at a SA registrar with DNS on **Cloudflare (proxied)**.
+
+```
+Browser ─▶ Cloudflare (proxy, TLS) ─▶ Caddy :443 (Cloudflare Origin CA cert)
+                                        ├─ /api/*, /signin-google ─▶ api:8080
+                                        └─ everything else       ─▶ web:4000 (SSR; API_INTERNAL_URL=http://api:8080)
+worker (nightly scrape) ─┐
+api ─────────────────────┴─▶ Neon (SSL, pooled host)
+```
+- **Images** are built in GitHub Actions (linux/amd64) and pushed to GHCR, never built on the server (1 GB isn't enough). Tags: the commit sha, plus `latest`.
+- **Migrations:** a one-shot `migrate` service (the API image run with `--migrate`) applies EF migrations and the reference seed, then exits. The deploy runs it before `up -d`.
+- **Memory:** 2 GB swap file; `.NET` workstation GC + `DOTNET_GCConserveMemory`; compose `mem_limit`s (api 300m, worker 300m, web 256m, caddy 64m).
+- **Data Protection keys** are stored in Postgres, so sign-in cookies survive container restarts and redeploys.
+- **Secrets** live only in `/opt/getabursary/.env` on the server (mode 600) and in GitHub Actions secrets for SSH. Nothing secret goes in the repo or the images (the images are public on GHCR because the repo is public).
+- **Firewall:** 22 open; 80/443 only from Cloudflare IP ranges.
+- **Deploy gate:** `vars.DEPLOY == 'on'` (the owner sets it after the first manual deploy works).
+
 ## 2a. Availability tiers (owner: "can cost more, I want some availability")
 
 | Tier | Setup | If a server dies | Rand per month |
