@@ -13,6 +13,7 @@ public static class MergingServiceCollectionExtensions
         services.AddScoped<IFunderRepository, FunderRepository>();
         services.AddScoped<IReviewItemRepository, ReviewItemRepository>();
         services.AddScoped<IBursaryMerger, BursaryMerger>();
+        services.AddScoped<IFunderNameCleanup, FunderNameCleanup>();
         return services;
     }
 }

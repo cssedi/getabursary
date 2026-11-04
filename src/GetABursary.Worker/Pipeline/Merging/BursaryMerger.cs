@@ -133,8 +133,9 @@ public sealed class BursaryMerger(
     private static bool DatesCompatible(DateOnly? a, DateOnly? b) =>
         a is null || b is null || Math.Abs(a.Value.DayNumber - b.Value.DayNumber) <= MaxClosingDateGapDays;
 
-    private async Task<Funder?> GetOrCreateFunderAsync(string? funderName, CancellationToken ct)
+    private async Task<Funder?> GetOrCreateFunderAsync(string? scrapedName, CancellationToken ct)
     {
+        var funderName = FunderName.Clean(scrapedName);
         var normalized = NameNormalizer.Normalize(funderName);
         if (normalized.Length == 0)
         {
@@ -144,7 +145,7 @@ public sealed class BursaryMerger(
         var funder = await funders.GetByNormalizedNameAsync(normalized, ct);
         if (funder is null)
         {
-            funder = new Funder { Name = Truncate(funderName!.Trim(), 200)!, NormalizedName = normalized };
+            funder = new Funder { Name = Truncate(funderName!, 200)!, NormalizedName = normalized };
             funders.Add(funder);
         }
 

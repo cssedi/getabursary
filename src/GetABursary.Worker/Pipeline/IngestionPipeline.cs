@@ -22,6 +22,7 @@ public sealed partial class IngestionPipeline(
     SourceAdapterRegistry adapters,
     IClosureJob closureJob,
     IVanishedJob vanishedJob,
+    IFunderNameCleanup funderNameCleanup,
     IServiceScopeFactory scopeFactory,
     IClock clock,
     ILogger<IngestionPipeline> logger) : IIngestionPipeline
@@ -40,6 +41,7 @@ public sealed partial class IngestionPipeline(
 
     public async Task RunAsync(Guid runId, Guid? sourceId, CancellationToken ct)
     {
+        await funderNameCleanup.RunAsync(ct);
         var enabled = await sources.GetEnabledSourcesAsync(sourceId, ct);
         var succeeded = 0;
         var failed = 0;
