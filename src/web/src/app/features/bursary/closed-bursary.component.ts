@@ -17,11 +17,11 @@ import { SourceLinksComponent } from '../../shared/ui/source-links/source-links.
   template: `
     <div class="space-y-3">
       <app-closing-date-badge [closingDate]="summary().closingDate" [status]="'Closed'" />
-      <h1 class="text-2xl font-bold">{{ summary().name }}</h1>
+      <h1 class="text-3xl font-bold [overflow-wrap:anywhere]">{{ summary().name }}</h1>
       @if (summary().funderName) {
         <p class="text-muted">{{ summary().funderName }}</p>
       }
-      <p class="text-lg font-semibold" role="status">{{ closedMessage() }}</p>
+      <p class="reading font-semibold" role="status">{{ closedMessage() }}</p>
       <app-source-links [sources]="summary().sources" />
       @if (fieldIds().length) {
         <p>

@@ -75,7 +75,7 @@ export const SEARCH_DEBOUNCE_MS = 300;
                       <span class="block text-sm text-muted">{{ b.funderName }}</span>
                     }
                   </td>
-                  <td class="py-3 pr-4 tabular-nums">
+                  <td class="py-3 pr-4 whitespace-nowrap tabular-nums">
                     {{ b.closingDate ? (b.closingDate | formatDate) : 'Not set' }}
                   </td>
                   <td class="py-3">{{ b.isPublished ? 'Published' : 'Unpublished' }}</td>

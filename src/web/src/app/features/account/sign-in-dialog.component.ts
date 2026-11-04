@@ -118,7 +118,7 @@ const CLIENT_ERRORS = {
 
         <button
           type="submit"
-          class="mb-3 min-h-11 w-full rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink disabled:opacity-60"
+          class="btn-primary mb-3 w-full"
           [disabled]="sending()"
         >
           @if (sending()) {
@@ -129,7 +129,7 @@ const CLIENT_ERRORS = {
         </button>
         <a
           [href]="googleUrl"
-          class="flex min-h-11 w-full items-center justify-center rounded-control border border-line px-4 font-medium hover:bg-bloom active:bg-bloom"
+          class="btn-secondary w-full"
           >Continue with Google</a
         >
       </form>
@@ -148,6 +148,21 @@ const CLIENT_ERRORS = {
       padding: 24px;
       border-radius: 16px;
       background: var(--paper);
+      box-shadow: 0 8px 32px rgb(27 26 23 / 0.16);
+    }
+    /* Bottom sheet below 640 px (the open call lives in AuthService, so this is done in CSS). */
+    @media (max-width: 639px) {
+      .cdk-global-overlay-wrapper:has(.auth-dialog-panel) {
+        align-items: flex-end;
+      }
+      .auth-dialog-panel {
+        width: 100% !important;
+        max-width: 100vw !important;
+      }
+      .auth-dialog-panel app-sign-in-dialog {
+        padding: 24px 16px calc(16px + env(safe-area-inset-bottom));
+        border-radius: 16px 16px 0 0;
+      }
     }
   `,
 })

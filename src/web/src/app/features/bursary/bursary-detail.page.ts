@@ -41,7 +41,7 @@ import {
         <header class="space-y-3">
           <app-closing-date-badge [closingDate]="b.closingDate" [status]="b.status" />
           <div class="flex items-start gap-2">
-            <h1 class="min-w-0 flex-1 text-2xl font-bold [overflow-wrap:anywhere]">{{ b.name }}</h1>
+            <h1 class="min-w-0 flex-1 text-3xl font-bold [overflow-wrap:anywhere]">{{ b.name }}</h1>
             @if (b.status !== 'Closed') {
               <app-save-button class="-mt-2" [bursaryId]="b.id" [name]="b.name" />
             }
@@ -55,19 +55,19 @@ import {
 
         <section class="section" aria-labelledby="who-heading">
           <h2 id="who-heading" class="text-xl font-bold">Who can apply</h2>
-          <dl class="grid gap-2 text-sm sm:grid-cols-[10rem_1fr]">
-            <dt class="font-medium">Study levels</dt>
+          <dl class="reading grid gap-x-4 gap-y-1 sm:grid-cols-[10rem_1fr]">
+            <dt class="font-sans text-base font-medium">Study levels</dt>
             <dd>{{ b.studyLevels.length ? b.studyLevels.join(', ') : 'Not specified' }}</dd>
-            <dt class="font-medium">Minimum average</dt>
+            <dt class="font-sans text-base font-medium">Minimum average</dt>
             <dd>{{ b.minAverage !== null ? b.minAverage + '%' : 'Not specified' }}</dd>
-            <dt class="font-medium">Citizenship</dt>
+            <dt class="font-sans text-base font-medium">Citizenship</dt>
             <dd>{{ citizenshipLabel(b.citizenship) }}</dd>
-            <dt class="font-medium">Provinces</dt>
+            <dt class="font-sans text-base font-medium">Provinces</dt>
             <dd>{{ provincesLabel(b) }}</dd>
           </dl>
           @if (b.minSubjectRequirements.length) {
             <h3 class="pt-2 font-medium">Subject requirements (for information only)</h3>
-            <ul class="list-inside list-disc text-sm">
+            <ul class="reading list-inside list-disc">
               @for (r of b.minSubjectRequirements; track r.subject) {
                 <li>{{ r.subject }}: {{ r.minPercent }}%</li>
               }
@@ -81,7 +81,7 @@ import {
           </h2>
           @if (b.fields.length) {
             <h3 class="font-medium">Fields</h3>
-            <ul class="list-inside list-disc text-sm">
+            <ul class="reading list-inside list-disc">
               @for (f of b.fields; track f.code) {
                 <li>{{ f.name }}</li>
               }
@@ -89,35 +89,35 @@ import {
           }
           @if (b.qualifications.length) {
             <h3 class="font-medium">Qualifications</h3>
-            <ul class="list-inside list-disc text-sm">
+            <ul class="reading list-inside list-disc">
               @for (q of b.qualifications; track q.id) {
                 <li>{{ q.name }} ({{ q.institutionShortName }})</li>
               }
             </ul>
           }
           @if (!b.fields.length && !b.qualifications.length) {
-            <p class="text-sm">Open to all fields of study.</p>
+            <p class="reading">Open to all fields of study.</p>
           }
         </section>
 
         <section class="section" aria-labelledby="covered-heading">
           <h2 id="covered-heading" class="text-xl font-bold">What’s covered</h2>
           @if (b.coverage.length) {
-            <ul class="list-inside list-disc text-sm">
+            <ul class="reading list-inside list-disc">
               @for (item of b.coverage; track item) {
                 <li>{{ item }}</li>
               }
             </ul>
           }
           @if (b.valueSummary) {
-            <p>{{ b.valueSummary }}</p>
+            <p class="reading">{{ b.valueSummary }}</p>
           }
         </section>
 
         @if (b.workBackRequired || b.workBackDetails) {
           <section class="section" aria-labelledby="workback-heading">
             <h2 id="workback-heading" class="text-xl font-bold">Work-back obligation</h2>
-            <p>
+            <p class="reading">
               {{
                 b.workBackDetails ??
                   'A work-back obligation applies. Check the funder’s site for the details.'
@@ -128,7 +128,7 @@ import {
 
         <section class="section" aria-labelledby="about-heading">
           <h2 id="about-heading" class="text-xl font-bold">About this bursary</h2>
-          <p>{{ b.summary }}</p>
+          <p class="reading">{{ b.summary }}</p>
         </section>
 
         <p class="text-sm text-muted">Last updated {{ lastUpdated(b) }}</p>
@@ -157,8 +157,10 @@ import {
   `,
   styles: `
     .detail {
-      max-width: 720px;
-      padding: 24px 16px;
+      display: grid;
+      gap: 24px;
+      max-width: 680px;
+      padding-block: 24px;
     }
     .section {
       display: grid;
@@ -172,21 +174,18 @@ import {
       justify-content: center;
       min-height: 48px;
       border-radius: var(--radius-control);
-      background: var(--jacaranda);
+      padding: 0 20px;
+      background: var(--ink);
       color: var(--paper);
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 600;
       text-align: center;
       overflow-wrap: anywhere;
     }
     .apply-button:hover {
-      text-decoration: underline;
-      text-underline-offset: 4px;
+      background: var(--jacaranda);
     }
     @media (min-width: 768px) {
-      .detail {
-        padding: 24px;
-      }
       .apply-bar {
         margin-top: 32px;
       }

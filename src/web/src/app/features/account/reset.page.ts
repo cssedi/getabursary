@@ -17,7 +17,7 @@ import { AuthService } from '../../core/auth/auth.service';
       <p role="status" class="mb-4">Password changed. Sign in with your new password.</p>
       <button
         type="button"
-        class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink"
+        class="btn-primary"
         (click)="auth.openSignIn()"
       >
         Sign in
@@ -42,7 +42,7 @@ import { AuthService } from '../../core/auth/auth.service';
         }
         <button
           type="submit"
-          class="mt-3 min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink disabled:opacity-60"
+          class="btn-primary mt-3"
           [disabled]="saving()"
         >
           {{ saving() ? 'Saving…' : 'Change password' }}
