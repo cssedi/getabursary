@@ -170,6 +170,8 @@ textarea:disabled {
   cursor: not-allowed;
 }
 
+/* In the components layer so utilities (e.g. sm:hidden) can override display. */
+@layer components {
 .btn-primary,
 .btn-secondary {
   display: inline-flex;
@@ -219,6 +221,7 @@ textarea:disabled {
   border: 1px dashed var(--closed);
   color: var(--closed);
   cursor: not-allowed;
+}
 }
 
 @media (prefers-reduced-motion: reduce) {
