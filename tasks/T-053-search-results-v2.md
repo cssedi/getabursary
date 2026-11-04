@@ -4,7 +4,7 @@ title: Search results v2 - no-overlap layout, filter sheet, grouped fields, ledg
 phase: 7
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-051]
 requirements: [FR-01, FR-02, FR-03, FR-04, FR-05, FR-06]
 issue: 103

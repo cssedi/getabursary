@@ -160,7 +160,8 @@ public sealed class BursarySearchFixture : IAsyncLifetime
 
         var zab = new Source { Id = Ids.SourceZa, Key = "zabursaries", Name = "ZA Bursaries", BaseUrl = "https://za.example.test", IconUrl = "https://za.example.test/icon.png" };
         var trust = new Source { Id = Ids.SourceTrust, Key = "studytrust", Name = "Study Trust", BaseUrl = "https://trust.example.test", IconUrl = null };
-        db.Sources.AddRange(zab, trust);
+        var allBursaries = new Source { Id = Ids.SourceAll, Key = "allbursaries", Name = "AllBursaries", BaseUrl = "https://all.example.test", IconUrl = null };
+        db.Sources.AddRange(zab, trust, allBursaries);
         await db.SaveChangesAsync();
 
         var today = FixedClock.TodayDate;
@@ -198,7 +199,10 @@ public sealed class BursarySearchFixture : IAsyncLifetime
         db.BursarySources.AddRange(
             new BursarySource { BursaryId = qual.Id, SourceId = Ids.SourceZa, SourceUrl = "https://za.example.test/qual", FirstSeenAt = seen, LastSeenAt = seen },
             new BursarySource { BursaryId = qual.Id, SourceId = Ids.SourceTrust, SourceUrl = "https://trust.example.test/qual", FirstSeenAt = seen, LastSeenAt = seen },
-            new BursarySource { BursaryId = second.Id, SourceId = Ids.SourceZa, SourceUrl = "https://za.example.test/second", FirstSeenAt = seen, LastSeenAt = seen });
+            new BursarySource { BursaryId = second.Id, SourceId = Ids.SourceZa, SourceUrl = "https://za.example.test/second", FirstSeenAt = seen, LastSeenAt = seen },
+            new BursarySource { BursaryId = first.Id, SourceId = Ids.SourceZa, SourceUrl = "https://za.example.test/first", FirstSeenAt = seen, LastSeenAt = seen },
+            new BursarySource { BursaryId = first.Id, SourceId = Ids.SourceTrust, SourceUrl = "https://trust.example.test/first", FirstSeenAt = seen, LastSeenAt = seen },
+            new BursarySource { BursaryId = first.Id, SourceId = Ids.SourceAll, SourceUrl = "https://all.example.test/first", FirstSeenAt = seen, LastSeenAt = seen });
         await db.SaveChangesAsync();
     }
 
@@ -252,6 +256,7 @@ public sealed class BursarySearchFixture : IAsyncLifetime
         public static readonly Guid WitsChemEng = Guid.CreateVersion7();
         public static readonly Guid SourceZa = Guid.CreateVersion7();
         public static readonly Guid SourceTrust = Guid.CreateVersion7();
+        public static readonly Guid SourceAll = Guid.CreateVersion7();
     }
 
     private sealed class SearchApiFactory(string connectionString, SqlCapture sql) : WebApplicationFactory<Program>

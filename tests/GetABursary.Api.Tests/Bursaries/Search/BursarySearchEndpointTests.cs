@@ -120,6 +120,20 @@ public class BursarySearchEndpointTests(BursarySearchFixture fixture)
     }
 
     [Fact]
+    public async Task Search_BursaryOnThreeSources_ReturnsAllThreeWithTheirListingUrls()
+    {
+        var body = await GetOkAsync(UctQuery());
+        var item = Items(body).Single(i => i.GetProperty("name").GetString() == "First Order Field");
+
+        var urls = item.GetProperty("sources").EnumerateArray()
+            .ToDictionary(s => s.GetProperty("key").GetString()!, s => s.GetProperty("url").GetString());
+        Assert.Equal(3, urls.Count);
+        Assert.Equal("https://za.example.test/first", urls["zabursaries"]);
+        Assert.Equal("https://trust.example.test/first", urls["studytrust"]);
+        Assert.Equal("https://all.example.test/first", urls["allbursaries"]);
+    }
+
+    [Fact]
     public async Task Search_ClosingSoon_UsesClockAndFourteenDayWindow()
     {
         var items = Items(await GetOkAsync(UctQuery())).ToList();

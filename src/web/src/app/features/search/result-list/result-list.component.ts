@@ -22,8 +22,8 @@ export const AD_SLOT_EVERY = 6;
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section id="results">
-      @if (loading()) {
+    <section id="results" [attr.aria-busy]="loading()">
+      @if (loading() && !result()) {
         <div>
           <p class="sr-only" role="status">Loading bursaries…</p>
           @for (n of [1, 2, 3]; track n) {
@@ -40,7 +40,10 @@ export const AD_SLOT_EVERY = 6;
             (action)="clearFilters.emit()"
           />
         } @else {
-          <div class="mb-1 flex items-center justify-between gap-4">
+          @if (loading()) {
+            <p class="sr-only" role="status">Updating results…</p>
+          }
+          <div class="mb-1 flex items-center justify-between gap-4" [class.opacity-60]="loading()">
             <p class="count font-medium tabular-nums" aria-live="polite">
               {{ r.totalCount }} {{ r.totalCount === 1 ? 'bursary matches' : 'bursaries match' }}
             </p>
@@ -59,7 +62,7 @@ export const AD_SLOT_EVERY = 6;
               </select>
             </div>
           </div>
-          <ul class="border-t border-line">
+          <ul class="border-t border-line" [class.opacity-60]="loading()">
             @for (b of r.items; track b.id; let i = $index) {
               <li><app-bursary-row [bursary]="b" [index]="i" /></li>
               @if ((i + 1) % adEvery === 0) {
