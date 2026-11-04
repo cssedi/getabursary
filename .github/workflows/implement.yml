@@ -82,6 +82,7 @@ jobs:
             Run `gh issue comment ${{ inputs.issue }} --body "Lesdee, BLOCKED: <reason> ..."` with your question and options, then stop.
             If you end WITHOUT opening a PR for any reason (blocked site, failing build, unclear spec), you MUST first post
             `gh issue comment ${{ inputs.issue }} --body "Lesdee, BLOCKED: <what you tried, the exact error, and options>"`. Never stop silently.
+            Before posting BLOCKED, commit what you have and push it to the task branch (WIP is fine), so the next run can continue from it instead of starting over.
           claude_args: |
             --model ${{ inputs.model == 'haiku' && 'claude-haiku-5-5' || 'claude-sonnet-5-5' }}
             --max-turns 90

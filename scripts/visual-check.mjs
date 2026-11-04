@@ -100,7 +100,7 @@ try {
     for (const [mode, viewport] of [['mobile', { width: 375, height: 812 }], ['desktop', { width: 1440, height: 900 }]]) {
       const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
       if (signIn) {
-        const res = await context.request.post('http://localhost:4200/api/v1/auth/login?useCookies=true', { data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD } });
+        const res = await context.request.post('http://localhost:4200/api/v1/auth/login?useCookies=true', { data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD }, headers: { 'X-Requested-With': 'getabursary' } });
         if (!res.ok()) throw new Error(`Admin sign-in failed (${res.status()})`);
       }
       const page = await context.newPage();
