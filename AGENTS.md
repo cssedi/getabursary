@@ -25,6 +25,7 @@ Product-owner rule (2026-11-02). Be lazy about the solution, never about finishi
 ## Frontend work (anything under `src/web/`)
 - `specs/06-design.md` **governs** all visual design, copy and interface behaviour. Read §2–§8 before writing UI. If a task file or `05-web.md` disagrees with it, 06 wins.
 - Before opening the PR, go through the **§7 checklist** for every file you touched, and add a "Design checklist" section to the PR listing anything you couldn't meet and why.
+- **Screenshots (06 §9):** always take them with `npx --yes playwright install chromium` then `node scripts/visual-check.mjs <task-id> <paths…>`. Don't launch Chromium directly. This also applies to fix runs: if a review asks for new screenshots, re-run the script and commit the PNGs.
 - Never introduce: card grids with shadows, gradients, all-caps labels, middle-dot meta strings, `→` in button text, `transition: all`, hard-coded date formats, or colours outside the §3 tokens.
 
 ## Standing scope allowance (applies to every task)
