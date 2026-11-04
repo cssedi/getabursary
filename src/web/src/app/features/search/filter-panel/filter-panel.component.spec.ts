@@ -45,16 +45,16 @@ describe('FilterPanelComponent (on /search)', () => {
     expect(router.url).toBe('/search?includeClosed=true');
   });
 
-  it('average_typing_isDebouncedBy400ms', async () => {
+  it('average_typing_isDebouncedBy300ms', async () => {
     await open('/search');
     vi.useFakeTimers();
     const input = el.querySelector<HTMLInputElement>('#filter-average')!;
     input.value = '7';
     input.dispatchEvent(new Event('input'));
-    vi.advanceTimersByTime(300);
+    vi.advanceTimersByTime(200);
     input.value = '75';
     input.dispatchEvent(new Event('input'));
-    vi.advanceTimersByTime(300);
+    vi.advanceTimersByTime(200);
     expect(router.url).toBe('/search');
     vi.advanceTimersByTime(150);
     vi.useRealTimers();
@@ -69,6 +69,31 @@ describe('FilterPanelComponent (on /search)', () => {
     chem.querySelector<HTMLInputElement>('input')!.click();
     await harness.fixture.whenStable();
     expect(router.url).toBe(`/search?fieldIds=${fields[0].children[0].id}`);
+  });
+
+  it('fieldGroups_openOnlyWithSelection_andClearEmptiesThatGroup', async () => {
+    await open(`/search?fieldIds=${fields[0].children[0].id}`);
+    const groups = Array.from(el.querySelectorAll<HTMLDetailsElement>('details.field-group'));
+    expect(groups.map((g) => g.open)).toEqual(fields.map((f, i) => i === 0));
+    el.querySelector<HTMLButtonElement>('.clear-group')!.click();
+    await harness.fixture.whenStable();
+    expect(router.url).toBe('/search');
+  });
+
+  it('fieldQuery_filtersGroupsAndChildren_andShowsEmptyMessage', async () => {
+    await open('/search');
+    const box = el.querySelector<HTMLInputElement>('#filter-field-query')!;
+    box.value = 'chemical';
+    box.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+    const groups = el.querySelectorAll<HTMLDetailsElement>('details.field-group');
+    expect(groups.length).toBe(1);
+    expect(groups[0].open).toBe(true);
+    box.value = 'zzz';
+    box.dispatchEvent(new Event('input'));
+    harness.detectChanges();
+    expect(el.querySelectorAll('details.field-group').length).toBe(0);
+    expect(el.textContent).toContain('No fields match');
   });
 
   it('clearFilters_emptiesUrl', async () => {

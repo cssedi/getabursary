@@ -9,17 +9,20 @@ import {
   computed,
   effect,
   inject,
+  linkedSignal,
   signal,
   untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, map, of, startWith, switchMap } from 'rxjs';
+import { catchError, debounce, map, of, startWith, switchMap, timer } from 'rxjs';
 import { BursaryApi } from '../../core/api/bursary-api';
 import { BursarySummaryResponse, PagedResponse } from '../../core/api/models';
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { FilterSheetComponent, FilterSheetData } from './filter-sheet/filter-sheet.component';
 import { ResultListComponent } from './result-list/result-list.component';
 import { SearchStateService } from './search-state.service';
+
+export const FILTER_DEBOUNCE_MS = 300;
 
 type SearchView =
   | { status: 'loading' }
@@ -31,7 +34,7 @@ type SearchView =
   imports: [FilterPanelComponent, ResultListComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="mx-auto grid max-w-[1040px] gap-4 px-4 py-4 md:px-6 lg:grid-cols-[18rem_1fr]">
+    <div class="mx-auto grid max-w-[1200px] gap-4 px-4 py-4 md:px-6 xl:px-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-8">
       <h1 class="text-2xl font-bold lg:col-span-2">Search bursaries</h1>
       <button
         type="button"
@@ -41,7 +44,9 @@ type SearchView =
       >
         Filters ({{ state.activeCount() }})
       </button>
-      <app-filter-panel class="hidden lg:block" />
+      <app-filter-panel
+        class="hidden min-w-0 lg:sticky lg:top-20 lg:block lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+      />
       <app-result-list
         class="min-w-0"
         [result]="result()"
@@ -60,6 +65,7 @@ export class SearchPage {
   protected readonly state = inject(SearchStateService);
   private readonly api = inject(BursaryApi);
   protected readonly retryCount = signal(0);
+  private firstRequest = true;
 
   private readonly request = computed(() => ({ params: this.state.apiParams(), retry: this.retryCount() }));
 
@@ -67,6 +73,12 @@ export class SearchPage {
   // (provideClientHydration) replays the server's response in the browser, so there is no duplicate request.
   protected readonly view = toSignal(
     toObservable(this.request).pipe(
+      // The first request goes straight out (and is replayed from the server); later ones wait for typing to settle.
+      debounce(() => {
+        const wait = this.firstRequest ? of(0) : timer(FILTER_DEBOUNCE_MS);
+        this.firstRequest = false;
+        return wait;
+      }),
       switchMap(({ params }) =>
         this.api.search(params).pipe(
           map((result): SearchView => ({ status: 'ok', result })),
@@ -78,9 +90,10 @@ export class SearchPage {
     { initialValue: { status: 'loading' } as SearchView },
   );
 
-  protected readonly result = computed(() => {
-    const v = this.view();
-    return v.status === 'ok' ? v.result : null;
+  // While a new search loads, the previous results stay on screen (dimmed) instead of flashing skeletons.
+  protected readonly result = linkedSignal<SearchView, PagedResponse<BursarySummaryResponse> | null>({
+    source: this.view,
+    computation: (v, previous) => (v.status === 'ok' ? v.result : v.status === 'loading' ? (previous?.value ?? null) : null),
   });
 
   private readonly dialog = inject(Dialog);

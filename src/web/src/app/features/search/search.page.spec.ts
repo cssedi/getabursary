@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { BursarySummaryResponse, PagedResponse } from '../../core/api/models';
 import { bursarySummaries, fields, institutions, openBursary } from '../../../testing/fixtures';
 import { routes } from '../../app.routes';
+import { FILTER_DEBOUNCE_MS } from './search.page';
 
 const SEARCH = '/api/v1/bursaries/search';
 
@@ -33,6 +34,14 @@ describe('SearchPage', () => {
   async function settle() {
     await harness.fixture.whenStable();
     harness.detectChanges();
+  }
+
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  /** Waits out the 300 ms filter debounce, then lets the page render. */
+  async function debounced() {
+    await sleep(FILTER_DEBOUNCE_MS + 50);
+    await settle();
   }
 
   function page(items: BursarySummaryResponse[], extra: Partial<PagedResponse<BursarySummaryResponse>> = {}) {
@@ -71,6 +80,7 @@ describe('SearchPage', () => {
     select.dispatchEvent(new Event('change'));
     await settle();
     expect(router.url).toBe('/search?sort=ClosingSoonest');
+    await debounced();
     http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries));
   });
 
@@ -121,11 +131,42 @@ describe('SearchPage', () => {
     await open('/search');
     const first = http.expectOne((r) => r.url === SEARCH);
     await router.navigateByUrl('/search?studyLevel=Honours');
-    await settle();
+    await debounced();
     expect(first.cancelled).toBe(true);
     const second = http.expectOne((r) => r.url === SEARCH);
     expect(second.request.params.get('studyLevel')).toBe('Honours');
     second.flush(page([openBursary]));
+  });
+
+  it('criteriaChanges_within300ms_sendOneRequest', async () => {
+    await open('/search');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries));
+    await settle();
+    await router.navigateByUrl('/search?studyLevel=Honours');
+    await sleep(150);
+    await router.navigateByUrl('/search?studyLevel=Masters');
+    await sleep(150);
+    http.expectNone((r) => r.url === SEARCH);
+    await debounced();
+    const req = http.expectOne((r) => r.url === SEARCH);
+    expect(req.request.params.get('studyLevel')).toBe('Masters');
+    req.flush(page([openBursary]));
+  });
+
+  it('reload_keepsPreviousResultsDimmedAndBusy_noSkeletons', async () => {
+    await open('/search');
+    http.expectOne((r) => r.url === SEARCH).flush(page(bursarySummaries));
+    await settle();
+    await router.navigateByUrl('/search?studyLevel=Honours');
+    await debounced();
+    expect(el.querySelectorAll('app-bursary-row').length).toBe(3);
+    expect(el.querySelectorAll('app-skeleton-card').length).toBe(0);
+    expect(el.querySelector('#results')!.getAttribute('aria-busy')).toBe('true');
+    expect(el.querySelector('ul')!.classList.contains('opacity-60')).toBe(true);
+    http.expectOne((r) => r.url === SEARCH).flush(page([openBursary]));
+    await settle();
+    expect(el.querySelectorAll('app-bursary-row').length).toBe(1);
+    expect(el.querySelector('#results')!.getAttribute('aria-busy')).toBe('false');
   });
 
   it('empty_showsMessageAndClearFiltersResetsUrl', async () => {
@@ -138,6 +179,7 @@ describe('SearchPage', () => {
       .dispatchEvent(new Event('click'));
     await settle();
     expect(router.url).toBe('/search');
+    await debounced();
     http.expectOne((r) => r.url === SEARCH).flush(page([]));
   });
 
@@ -147,7 +189,7 @@ describe('SearchPage', () => {
     await settle();
     expect(el.querySelector('app-error-state')).not.toBeNull();
     el.querySelector('app-error-state button')!.dispatchEvent(new Event('click'));
-    await settle();
+    await debounced();
     http.expectOne((r) => r.url === SEARCH).flush(page([openBursary]));
     await settle();
     expect(el.querySelector('app-error-state')).toBeNull();
@@ -183,12 +225,14 @@ describe('SearchPage', () => {
     el.querySelector<HTMLAnchorElement>('a.next')!.click();
     await settle();
     expect(router.url).toBe('/search?page=2');
+    await debounced();
     http.expectOne((r) => r.url === SEARCH).flush(page(manyBursaries(20), { page: 2, totalCount: 45 }));
     await settle();
     expect(el.textContent).toContain('Page 2 of 3');
     el.querySelector<HTMLAnchorElement>('a.prev')!.click();
     await settle();
     expect(router.url).toBe('/search');
+    await debounced();
     http.expectOne((r) => r.url === SEARCH).flush(page(manyBursaries(20), { totalCount: 45 }));
   });
 

@@ -8,7 +8,7 @@ import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/cl
 import { ErrorStateComponent } from '../../shared/ui/error-state/error-state.component';
 import { ReportButtonComponent } from '../../shared/ui/report-button/report-button.component';
 import { SaveButtonComponent } from '../../shared/ui/save-button/save-button.component';
-import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
+import { SourceLinksComponent } from '../../shared/ui/source-links/source-links.component';
 import { ToastComponent } from '../../shared/ui/toast/toast.component';
 import { NotFoundPage } from '../static/not-found.page';
 import { SeoService } from '../seo/seo.service';
@@ -31,7 +31,7 @@ import {
     NotFoundPage,
     ReportButtonComponent,
     SaveButtonComponent,
-    SourceIconsComponent,
+    SourceLinksComponent,
     ToastComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +50,7 @@ import {
           @if (b.funderName) {
             <p class="text-muted">{{ b.funderName }}</p>
           }
-          <app-source-icons [sources]="b.sources" />
+          <app-source-links [sources]="b.sources" />
         </header>
 
         <section class="section" aria-labelledby="who-heading">

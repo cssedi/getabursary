@@ -5,21 +5,15 @@ import { BursarySummaryResponse } from '../../../core/api/models';
 import { ClosingDateBadgeComponent } from '../../../shared/ui/closing-date-badge/closing-date-badge.component';
 import { ReportButtonComponent } from '../../../shared/ui/report-button/report-button.component';
 import { SaveButtonComponent } from '../../../shared/ui/save-button/save-button.component';
-import { SourceIconsComponent } from '../../../shared/ui/source-icons/source-icons.component';
+import { SourceLinksComponent } from '../../../shared/ui/source-links/source-links.component';
 
-const COVERAGE_SHOWN = 3;
 /** Only the first rows swipe in, 60 ms apart (06 §6.5). */
 export const SWIPE_ROWS = 3;
-
-/** "Tuition" → "tuition", but "NSFAS" stays as written. */
-function lowerFirst(text: string): string {
-  return /^[A-Z][a-z]/.test(text) ? text[0].toLowerCase() + text.slice(1) : text;
-}
 
 /** One ledger row: date column on the left, details on the right (06 §5). */
 @Component({
   selector: 'app-bursary-row',
-  imports: [RouterLink, ClosingDateBadgeComponent, ReportButtonComponent, SaveButtonComponent, SourceIconsComponent],
+  imports: [RouterLink, ClosingDateBadgeComponent, ReportButtonComponent, SaveButtonComponent, SourceLinksComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article
@@ -49,18 +43,14 @@ function lowerFirst(text: string): string {
           <app-report-button class="-mt-2 -mr-2" [bursaryId]="bursary().id" />
         </div>
         @if (bursary().funderName) {
-          <p class="funder truncate text-sm text-muted">{{ bursary().funderName }}</p>
+          <p class="funder line-clamp-2 text-sm text-muted [overflow-wrap:anywhere]" [attr.title]="bursary().funderName">{{
+            bursary().funderName
+          }}</p>
         }
         @if (eligibility()) {
           <p class="eligibility text-sm">{{ eligibility() }}</p>
         }
-        @if (coverage()) {
-          <p class="coverage text-sm">{{ coverage() }}</p>
-        }
-        <div class="mt-2 flex items-center gap-2">
-          <app-source-icons [sources]="bursary().sources" />
-          <span class="sources-count text-sm text-muted">found on {{ siteCount() }}</span>
-        </div>
+        <app-source-links class="mt-1 block" [sources]="bursary().sources" />
       </div>
     </article>
   `,
@@ -105,21 +95,9 @@ export class BursaryRowComponent {
   protected readonly animate = computed(
     () => this.index() < SWIPE_ROWS && !this.window?.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
   );
-  protected readonly siteCount = computed(() => {
-    const n = this.bursary().sources.length;
-    return `${n} ${n === 1 ? 'site' : 'sites'}`;
-  });
   protected readonly eligibility = computed(() => {
     const { studyLevels, minAverage } = this.bursary();
     const parts = [studyLevels.join(', '), minAverage === null ? '' : `min ${minAverage}% average`];
     return parts.filter(Boolean).join(', ');
-  });
-  protected readonly coverage = computed(() => {
-    const items = this.bursary().coverage.map(lowerFirst);
-    if (items.length === 0) return '';
-    const shown = items.slice(0, COVERAGE_SHOWN);
-    const last = shown.pop()!;
-    const list = shown.length ? `${shown.join(', ')} and ${last}` : last;
-    return `Covers ${list}${items.length > COVERAGE_SHOWN ? ` +${items.length - COVERAGE_SHOWN} more` : ''}`;
   });
 }

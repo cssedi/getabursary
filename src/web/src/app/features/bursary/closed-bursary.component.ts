@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { BursarySummaryResponse } from '../../core/api/models';
 import { formatDate } from '../../shared/format/format';
 import { ClosingDateBadgeComponent } from '../../shared/ui/closing-date-badge/closing-date-badge.component';
-import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.component';
+import { SourceLinksComponent } from '../../shared/ui/source-links/source-links.component';
 
 /**
  * Summary-only view for a closed bursary (API `410 Gone`). It shows no eligibility details and no apply button.
@@ -12,7 +12,7 @@ import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.
  */
 @Component({
   selector: 'app-closed-bursary',
-  imports: [ClosingDateBadgeComponent, RouterLink, SourceIconsComponent],
+  imports: [ClosingDateBadgeComponent, RouterLink, SourceLinksComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-3">
@@ -22,7 +22,7 @@ import { SourceIconsComponent } from '../../shared/ui/source-icons/source-icons.
         <p class="text-muted">{{ summary().funderName }}</p>
       }
       <p class="text-lg font-semibold" role="status">{{ closedMessage() }}</p>
-      <app-source-icons [sources]="summary().sources" />
+      <app-source-links [sources]="summary().sources" />
       @if (fieldIds().length) {
         <p>
           <a

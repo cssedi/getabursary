@@ -72,7 +72,7 @@ describe('BursaryDetailPage', () => {
     expect(el.querySelector('h1')?.textContent).toBe(bursaryDetail.name);
     expect(el.textContent).toContain(bursaryDetail.funderName!);
     expect(el.querySelector('app-closing-date-badge')).not.toBeNull();
-    expect(el.querySelectorAll('app-source-icons a').length).toBe(2);
+    expect(el.querySelectorAll('app-source-links a').length).toBe(2);
     expect(headings()).toEqual([
       'Who can apply',
       'Fields of study and qualifications',
@@ -221,7 +221,7 @@ describe('BursaryDetailPage', () => {
     expect(el.querySelector('h1')?.textContent).toBe(closedBursary.name);
     expect(el.textContent).toContain('This bursary closed on 30 Sept 2026.');
     expect(el.querySelector('app-closing-date-badge')).not.toBeNull();
-    expect(el.querySelectorAll('app-source-icons a').length).toBe(1);
+    expect(el.querySelectorAll('app-source-links a').length).toBe(1);
     expect(headings()).toEqual([]);
     expect(el.textContent).not.toContain('Apply on');
     expect(el.querySelector('.apply-bar')).toBeNull();

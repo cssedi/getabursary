@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { StudyLevel } from '../../../core/api/models';
@@ -6,7 +6,7 @@ import { TaxonomyApi } from '../../../core/api/taxonomy-api';
 import { DegreePickerComponent, DegreeSelection } from '../../home/degree-picker.component';
 import { STUDY_LEVELS, SearchStateService, parseAverage } from '../search-state.service';
 
-const AVERAGE_DEBOUNCE_MS = 400;
+const AVERAGE_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-filter-panel',
@@ -22,36 +22,66 @@ const AVERAGE_DEBOUNCE_MS = 400;
           (selectionChange)="onDegree($event)"
         />
 
-        <details class="rounded-control border border-line p-2">
-          <summary class="cursor-pointer font-medium hover:text-jacaranda">
+        <div class="grid gap-2">
+          <label [for]="idPrefix() + '-field-query'" class="font-medium">
             Field of study @if (criteria().fieldIds.length) { ({{ criteria().fieldIds.length }} selected) }
-          </summary>
-          <div class="mt-2 grid gap-3">
-            @for (group of fields(); track group.id) {
-              <fieldset class="grid gap-1">
-                <legend class="font-medium">{{ group.name }}</legend>
-                <label class="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    [checked]="criteria().fieldIds.includes(group.id)"
-                    (change)="toggleField(group.id, $any($event.target).checked)"
-                  />
-                  All {{ group.name }}
-                </label>
-                @for (child of group.children; track child.id) {
-                  <label class="ml-4 flex items-center gap-2">
+          </label>
+          <input
+            [id]="idPrefix() + '-field-query'"
+            name="fieldQuery"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Type a field, e.g. law…"
+            class="min-h-11 rounded-control border border-line bg-paper-raised px-2 text-ink"
+            [value]="fieldQuery()"
+            (input)="fieldQuery.set($any($event.target).value)"
+          />
+          <div class="grid border-t border-line">
+            @for (group of visibleGroups(); track group.id) {
+              <details class="field-group border-b border-line" [open]="group.open">
+                <summary class="flex min-h-11 cursor-pointer items-center font-medium hover:text-jacaranda">
+                  <span class="min-w-0 [overflow-wrap:anywhere]">{{ group.name }}</span>
+                  @if (group.selected) {
+                    <span class="ml-2 tabular-nums text-muted">({{ group.selected }})</span>
+                  }
+                </summary>
+                <div class="grid gap-1 pb-2">
+                  <label class="flex min-h-11 items-center gap-2">
                     <input
                       type="checkbox"
-                      [checked]="criteria().fieldIds.includes(child.id)"
-                      (change)="toggleField(child.id, $any($event.target).checked)"
+                      [checked]="criteria().fieldIds.includes(group.id)"
+                      (change)="toggleField(group.id, $any($event.target).checked)"
                     />
-                    {{ child.name }}
+                    <span class="min-w-0 [overflow-wrap:anywhere]">All {{ group.name }}</span>
                   </label>
-                }
-              </fieldset>
+                  @for (child of group.children; track child.id) {
+                    <label class="ml-4 flex min-h-11 items-center gap-2">
+                      <input
+                        type="checkbox"
+                        [checked]="criteria().fieldIds.includes(child.id)"
+                        (change)="toggleField(child.id, $any($event.target).checked)"
+                      />
+                      <span class="min-w-0 [overflow-wrap:anywhere]">{{ child.name }}</span>
+                    </label>
+                  }
+                  @if (group.selected) {
+                    <button
+                      type="button"
+                      class="clear-group min-h-11 justify-self-start px-2 text-jacaranda underline underline-offset-[3px] hover:decoration-2 active:decoration-2"
+                      (click)="clearGroup(group.id)"
+                    >
+                      Clear {{ group.name }}
+                    </button>
+                  }
+                </div>
+              </details>
+            }
+            @if (visibleGroups().length === 0 && fieldQuery()) {
+              <p class="py-2 text-sm text-muted">No fields match “{{ fieldQuery() }}”.</p>
             }
           </div>
-        </details>
+        </div>
 
         <div class="grid gap-1">
           <label [for]="idPrefix() + '-study-level'" class="font-medium">Study level</label>
@@ -137,6 +167,25 @@ export class FilterPanelComponent {
   readonly idPrefix = input('filter');
   protected readonly fields = toSignal(this.taxonomy.fields().pipe(catchError(() => of([]))), { initialValue: [] });
 
+  protected readonly fieldQuery = signal('');
+
+  /**
+   * Groups (and children) matching the filter box. A group opens when it holds a selection or the box is in use.
+   * shortcut: unticking a group's last field closes it, upgrade to remembered open state if that annoys.
+   */
+  protected readonly visibleGroups = computed(() => {
+    const query = this.fieldQuery().trim().toLowerCase();
+    const selected = this.criteria().fieldIds;
+    const has = (name: string) => name.toLowerCase().includes(query);
+    return this.fields()
+      .map((g) => {
+        const children = !query || has(g.name) ? g.children : g.children.filter((c) => has(c.name));
+        const count = [g.id, ...g.children.map((c) => c.id)].filter((id) => selected.includes(id)).length;
+        return { id: g.id, name: g.name, children, selected: count, open: count > 0 || !!query, show: !query || has(g.name) || children.length > 0 };
+      })
+      .filter((g) => g.show);
+  });
+
   /** Text in the average box; follows the URL (e.g. when filters are cleared). */
   protected readonly averageText = linkedSignal(() => this.criteria().average?.toString() ?? '');
 
@@ -156,6 +205,13 @@ export class FilterPanelComponent {
       () => void this.state.update({ average: parseAverage(text) }),
       AVERAGE_DEBOUNCE_MS,
     );
+  }
+
+  protected clearGroup(groupId: string): void {
+    const group = this.fields().find((g) => g.id === groupId);
+    if (!group) return;
+    const ids = new Set([group.id, ...group.children.map((c) => c.id)]);
+    void this.state.update({ fieldIds: this.criteria().fieldIds.filter((id) => !ids.has(id)) });
   }
 
   protected toggleField(id: string, checked: boolean): void {
