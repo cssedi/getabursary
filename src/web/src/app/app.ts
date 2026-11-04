@@ -10,7 +10,7 @@ import { HeaderComponent } from './layout/header.component';
   template: `
     <a class="skip-link" href="#content" (click)="skipToContent($event)">Skip to content</a>
     <app-header />
-    <main id="content" tabindex="-1" class="mx-auto max-w-5xl px-4 py-6 md:px-6"><router-outlet /></main>
+    <main id="content" tabindex="-1" class="mx-auto max-w-300 px-4 py-6 md:px-6 xl:px-8"><router-outlet /></main>
     <app-footer />
   `,
 })

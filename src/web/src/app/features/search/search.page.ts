@@ -43,6 +43,7 @@ type SearchView =
       </button>
       <app-filter-panel class="hidden lg:block" />
       <app-result-list
+        class="min-w-0"
         [result]="result()"
         [loading]="view().status === 'loading'"
         [error]="view().status === 'error'"

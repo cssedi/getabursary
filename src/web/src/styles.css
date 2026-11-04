@@ -1,59 +1,76 @@
 @import "tailwindcss";
 
-/* Latin subset only, self-hosted from the Fontsource package (copied to /fonts by angular.json). */
+/* Latin subset only, self-hosted from the Fontsource packages (copied to /fonts by angular.json). */
 @font-face {
-  font-family: "Atkinson Hyperlegible Next";
+  font-family: "Bricolage Grotesque";
   font-style: normal;
   font-display: swap;
   font-weight: 200 800;
-  src: url("/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2-variations");
+  font-stretch: 75% 100%;
+  src: url("/fonts/bricolage-grotesque-latin-wdth-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("/fonts/newsreader-latin-wght-normal.woff2") format("woff2-variations");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 :root {
-  --ink: #1e1a2e;
-  --paper: #fafafc;
-  --jacaranda: #5e43b0;
-  --bloom: #e6defa;
+  --ink: #1b1a17;
+  --paper: #f7f5ef;
+  --paper-raised: #ffffff;
+  --jacaranda: #4f3a9e;
+  --bloom: #ece7f8;
   --highlighter: #ffe14d;
-  --muted: #5b566b;
-  --line: #e3e0ea;
-  --closed: #8a8697;
+  --muted: #5e5b53;
+  --line: #e2ded3;
+  --closed: #8c887e;
   color-scheme: light;
 }
 
 @theme {
-  --radius-control: 8px;
+  --radius-control: 10px;
+  --radius-sheet: 16px;
 }
 
 @theme inline {
   --color-ink: var(--ink);
   --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
   --color-jacaranda: var(--jacaranda);
   --color-bloom: var(--bloom);
   --color-highlighter: var(--highlighter);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-closed: var(--closed);
-  --font-sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, serif;
   /* Type scale, ratio 1.25 on a 16 px base */
   --text-xs: 13px;
   --text-xs--line-height: 1.5;
   --text-sm: 13px;
   --text-sm--line-height: 1.5;
   --text-base: 16px;
-  --text-base--line-height: 1.55;
+  --text-base--line-height: 1.5;
   --text-lg: 20px;
   --text-lg--line-height: 1.3;
   --text-xl: 20px;
   --text-xl--line-height: 1.3;
   --text-2xl: 25px;
-  --text-2xl--line-height: 1.15;
+  --text-2xl--line-height: 1.1;
   --text-3xl: 31px;
-  --text-3xl--line-height: 1.15;
+  --text-3xl--line-height: 1.1;
   --text-4xl: 39px;
-  --text-4xl--line-height: 1.15;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 49px;
+  --text-5xl--line-height: 1.1;
 }
 
 html {
@@ -66,7 +83,7 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -75,7 +92,7 @@ h2,
 h3,
 h4 {
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.1;
   text-wrap: balance;
 }
 
@@ -88,9 +105,129 @@ summary {
   touch-action: manipulation;
 }
 
-select {
-  background-color: var(--paper);
+/* Reading text: serif, 65ch. */
+.reading {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  max-width: 65ch;
+}
+
+/* Base controls */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background-color: var(--paper-raised);
   color: var(--ink);
+  font: inherit;
+}
+
+@media (min-width: 640px) {
+  select {
+    width: auto;
+    min-width: 12rem;
+  }
+}
+
+select {
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%231B1A17' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  text-overflow: ellipsis;
+}
+
+select option,
+select optgroup {
+  background-color: var(--paper-raised);
+  color: var(--ink);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--jacaranda);
+  flex: none;
+}
+
+/* Disabled looks disabled: flat paper, dashed border, muted text. Pair with a visible reason where used. */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: var(--paper);
+  color: var(--closed);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+/* In the components layer so utilities (e.g. sm:hidden) can override display. */
+@layer components {
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-radius: var(--radius-control);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    border-color 120ms,
+    transform 120ms;
+}
+
+.btn-primary {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover {
+  background: var(--jacaranda);
+  border-color: var(--jacaranda);
+}
+
+.btn-secondary {
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  background: var(--bloom);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  background: var(--paper);
+  border: 1px dashed var(--closed);
+  color: var(--closed);
+  cursor: not-allowed;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
 
 :focus-visible {
@@ -104,13 +241,18 @@ button:active {
   opacity: 0.7;
 }
 
+.btn-primary:active,
+.btn-secondary:active {
+  opacity: 1;
+}
+
 .skip-link {
   position: absolute;
   left: 16px;
   top: -64px;
   z-index: 50;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-control);
   background: var(--jacaranda);
   color: var(--paper);
   font-weight: 600;
@@ -120,15 +262,27 @@ button:active {
   top: 8px;
 }
 
+/* The sticky header must not cover the skip-link target. */
 #content {
-  scroll-margin-top: 16px;
+  scroll-margin-top: 72px;
 }
 
-/* The sticky apply bar must not cover a focused element. */
+/* The sticky header and apply bar must not cover a focused element. */
 html {
+  scroll-padding-top: 72px;
   scroll-padding-bottom: 96px;
+}
+
+a {
+  text-underline-offset: 3px;
 }
 
 a:hover {
   text-decoration-thickness: 2px;
+}
+
+/* Sheets and dialogs: stop scroll chaining into the page. */
+.cdk-overlay-pane,
+.sheet {
+  overscroll-behavior: contain;
 }

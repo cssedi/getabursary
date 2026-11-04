@@ -4,7 +4,7 @@ title: Design v2 foundation - tokens, fonts, header and nav, base controls, hydr
 phase: 7
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-050]
 requirements: [NFR-01, NFR-03]
 issue: 101
