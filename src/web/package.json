@@ -9,6 +9,7 @@
     "test": "ng test",
     "serve:ssr:getabursary-web": "node dist/getabursary-web/server/server.mjs",
     "lint": "ng lint",
+    "visual-check": "node ../../scripts/visual-check.mjs",
     "serve:ssr": "node dist/getabursary-web/server/server.mjs"
   },
   "private": true,
@@ -39,6 +40,7 @@
     "angular-eslint": "22.6.0",
     "eslint": "^10.12.0",
     "jsdom": "^30.0.0",
+    "playwright": "^1.64.1",
     "postcss": "^8.5.32",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.3.3",

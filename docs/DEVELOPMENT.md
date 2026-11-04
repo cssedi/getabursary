@@ -52,6 +52,12 @@ Integration tests use **Testcontainers**, which starts its own PostgreSQL contai
 
 Adapter tests use saved HTML fixtures and make no live network calls.
 
+## Visual check
+
+Once: `cd src/web && npm ci && npx playwright install chromium`. Then, from the repo root: `node scripts/visual-check.mjs <task-id> / /search` (add `--sign-in-admin` for signed-in pages).
+It starts the db, API (port 5266) and web (4200), loads `data/dev/sample-bursaries.sql` (15 bursaries; safe to re-run), and saves `docs/screenshots/<task-id>/<page>-{mobile,desktop}.png` (375×812, 1440×900).
+The dev-only admin is `admin@getabursary.local` / `DevOnly-Passw0rd!`. Open the PNGs before review.
+
 ## Never commit secrets
 
 - Do **not** commit `.env`, real connection strings, API keys, passwords or personal data. This repository is public.
