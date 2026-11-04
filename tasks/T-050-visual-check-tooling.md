@@ -4,7 +4,7 @@ title: Visual check tooling - sample data and one-command screenshots of the run
 phase: 7
 area: infra
 model: sonnet
-status: todo
+status: done
 depends_on: []
 requirements: [NFR-01]
 issue: 100
