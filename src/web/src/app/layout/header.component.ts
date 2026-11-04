@@ -67,6 +67,7 @@ export class HeaderComponent {
   protected readonly item = MENU_ITEM;
   /** True once the page has scrolled past the sentinel: the header then gets its hairline. */
   protected readonly scrolled = signal(false);
+  private menuOpen = false;
   private readonly sentinel = viewChild.required<ElementRef<HTMLElement>>('sentinel');
 
   constructor() {
@@ -79,13 +80,22 @@ export class HeaderComponent {
   }
 
   protected async openMenu(): Promise<void> {
+    if (this.menuOpen) return;
+    this.menuOpen = true;
     // Lazy: the CDK dialog stack is ~80 kB and most desktop visits never open the sheet.
-    const [{ MobileNavComponent }, { Dialog }, { Overlay }] = await Promise.all([
-      import('./mobile-nav.component'),
-      import('@angular/cdk/dialog'),
-      import('@angular/cdk/overlay'),
-    ]);
-    this.injector.get(Dialog).open(MobileNavComponent, {
+    let modules;
+    try {
+      modules = await Promise.all([
+        import('./mobile-nav.component'),
+        import('@angular/cdk/dialog'),
+        import('@angular/cdk/overlay'),
+      ]);
+    } catch (error) {
+      this.menuOpen = false;
+      throw error;
+    }
+    const [{ MobileNavComponent }, { Dialog }, { Overlay }] = modules;
+    const ref = this.injector.get(Dialog).open(MobileNavComponent, {
       ariaLabel: 'Menu',
       autoFocus: 'dialog', // no autofocus into a control on mobile
       width: 'calc(100% - 16px)',
@@ -94,5 +104,6 @@ export class HeaderComponent {
       backdropClass: 'nav-sheet-backdrop',
       positionStrategy: this.injector.get(Overlay).position().global().top('8px').centerHorizontally(),
     });
+    ref.closed.subscribe(() => (this.menuOpen = false));
   }
 }
