@@ -10,7 +10,7 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 | 03 | [Engineering conventions](03-conventions.md) | Accepted v1.0 |
 | 04 | [Agentic development workflow](04-agent-workflow.md) | Accepted v1.1 |
 | 05 | [Web app (Angular)](05-web.md) | Accepted v1.1 |
-| 06 | [Design system & interface rules](06-design.md) | Accepted v1.0 (governs frontend) |
+| 06 | [Design system & interface rules](06-design.md) | Accepted v2.0 (governs frontend) |
 | 07 | [Accounts, saved bursaries & admin](07-accounts-and-admin.md) | Accepted v1.0 |
 | 08 | [Hosting cost analysis](08-hosting.md) | Draft v0.1 |
 
@@ -36,3 +36,4 @@ Specs are the source of truth. Code follows the specs. If the code needs to diff
 | 2026-11-02 | Auto-merge green + approved PRs; human only for flagged cases | Spec 04 |
 | 2026-11-02 | Frontend governed by frontend-design + Web Interface Guidelines: jacaranda/highlighter palette, Atkinson Hyperlegible Next, deadline-ledger layout; sentence case | Spec 06 |
 | 2026-11-02 | Cookie auth via Identity endpoints; Phase 5 = Epic A accounts + Epic B admin tab | ADR-003, Spec 07 |
+| 2026-11-04 | UI v2: warm paper + jacaranda + highlighter, Bricolage Grotesque + Newsreader, real home page, named source links, screenshot check | Spec 06 v2 |

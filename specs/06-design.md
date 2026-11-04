@@ -1,91 +1,102 @@
 # 06 — Design System & Interface Rules
 
-> Status: **Accepted v1.0** (2026-11-02). **Governs every frontend task.** Supersedes the tokens in [05-web §8](05-web.md).
-> Sources: the product owner asked that two skills govern the frontend: *frontend-design* (visual identity, typography, copy) and *web-design-guidelines* (the [Vercel Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines)). §2–§6 apply the first; §7 is our checklist of the second.
+> Status: **Accepted v2.0** (2026-11-04). **Governs every frontend task.** Supersedes v1.0 (jacaranda "deadline ledger" on cool white) and the tokens in [05-web §8](05-web.md).
+> Sources: the frontend-design and web-design-guidelines skills (owner, 2026-11-02), and the owner's v2 brief (2026-11-04): *"a UI inspired by a minimalist Anthropic look, be creative with the font but fitting for the context; a real home page welcoming the user; fix responsiveness, broken dropdowns, choppiness and overlapping elements."* Reference pages the owner shared: anthropic.com/constitution (warm paper, generous space, serif reading text, one hand-drawn spot illustration) and jozue.fr (huge, tight, confident grotesque headline).
 
 ## 1. Brief
-- **Subject:** South African bursaries, matched to a student's actual degree.
-- **Audience:** matric learners and university students aged 17–25, mostly on mid-range Android phones with expensive data, often filling this in between classes or at home with a parent.
-- **Primary job:** answer "which bursaries can *I* get for *my* degree, and when do they close?" in one screen.
-- **The thing that matters most in this world is the closing date.** Missing it means losing a year of funding. The design is built around that.
+- **Subject:** South African bursaries, matched to a student's actual degree and closing dates.
+- **Audience:** matric learners and university students aged 17–25, mostly on mid-range Android phones with expensive data, often with a parent beside them.
+- **Primary job:** "which bursaries can *I* get for *my* degree, and when do they close?"
+- **Feeling:** calm and trustworthy (it's about money and their future), not corporate. Quiet pages, one confident voice.
 
-## 2. Design plan (after review against generic defaults)
+## 2. Design plan (reviewed against generic defaults)
 
-**Concept: "the deadline ledger."** Bursary season in Gauteng runs through jacaranda season (Oct–Nov), when students are writing exams and chasing applications. The design borrows two things from that world: the **jacaranda purple** that covers Pretoria and Joburg at exactly that time of year, and the **highlighter** students drag across the dates they can't miss.
+**Concept: "a calm desk in bursary season."** Warm paper, lots of air, a confident headline, and one thing that's loud: the closing date, marked with a highlighter the way students mark the dates they can't miss.
 
-| Axis | First instinct (rejected) | Why rejected | Choice |
-|---|---|---|---|
-| Colour | Forest green + gold | Reads as a generic finance/"trust" template | Jacaranda purple + highlighter yellow on cool white |
-| Type | System font stack | No personality; looks like a default | **Atkinson Hyperlegible Next** (one family). It was designed for legibility for low-vision readers, which suits small, cheap screens. Personality comes from its distinctive letterforms and big date numerals |
-| Results | Grid of identical rounded cards with soft shadows | The "SaaS card kit" | **Ledger rows**: a big date column on the left, details on the right, separated by space and a single hairline. No shadows |
-| Hero | Headline + stat + gradient | The default hero | **The search *is* the hero**: a fill-in-the-blanks sentence (§5) |
+| Axis | Generic default | What we do instead, and why |
+|---|---|---|
+| Colour | Cream + serif + terracotta (the stock "Anthropic-like" output) | Warm paper and ink give the Anthropic calm the owner asked for, but the accent stays **jacaranda** (our v1 identity: Gauteng in bursary season), not clay. The **highlighter** yellow is the only loud colour, and it only ever means "closes soon" |
+| Type | One sans everywhere, or a high-contrast serif display | **Bricolage Grotesque** (variable: weight, width, optical size) for headlines, UI and the big date numerals: friendly, a little hand-made, young without being childish, and it gets confident at display sizes like the jozue.fr headline. **Newsreader** (variable serif) only for reading text: hero intro, bursary descriptions, About/Privacy. The pairing is clearly distinct: grotesque for doing, serif for reading |
+| Hero | Headline + stat + gradient | A very large, tightly set headline in Bricolage (condensed width), a short serif intro, then the degree search right there. Beside it on desktop (below it on mobile), **one** hand-drawn line illustration: a calendar page with a highlighter swipe (inline SVG, ink lines, the swipe in `--highlighter`) |
+| Results | Grid of identical rounded cards with shadows | **Ledger rows**: big date column left, details right, hairlines between, no shadows (kept from v1, restyled) |
+| Structure | Eyebrows, numbered sections, middle-dot meta | No eyebrows. Numbers only on "How it works" (a real sequence). Meta as short separate lines |
 
-## 3. Tokens (CSS variables in `styles.css`, mapped into the Tailwind theme)
+## 3. Tokens (CSS variables in `styles.css`, mapped into the Tailwind theme; v1 names kept where the role is the same)
 
 | Token | Hex | Role | Contrast |
 |---|---|---|---|
-| `--ink` | `#1E1A2E` | Body text, headings (deep aubergine, not a tinted near-black) | 16.2:1 on paper |
-| `--paper` | `#FAFAFC` | Page background (cool white, **not cream**) | — |
-| `--jacaranda` | `#5E43B0` | Primary actions, links, focus ring, selected state | 6.9:1 on paper; white text on it 7.2:1 |
-| `--bloom` | `#E6DEFA` | Selected chips, hover background, soft fills (never text) | — |
-| `--highlighter` | `#FFE14D` | **Only** closing-soon dates (≤ 14 days), drawn as a highlighter swipe behind the date. Never text, never decoration | ink on it: 13.0:1 |
-| `--muted` | `#5B566B` | Secondary text, metadata | 6.7:1 on paper |
-| `--line` | `#E3E0EA` | Hairlines between rows, input borders | — |
-| `--closed` | `#8A8697` | Closed-bursary text (paired with the word "Closed", never colour alone) | 3.4:1: only for large text (≥ 18 px) and always next to the word "Closed" |
+| `--paper` | `#F7F5EF` | Page background (warm paper) | — |
+| `--paper-raised` | `#FFFFFF` | Inputs, dialogs, the search panel | — |
+| `--ink` | `#1B1A17` | Text, headings, primary button fill | 16.6:1 on paper |
+| `--muted` | `#5E5B53` | Secondary text, metadata | 6.4:1 on paper |
+| `--line` | `#E2DED3` | Hairlines, input borders | — |
+| `--jacaranda` | `#4F3A9E` | Links, focus ring, selected state, the saved icon | 8.1:1 on paper |
+| `--bloom` | `#ECE7F8` | Selected chips, hover fill on rows (never text) | — |
+| `--highlighter` | `#FFE14D` | **Only** closing-soon dates (≤ 14 days) and the hero illustration's swipe | ink on it: 13.4:1 |
+| `--closed` | `#8C887E` | Closed-bursary text (always next to the word "Closed") | large text only |
 
-- **Radius:** `--radius-control: 8px` for inputs, buttons and chips. Rows and sections have **no radius and no shadow**. Dialogs: 16 px.
-- **Spacing:** 4 px base (`4, 8, 12, 16, 24, 32, 48, 64`). Page gutter 16 px on mobile, 24 px from 768 px.
-- **Max width:** 720 px for reading/detail pages, 1040 px for search (filters + results).
-- **Dark mode:** not in the MVP. Set `color-scheme: light` and `<meta name="theme-color" content="#FAFAFC">`.
+- **Primary button:** ink fill, paper text, 10 px radius, 48 px tall. Secondary: paper-raised with a `--line` border. Links: jacaranda, underline offset 3 px.
+- **Radius:** 10 px controls and the search panel, 16 px dialogs/sheets, **0** on ledger rows. **No shadows** except dialogs (one soft shadow) and the sticky header's hairline.
+- **Spacing:** 4 px base (`4 8 12 16 24 32 48 64 96`). Gutter 16 px mobile, 24 px ≥ 768, 32 px ≥ 1280. Sections on home are separated by 96 px (64 px on mobile), not by rules.
+- **Widths:** 1200 px max page; 680 px reading column; search uses a 288 px filter column + fluid results.
+- **Dark mode:** not in this iteration. `color-scheme: light`, `theme-color` = `--paper`.
 
 ## 4. Typography
-- **Family:** Atkinson Hyperlegible Next, variable (weights 200–800, OFL-1.1), **self-hosted** via Fontsource (`@fontsource-variable/atkinson-hyperlegible-next`; verify the exact package name), **Latin subset only**, `font-display: swap`, preloaded. Fallback: `system-ui, sans-serif`.
-- **Scale** (ratio 1.25, 16 px base): 13 / 16 / 20 / 25 / 31 / 39 px. Body 16 px / 1.55. Headings line-height 1.15, weight 700, `text-wrap: balance`.
-- **Date numerals** are the display type: the day number in result rows is 31 px weight 800 with `font-variant-numeric: tabular-nums`; the month sits under it at 13 px weight 600. This is the one place the type gets loud.
-- Line length ≤ 70 characters (`max-width: 65ch` on prose).
-- **Sentence case everywhere**, headings and buttons included (decision: this overrides the guidelines' Title Case rule; see §7 note). **No all-caps labels**, no letter-spaced eyebrows, no single-word accent colours in headlines, no middle-dot meta strings (`A · B · C`), no `→` appended to links or buttons.
+- **Families:** `@fontsource-variable/bricolage-grotesque` and `@fontsource-variable/newsreader`, self-hosted, **Latin subset only**, `font-display: swap`, the Bricolage file preloaded. Fallbacks: `ui-sans-serif, system-ui` / `ui-serif, Georgia`. Remove Atkinson Hyperlegible.
+- **Scale** (ratio 1.25, 16 px base): 13 / 16 / 20 / 25 / 31 / 39 / 49 px, plus the hero display size.
+- **Hero headline:** Bricolage, `font-size: clamp(2.75rem, 8vw, 6.5rem)`, weight 700, `font-stretch: 80%` (condensed), letter-spacing −0.03em, line-height 0.95, `text-wrap: balance`. Copy: **"Find the bursaries that fit your degree."** No single accented word.
+- **Headings:** Bricolage 700, line-height 1.1, `text-wrap: balance`. **UI text** (labels, buttons, rows): Bricolage 400–600 at 16 px / 1.5.
+- **Reading text:** Newsreader 400, 18 px / 1.65 (serif gets more leading), `max-width: 65ch`.
+- **Date numerals** (ledger + closing-soon list): Bricolage 800, 32 px, `tabular-nums`, month under it at 13 px 600.
+- **Sentence case everywhere.** No all-caps labels, no letter-spaced eyebrows, no middle-dot meta strings, no `→` on links or buttons.
 
-## 5. Layout & key screens (mobile first, left-aligned)
+## 5. Screens (mobile first, left-aligned)
 
-**Home: the search is the hero**
-```
-GetABursary
-────────────────────────────────────
-Find bursaries for
-[ BCom Accounting ▾ ] at [ UJ ▾ ]
-in [ first year ▾ ] with a [ 72 ]% average.
-                          [ Show bursaries ]
-────────────────────────────────────
-Browse by field: Engineering, Commerce, Health …   (links)
-```
-The sentence is built from real `<label>`/`<select>`/`<input>` elements (each select has a visually-hidden label). On mobile it wraps naturally; each control is ≥ 44 px tall.
+**Header** (sticky, paper background, hairline bottom when scrolled): wordmark "getabursary" (Bricolage 700, lowercase, the "a" in "a bursary" not styled differently) left; right: "Search", "My bursaries" (if signed in), account menu or "Sign in". On < 640 px the nav collapses into a menu button that opens a sheet.
 
-**Search: the deadline ledger**
+**Home** (`/`):
 ```
-23 bursaries match                 Sort: closing soonest ▾
-┌──────┬───────────────────────────────────────────┐
-│  14  │ Sasol Engineering Bursary          ⚑     │
-│ Nov  │ Sasol                                     │
-│ ▓▓▓▓ │ Undergraduate, min 65% average             │
-│      │ Covers tuition and books                   │
-│      │ [ZA][ST]  found on 2 sites                 │
-├──────┼───────────────────────────────────────────┤
-│  31  │ Investec Tertiary Bursary           ⚑     │
-│ Jan  │ …                                          │
+[header]
+Find the bursaries                      ┌ hand-drawn calendar page,
+that fit your degree.                   │ one date highlighted ┐
+We read South Africa's bursary sites so you don't have to. Pick your
+degree and see what you qualify for, sorted by closing date.   (serif)
+┌ search panel (paper-raised, 1px line, radius 10) ─────────────────┐
+│ University ▾        Qualification ▾ (grouped by faculty)          │
+│ Year of study ▾     Your average [72] %        [ Show bursaries ] │
+└────────────────────────────────────────────────────────────────────┘
+Closing soon                                              See all
+ 14 Nov ▓  Sasol Bursary            Sasol                 (ledger rows, 5)
+ 21 Nov    Exxaro Bursary Scheme    Exxaro
+How it works   1 Pick your degree  2 See what you qualify for  3 Track your applications
+Browse by field   Engineering   Health sciences   Commerce   Law   … (large Bricolage links, 2–3 columns)
+Where the listings come from: ZA Bursaries, StudyTrust, AllBursaries (links). Always apply on the funder's own site.
+[footer]
 ```
-- The date column is fixed-width (64 px). Closing soon (≤ 14 days) gets the highlighter swipe behind the day number plus the text "closes in 5 days" in the row. **Closed** rows render the date in `--closed` and replace it with the word "Closed", the whole row at reduced emphasis, not clickable (05 §6).
-- The row's title is the link (the whole row is a hit target via a stretched link). The flag (report) button sits outside the link.
-- Filters: a left column ≥ 1024 px; otherwise a "Filters (3)" button that opens a bottom sheet (CDK dialog) with overscroll contained.
+- The search panel order is **University → Qualification → Year of study → Average**. Qualification is one native `<select>` with `<optgroup>` per faculty, loaded for the chosen university (no separate faculty step). Before a university is picked, it shows "Pick a university first" and is disabled with a visible reason. Desktop: 2×2 grid; mobile: stacked, full-width controls ≥ 48 px tall. Everything is optional except nothing: "Show bursaries" always works.
+- "Closing soon" uses the real search (`sort=ClosingSoonest&pageSize=5`), rendered on the server.
 
-**Detail:** single 720 px column. The closing date block at the top (same treatment as the ledger), then "Who can apply", "What's covered", "Work-back obligation", "About", and a full-width **Apply on {funder}'s site** button that sticks to the bottom on mobile.
+**Search** (`/search`): filters in a 288 px left column at ≥ 1024 px (sticky, scrolls independently, **never overlaps results**); below 1024 px a "Filters (3)" button opens a bottom sheet. Field of study is a list of collapsible groups (`<details>`) with a filter-as-you-type box at the top; only the groups with a selection are open. Results are ledger rows:
+```
+ 14   Sasol Bursary                                   [save] [report]
+ Nov  Sasol
+ ▓▓   Undergraduate, min 65% average
+      Found on ZA Bursaries, StudyTrust       (each name links to that site's page for this bursary)
+```
+**"Found on"**: list **every** source the bursary was found on, by name, each linking (`target="_blank" rel="noopener nofollow"`) to the exact aggregator page (`sources[].url`), with its 16 px favicon before the name. Never "found on 1 site".
+
+**Detail** (`/bursaries/:slug`): 680 px column; date block; title; funder; "Found on" (same as above); sections in serif reading text; sticky "Apply on {funder}'s site" bar on mobile.
+
+**Everything else** (account dialogs, tracker, admin): same tokens and type; admin may use plain tables with hairlines.
 
 ## 6. Principles
-1. **The date is the loudest thing on every screen.** Nothing else gets display-size type.
-2. **One bold device: the highlighter.** It means "closes soon" and nothing else. Don't reuse it for decoration, badges or marketing.
-3. **Plain, specific copy** (§8). Name things the way students do: "closing date", "average", "what's covered", not "deadline window", "aggregate", "benefits package".
-4. **Quiet structure.** Hairlines and whitespace, not boxes and shadows. No numbered markers unless the content is a real sequence. No gradients.
-5. **Motion: one moment only.** When results first render, the highlighter swipes in behind closing-soon dates (`transform: scaleX` 0→1, 300 ms, staggered ≤ 3 rows). Respond to user actions (dialog open, filter sheet). Nothing else animates; `prefers-reduced-motion: reduce` disables the swipe (it just appears).
-6. **Cheap on data.** One font file, no images except source favicons, no icon font (inline SVG only).
+1. **The date is the loudest thing on result screens; the headline is the loudest thing on home.** Nothing else gets display-size type.
+2. **One bold device: the highlighter.** It means "closes soon" (and draws the swipe in the hero illustration). Nothing else uses it.
+3. **Calm by default.** Warm paper, whitespace, hairlines. No gradients, no card grids, no shadows on content.
+4. **Fast and steady.** No layout shift (reserve space for loading content, explicit image sizes), no element ever overlaps another at any width from 320 px to 1920 px, interactions respond within one frame (transitions ≤ 150 ms, `transform`/`opacity` only). Hydration uses event replay so taps made before the app wakes up still work, and below-the-fold sections hydrate on viewport.
+5. **Motion: one moment.** On home, the hero illustration's highlighter swipe draws in once (`scaleX` 0→1, 500 ms). On results, closing-soon swipes appear without animation. Respect `prefers-reduced-motion`.
+6. **Cheap on data.** Two variable font files (Latin), one inline SVG illustration, favicons only. Initial JS+CSS within the 05 budgets.
+7. **Check it with your eyes.** Every web task commits screenshots (§9) at 375×812 and 1440×900 of each page it changes, and the author reviews them before opening the PR.
 
 ## 7. Interface rules checklist (from the Web Interface Guidelines; reviewers check every web PR against this)
 **Accessibility:** icon-only buttons have an accessible name · every control has a label · actions are `<button>`, navigation is `<a>`, never clickable divs · images have `alt` (empty if decorative), decorative SVGs `aria-hidden="true"` · toasts and async validation use a polite live region · native elements before ARIA · logical heading order + a "Skip to results/content" link · `scroll-margin-top` on anchor targets.
@@ -113,3 +124,8 @@ The sentence is built from real `<label>`/`<select>`/`<input>` elements (each se
 - Buttons say what happens: "Show bursaries", "Send report", "Apply on Sasol's site". The resulting toast uses the same verb: "Report sent".
 - Errors say what happened and what to do, without apology: "Bursaries didn't load. Check your connection and try again." Empty states invite an action: "No bursaries match a 75% average. Lower it to see more."
 - No exclamation marks, no "Oops", no "Uh oh".
+
+## 9. Visual check (required for every web task)
+- `scripts/dev-stack.sh` starts Postgres (docker compose), the API with `Database:MigrateOnStartup=true` plus **sample data** (`data/dev/sample-bursaries.sql`: about 15 realistic bursaries, some closing within 14 days, some closed, several found on 2–3 sources), and `ng serve`.
+- `node scripts/screenshots.mjs <task-id> <path> [<path>…]` uses Playwright (Chromium) to save `docs/screenshots/<task-id>/<page>-{mobile,desktop}.png` at 375×812 and 1440×900, full page.
+- The author **opens every screenshot** (Read tool), fixes overlaps, clipping, horizontal scroll and misalignment, re-shoots, and commits the final PNGs. The PR lists them. Reviewers open them too.

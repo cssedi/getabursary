@@ -90,6 +90,11 @@ graph LR
   T045 --> T046
   T047[T-047 containers] --> T048[T-048 deploy workflow]
   T047 --> T049[T-049 bootstrap + runbook]
+  T050[T-050 visual check] --> T051[T-051 design v2 foundation]
+  T051 --> T052[T-052 home]
+  T051 --> T053[T-053 search v2]
+  T053 --> T054[T-054 other pages v2]
+  T055[T-055 funder names]
 ```
 
 **Can start immediately (in parallel):** T-001, T-002, T-008.

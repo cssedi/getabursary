@@ -56,7 +56,8 @@ jobs:
                Also: acceptance criteria met; files inside Scope (the AGENTS.md "Standing scope allowance" and scope approved in
                comments by @cssedi or an "orchestrator note" count as in Scope); layering + Result<T>; no secrets; migrations rules.
                For changes under src/web/: check specs/06-design.md (§3 tokens, §4 type, §5 layout, §6 principles, §7 checklist,
-               §8 copy); §7 anti-patterns and off-token colours are Must fix.
+               §8 copy); §7 anti-patterns and off-token colours are Must fix. Open (Read) every PNG the PR adds under
+               docs/screenshots/<task>/: overlapping or clipped elements, horizontal scroll or missing screenshots are Must fix.
             3. Check before reporting: every finding needs a concrete case ("this input/situation gives this wrong result").
                Re-read the lines to confirm. A `// shortcut:` comment that names its limit is a decision, not a finding, unless
                the expected load already crosses it. Propose the smallest fix; prefer fixes that delete code. No style taste,
