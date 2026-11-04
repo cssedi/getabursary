@@ -4,7 +4,7 @@ title: Clean scraped funder names (email-protection junk, admin notes in bracket
 phase: 7
 area: worker
 model: haiku
-status: todo
+status: done
 depends_on: []
 requirements: [FR-22]
 issue: 105
