@@ -20,6 +20,7 @@ The whole site moves to the v2 look (warm paper, ink, jacaranda, highlighter; Br
 ## Scope
 - `src/web/src/styles.css`, Tailwind theme config, `src/web/src/index.html` (preload, theme-color), `src/web/package.json` + lock (add the two `@fontsource-variable` packages, remove Atkinson)
 - `src/web/src/app/app.config.ts` (`provideClientHydration(withEventReplay(), withIncrementalHydration())`), the shell/header/footer components, `src/web/src/app/shared/ui/**` (restyle only; keep APIs)
+- `src/web/angular.json` (font asset entries; initial budget to warn 340 kB / error 380 kB per 05 §NFR-01, revised 2026-11-04)
 - Existing spec files only where markup changes break them (standing allowance), `docs/screenshots/T-051/**`
 
 ## Requirements
@@ -40,3 +41,6 @@ The whole site moves to the v2 look (warm paper, ink, jacaranda, highlighter; Br
 cd src/web && npm ci && npm test -- --watch=false && npm run lint && npm run build && cd ../..
 node scripts/visual-check.mjs T-051 / /search /about
 ```
+
+## Orchestrator decision (2026-11-04)
+Option 1: budget raised to 340/380 kB (spec 05 updated on main), and the `angular.json` font assets are in Scope. Continue from the pushed branch `task/T-051` (rebase on main) and finish: screenshots, checklist, PR.

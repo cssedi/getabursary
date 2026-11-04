@@ -18,7 +18,7 @@ Funder names read like names ("SRK Consulting"), not like scraped page fragments
 - Live examples: "SRK Consulting (South Africa) (administered in-house; [email protected])", "Exxaro Resources Limited (applications via the Exxaro eRecruit portal)", "South African Institution of Civil Engineering (SAICE) — administered in-house via the SAICE Patrons' Engineering Bursary Scheme (SPEBS) desk"
 
 ## Scope
-- `src/GetABursary.Worker/Pipeline/**` or `Merging/**` (one static `FunderName.Clean`, applied before merge), `src/GetABursary.Core/Data/Migrations/**` (**one** migration `CleanFunderNames` that applies the same rules to existing rows with SQL, skipping rows whose `locked_fields` contains `FunderName`), `tests/GetABursary.Worker.Tests/**`
+- `src/GetABursary.Worker/Pipeline/**` or `Merging/**` (one static `FunderName.Clean`, applied before merge), `src/GetABursary.Core/Data/Migrations/**` (**one** migration `CleanFunderNames`; see the decisions below), `tests/GetABursary.Worker.Tests/**`
 
 ## Requirements
 1. Rules, in order: remove Cloudflare email-protection text (`[email protected]`, `[email&#160;protected]`); drop bracketed parts containing "administered", "applications via", "apply via", "portal", "in-house", "@"; drop text after " — " or " - " when it starts with "administered"/"applications"; keep a short bracketed acronym like "(SAICE)" or "(GE)"; collapse spaces; trim punctuation.
@@ -33,3 +33,9 @@ Funder names read like names ("SRK Consulting"), not like scraped page fragments
 ```bash
 dotnet test --filter "FullyQualifiedName~Funder"
 ```
+
+## Orchestrator decisions (2026-11-04, answering BLOCKED)
+1. **(b)** No lock check: funders have no locks.
+2. **(b)** Merge: when the cleaned name's normalized form already exists, repoint `bursary.funder_id` from the dirty funder to the existing one, then delete the dirty funder. Otherwise update `name` + `normalized_name`. Touching `bursary.funder_id` in this migration is in Scope. If replicating `NameNormalizer` in SQL is fragile, write the migration as C# in `Up()` using `migrationBuilder.Sql` built from a query at migration time is NOT allowed; instead add a one-off idempotent startup step in the worker (`FunderNameCleanup`, runs before the first ingestion, uses `FunderName.Clean` + `NameNormalizer` through EF) and skip the SQL migration. Your choice; say which in the PR.
+3. **(a)** Keep the literal rules ("SRK Consulting (South Africa)" is fine).
+The local branch was lost with the runner; redo from main.
