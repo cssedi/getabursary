@@ -14,7 +14,7 @@ import {
   untracked,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, debounce, map, of, startWith, switchMap, timer } from 'rxjs';
+import { catchError, map, of, startWith, switchMap, timer } from 'rxjs';
 import { BursaryApi } from '../../core/api/bursary-api';
 import { BursarySummaryResponse, PagedResponse } from '../../core/api/models';
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
@@ -45,7 +45,7 @@ type SearchView =
         Filters ({{ state.activeCount() }})
       </button>
       <app-filter-panel
-        class="hidden min-w-0 lg:sticky lg:top-20 lg:block lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:pr-2"
+        class="hidden min-w-0 lg:sticky lg:top-20 lg:block lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:pb-4 lg:pr-2"
       />
       <app-result-list
         class="min-w-0"
@@ -74,18 +74,17 @@ export class SearchPage {
   protected readonly view = toSignal(
     toObservable(this.request).pipe(
       // The first request goes straight out (and is replayed from the server); later ones wait for typing to settle.
-      debounce(() => {
+      // 'loading' is emitted straight away, so the list dims and aria-busy is set during the wait too.
+      switchMap(({ params }) => {
         const wait = this.firstRequest ? of(0) : timer(FILTER_DEBOUNCE_MS);
         this.firstRequest = false;
-        return wait;
-      }),
-      switchMap(({ params }) =>
-        this.api.search(params).pipe(
+        return wait.pipe(
+          switchMap(() => this.api.search(params)),
           map((result): SearchView => ({ status: 'ok', result })),
           catchError(() => of<SearchView>({ status: 'error' })),
           startWith<SearchView>({ status: 'loading' }),
-        ),
-      ),
+        );
+      }),
     ),
     { initialValue: { status: 'loading' } as SearchView },
   );
