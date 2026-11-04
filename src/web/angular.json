@@ -27,8 +27,13 @@
                 "input": "public"
               },
               {
-                "glob": "atkinson-hyperlegible-next-latin-wght-normal.woff2",
-                "input": "node_modules/@fontsource-variable/atkinson-hyperlegible-next/files",
+                "glob": "bricolage-grotesque-latin-wdth-normal.woff2",
+                "input": "node_modules/@fontsource-variable/bricolage-grotesque/files",
+                "output": "/fonts"
+              },
+              {
+                "glob": "newsreader-latin-wght-normal.woff2",
+                "input": "node_modules/@fontsource-variable/newsreader/files",
                 "output": "/fonts"
               }
             ],

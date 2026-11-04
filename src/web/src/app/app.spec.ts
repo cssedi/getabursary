@@ -21,12 +21,12 @@ describe('App shell', () => {
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     const logo = el.querySelector('app-header a');
-    expect(logo?.textContent).toContain('GetABursary');
+    expect(logo?.textContent).toContain('getabursary');
     expect(logo?.getAttribute('href')).toBe('/');
     const hrefs = Array.from(el.querySelectorAll('app-footer a')).map((a) => a.getAttribute('href'));
     expect(hrefs).toEqual(['/about', '/privacy']);
     expect(el.querySelector('app-footer')?.textContent).toContain(
-      'Bursary info is gathered from public sources. Always confirm details on the funder',
+      'Listings come from public bursary sites. Always confirm on the funder',
     );
   });
 
