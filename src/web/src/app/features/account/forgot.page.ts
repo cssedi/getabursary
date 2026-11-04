@@ -34,7 +34,7 @@ import { authErrors } from '../../core/auth/auth-errors';
         }
         <button
           type="submit"
-          class="mt-3 min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink disabled:opacity-60"
+          class="btn-primary mt-3"
           [disabled]="sending()"
         >
           {{ sending() ? 'Sending…' : 'Send reset link' }}

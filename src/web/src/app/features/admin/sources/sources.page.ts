@@ -56,7 +56,7 @@ export function relativeTime(iso: string, now = Date.now()): string {
       <h2 class="text-xl font-bold">Sources</h2>
       <button
         type="button"
-        class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink"
+        class="btn-primary"
         (click)="requestRun()"
       >
         Run all sources now

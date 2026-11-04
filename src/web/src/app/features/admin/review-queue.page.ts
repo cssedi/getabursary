@@ -93,7 +93,7 @@ export function reasonText(reason: ReviewItem['reason']): string {
                     </div>
                     <button
                       type="submit"
-                      class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink"
+                      class="btn-primary"
                     >
                       Dismiss item
                     </button>

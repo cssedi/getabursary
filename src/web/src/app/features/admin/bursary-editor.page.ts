@@ -343,7 +343,7 @@ const INPUT = 'min-h-11 w-full rounded-control border border-line px-3';
         <div>
           <button
             type="submit"
-            class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink disabled:opacity-60"
+            class="btn-primary"
             [disabled]="busy()"
           >
             {{ busy() ? 'Saving…' : 'Save changes' }}

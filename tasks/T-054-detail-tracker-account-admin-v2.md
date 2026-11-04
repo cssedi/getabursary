@@ -4,7 +4,7 @@ title: Detail, tracker, sign-in and admin pages in the v2 design, with "Found on
 phase: 7
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-051, T-053]
 requirements: [FR-06, FR-07, FR-12, FR-13, FR-41]
 issue: 104

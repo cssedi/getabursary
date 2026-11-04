@@ -18,7 +18,7 @@ import { AuthService } from '../../core/auth/auth.service';
         <p role="status" class="mb-4">Email confirmed. You can save bursaries now.</p>
         <button
           type="button"
-          class="min-h-11 rounded-control bg-jacaranda px-4 font-semibold text-paper hover:bg-ink active:bg-ink"
+          class="btn-primary"
           (click)="auth.openSignIn()"
         >
           Sign in
