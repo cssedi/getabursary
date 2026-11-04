@@ -101,4 +101,6 @@ jobs:
             done
             # Merges made with GITHUB_TOKEN don't trigger push workflows, so start the autopilot explicitly.
             gh workflow run autopilot.yml -R "$R" --ref main || true
+            # ...and the deploy (it builds main and skips the server unless vars.DEPLOY is 'on').
+            gh workflow run deploy.yml -R "$R" --ref main || true
           fi
