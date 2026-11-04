@@ -1,8 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { faculties, fields, institutions, qualifications } from '../../../testing/fixtures';
+import { faculties, fields, institutions, qualifications, searchPage } from '../../../testing/fixtures';
 import { HomePage } from './home.page';
 
 const degreesByFaculty = [
@@ -10,8 +10,12 @@ const degreesByFaculty = [
   { ...faculties[1], qualifications: qualifications.slice(2) },
 ];
 
-async function setup() {
-  TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()] });
+async function setup(closingSoon = searchPage) {
+  // jsdom has no IntersectionObserver, so the @defer blocks are rendered by hand below.
+  TestBed.configureTestingModule({
+    deferBlockBehavior: DeferBlockBehavior.Manual,
+    providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+  });
   const http = TestBed.inject(HttpTestingController);
   const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
   const fixture = TestBed.createComponent(HomePage);
@@ -22,8 +26,10 @@ async function setup() {
     fixture.detectChanges();
   };
   await flush();
+  for (const block of await fixture.getDeferBlocks()) await block.render(DeferBlockState.Complete);
   http.expectOne('/api/v1/taxonomy/institutions').flush(institutions);
   http.expectOne('/api/v1/taxonomy/fields').flush(fields);
+  http.expectOne((r) => r.url === '/api/v1/bursaries/search').flush(closingSoon);
   await flush();
   const $ = <T extends HTMLElement>(selector: string) => el.querySelector<T>(selector)!;
   const choose = async (selector: string, value: string) => {
@@ -51,7 +57,7 @@ async function setup() {
 }
 
 describe('HomePage', () => {
-  it('universityPick_makesOneDegreesRequest', async () => {
+  it('universityPick_makesOneQualificationsRequest', async () => {
     const { choose, http } = await setup();
     await choose('#home-university', institutions[0].id);
     const taxonomyRequests = http.match((r) => r.url.startsWith('/api/v1/taxonomy/institutions/'));
@@ -61,19 +67,26 @@ describe('HomePage', () => {
     taxonomyRequests[0].flush(degreesByFaculty);
   });
 
-  it('degreeSelect_beforeUniversity_isDisabledWithPlaceholder', async () => {
+  it('qualificationSelect_beforeUniversity_isDisabledWithReason', async () => {
     const { $ } = await setup();
-    const degree = $<HTMLSelectElement>('#home-degree');
-    expect(degree.disabled).toBe(true);
-    expect(degree.options[0].textContent).toBe('Choose a university first…');
+    const select = $<HTMLSelectElement>('#home-qualification');
+    expect(select.disabled).toBe(true);
+    expect(select.options[0].textContent).toBe('Pick a university first');
   });
 
-  it('degreeSelect_afterUniversity_isEnabledAndGroupedByFaculty', async () => {
+  it('qualificationSelect_whileLoading_saysLoading', async () => {
+    const { $, choose, http } = await setup();
+    await choose('#home-university', institutions[0].id);
+    expect($<HTMLSelectElement>('#home-qualification').options[0].textContent).toBe('Loading qualifications…');
+    http.expectOne(`/api/v1/taxonomy/institutions/${institutions[0].id}/qualifications`).flush([]);
+  });
+
+  it('qualificationSelect_afterUniversity_isEnabledAndGroupedByFaculty', async () => {
     const { $, chooseUniversity } = await setup();
     await chooseUniversity();
-    const degree = $<HTMLSelectElement>('#home-degree');
-    expect(degree.disabled).toBe(false);
-    const groups = Array.from(degree.querySelectorAll('optgroup')).map((g) => [
+    const select = $<HTMLSelectElement>('#home-qualification');
+    expect(select.disabled).toBe(false);
+    const groups = Array.from(select.querySelectorAll('optgroup')).map((g) => [
       g.label,
       g.querySelectorAll('option').length,
     ]);
@@ -85,32 +98,50 @@ describe('HomePage', () => {
 
   it('controls_all_haveLabelsAndAverageAttributes', async () => {
     const { el, $ } = await setup();
-    const labels = ['home-degree', 'home-university', 'home-study-level', 'home-average'].map(
+    const labels = ['home-university', 'home-qualification', 'home-study-level', 'home-average'].map(
       (id) => el.querySelector(`label[for="${id}"]`)?.textContent,
     );
-    expect(labels).toEqual(['Degree', 'University', 'Study level', 'Your average']);
+    expect(labels).toEqual(['University', 'Qualification', 'Year of study', 'Your average']);
     const average = $<HTMLInputElement>('#home-average');
     expect(average.type).toBe('text');
     expect(average.getAttribute('inputmode')).toBe('numeric');
     expect(average.getAttribute('autocomplete')).toBe('off');
     expect(average.name).toBe('average');
-    expect(average.placeholder).toBe('e.g. 72…');
+    expect(average.placeholder).toBe('For example 72…');
   });
 
   it('browseByField_rendersLinksToFieldPages', async () => {
     const { el } = await setup();
     const hrefs = Array.from(el.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toEqual(['/bursaries/field/engineering', '/bursaries/field/physical-sciences']);
+    expect(hrefs).toContain('/bursaries/field/engineering');
+    expect(hrefs).toContain('/bursaries/field/physical-sciences');
   });
 
-  it('submit_withoutUniversity_showsErrorAndFocusesIt', async () => {
-    const { el, $, navigate, submit } = await setup();
-    document.body.append(el); // focus() only works on attached elements
+  it('submit_withNothingChosen_navigatesToSearchWithNoFilters', async () => {
+    const { navigate, submit } = await setup();
     await submit();
-    expect(navigate).not.toHaveBeenCalled();
-    expect($('#home-university-error').textContent).toContain('Choose your university');
-    expect(document.activeElement).toBe($('#home-university'));
-    el.remove();
+    expect(navigate).toHaveBeenCalledWith(['/search'], { queryParams: {} });
+  });
+
+  it('universityChange_clearsChosenQualification', async () => {
+    const { navigate, choose, chooseUniversity, submit, http } = await setup();
+    await chooseUniversity();
+    await choose('#home-qualification', qualifications[0].id);
+    await choose('#home-university', institutions[1].id);
+    http.expectOne(`/api/v1/taxonomy/institutions/${institutions[1].id}/qualifications`).flush([]);
+    await submit();
+    expect(navigate.mock.calls[0][1]?.queryParams).toEqual({ institutionId: institutions[1].id });
+  });
+
+  it('closingSoon_withBursaries_linksEachToItsPage', async () => {
+    const { el } = await setup();
+    const hrefs = Array.from(el.querySelectorAll('[aria-labelledby="closing-soon-heading"] ul a')).map((a) => a.getAttribute('href'));
+    expect(hrefs).toEqual(searchPage.items.map((b) => `/bursaries/${b.slug}`));
+  });
+
+  it('closingSoon_empty_showsInvitationToSearch', async () => {
+    const { el } = await setup({ ...searchPage, items: [], totalCount: 0 });
+    expect(el.textContent).toContain('No bursaries close in the next while. Search by your degree instead.');
   });
 
   it('submit_withInvalidAverage_showsFixItMessageAndDoesNotNavigate', async () => {
@@ -125,7 +156,7 @@ describe('HomePage', () => {
   it('submit_withValidInput_pushesSearchUrlWithQueryParams', async () => {
     const { navigate, choose, chooseUniversity, submit, type } = await setup();
     await chooseUniversity();
-    await choose('#home-degree', qualifications[0].id);
+    await choose('#home-qualification', qualifications[0].id);
     await choose('#home-study-level', 'Undergraduate');
     await type('72');
     await submit();

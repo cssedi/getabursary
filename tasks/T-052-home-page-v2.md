@@ -4,7 +4,7 @@ title: Real home page - hero, working degree search, closing soon, how it works,
 phase: 7
 area: web
 model: sonnet
-status: todo
+status: done
 depends_on: [T-051]
 requirements: [FR-01, FR-02, FR-05]
 issue: 102
